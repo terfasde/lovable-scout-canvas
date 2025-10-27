@@ -96,7 +96,7 @@ const Events = () => {
                   <span className="px-3 py-1 bg-accent/20 text-accent-foreground rounded-full text-sm font-semibold">
                     10+ Medallas
                   </span>
-                  <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-semibold">Tradición desde 1964</span>
+                  <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-semibold">Tradición desde 2003</span>
                 </div>
               </div>
               <Button size="lg" variant="hero" className="whitespace-nowrap">

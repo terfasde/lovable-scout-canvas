@@ -6,7 +6,7 @@ import emblemImage from "@/assets/scout-emblem.jpg";
 const Historia = () => {
   const milestones = [
     {
-      year: "1957",
+      year: "1964",
       title: "Fundación del Grupo",
       description: "Nace el Grupo Scout Séptimo de Montevideo con un grupo de jóvenes visionarios comprometidos con los valores del escultismo.",
     },
@@ -16,9 +16,9 @@ const Historia = () => {
       description: "Inauguramos nuestro primer local, consolidando nuestra presencia en la comunidad.",
     },
     {
-      year: "1978",
-      title: "Primera Victoria en BAUEN",
-      description: "El grupo logra su primer campeonato en la competencia BAUEN, marcando el inicio de una tradición de excelencia.",
+      year: "2003",
+      title: "Nace BAUEN",
+      description: "Se crea la competencia BAUEN, que se convertirá en el evento más importante del escultismo uruguayo.",
     },
     {
       year: "1990",
@@ -54,10 +54,10 @@ const Historia = () => {
               <span className="text-primary font-semibold">Nuestra Historia</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              67 Años Construyendo Futuro
+              61 Años Construyendo Futuro
             </h1>
             <p className="text-xl text-muted-foreground">
-              Desde 1957, hemos sido parte fundamental del movimiento scout uruguayo, 
+              Desde 1964, hemos sido parte fundamental del movimiento scout uruguayo,
               formando generaciones de líderes comprometidos con su comunidad.
             </p>
           </div>
@@ -78,7 +78,7 @@ const Historia = () => {
             <div className="md:col-span-2 flex flex-col justify-center">
               <h2 className="text-3xl font-bold mb-4">El Comienzo de una Tradición</h2>
               <p className="text-lg text-muted-foreground mb-4">
-                El Grupo Scout Séptimo de Montevideo fue fundado en 1957 por un grupo de jóvenes 
+                El Grupo Scout Séptimo de Montevideo fue fundado en 1964 por un grupo de jóvenes
                 comprometidos con los ideales de Baden-Powell. Desde entonces, hemos crecido 
                 hasta convertirnos en uno de los grupos scouts más reconocidos del Uruguay.
               </p>
