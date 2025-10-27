@@ -1,40 +1,33 @@
 import { Calendar, MapPin, Trophy, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
 const Events = () => {
-  const events = [
-    {
-      title: "Campamento de Verano 2025",
-      date: "15-22 Enero, 2025",
-      location: "Parque Nacional Santa Teresa",
-      participants: "150 scouts",
-      type: "Campamento",
-      status: "Próximamente",
-      color: "primary",
-    },
-    {
-      title: "BAUEN - Competencia Nacional",
-      date: "5-7 Marzo, 2025",
-      location: "Montevideo",
-      participants: "200+ scouts",
-      type: "Competencia",
-      status: "Inscripciones Abiertas",
-      color: "accent",
-    },
-    {
-      title: "Jornada de Servicio Comunitario",
-      date: "20 Abril, 2025",
-      location: "Barrio La Teja",
-      participants: "80 scouts",
-      type: "Servicio",
-      status: "Confirmado",
-      color: "primary",
-    },
-  ];
-
-  return (
-    <section className="section-padding bg-muted/30">
+  const events = [{
+    title: "Campamento de Verano 2025",
+    date: "15-22 Enero, 2025",
+    location: "Parque Nacional Santa Teresa",
+    participants: "150 scouts",
+    type: "Campamento",
+    status: "Próximamente",
+    color: "primary"
+  }, {
+    title: "BAUEN - Competencia Nacional",
+    date: "5-7 Marzo, 2025",
+    location: "Montevideo",
+    participants: "200+ scouts",
+    type: "Competencia",
+    status: "Inscripciones Abiertas",
+    color: "accent"
+  }, {
+    title: "Jornada de Servicio Comunitario",
+    date: "20 Abril, 2025",
+    location: "Barrio La Teja",
+    participants: "80 scouts",
+    type: "Servicio",
+    status: "Confirmado",
+    color: "primary"
+  }];
+  return <section className="section-padding bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <div className="inline-block px-4 py-2 bg-primary/10 rounded-full mb-4">
@@ -50,8 +43,7 @@ const Events = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {events.map((event, index) => (
-            <Card key={index} className="card-hover overflow-hidden">
+          {events.map((event, index) => <Card key={index} className="card-hover overflow-hidden">
               <div className={`h-2 bg-${event.color}`}></div>
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
@@ -78,8 +70,7 @@ const Events = () => {
                   <span className="text-sm">{event.participants}</span>
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
         {/* BAUEN Special Section */}
@@ -105,9 +96,7 @@ const Events = () => {
                   <span className="px-3 py-1 bg-accent/20 text-accent-foreground rounded-full text-sm font-semibold">
                     10+ Medallas
                   </span>
-                  <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-semibold">
-                    Tradición desde 1957
-                  </span>
+                  <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-semibold">Tradición desde 1964</span>
                 </div>
               </div>
               <Button size="lg" variant="hero" className="whitespace-nowrap">
@@ -117,8 +106,6 @@ const Events = () => {
           </CardContent>
         </Card>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Events;
