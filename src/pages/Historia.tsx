@@ -16,7 +16,7 @@ const Historia = () => {
       description: "Inauguramos nuestro primer local, consolidando nuestra presencia en la comunidad.",
     },
     {
-      year: "2003",
+      year: "2004",
       title: "Nace BAUEN",
       description: "Se crea la competencia BAUEN, que se convertirá en el evento más importante del escultismo uruguayo.",
     },
