@@ -1,9 +1,7 @@
 import { Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-
 const Footer = () => {
-  return (
-    <footer className="bg-scout-black text-gray-300">
+  return <footer className="bg-scout-black text-gray-300">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Logo & Description */}
@@ -22,20 +20,10 @@ const Footer = () => {
               valores y crecimiento personal.
             </p>
             <div className="flex space-x-4">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors"
-              >
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors"
-              >
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
             </div>
@@ -79,11 +67,11 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="w-5 h-5 mr-2 mt-1 text-primary flex-shrink-0" />
-                <span className="text-sm">Av. 8 de Octubre 1234, Montevideo</span>
+                <span className="text-sm">Volteadores 1753, Montevideo</span>
               </li>
               <li className="flex items-center">
                 <Phone className="w-5 h-5 mr-2 text-primary flex-shrink-0" />
-                <span className="text-sm">+598 99 123 456</span>
+                <span className="text-sm">098138668</span>
               </li>
               <li className="flex items-center">
                 <Mail className="w-5 h-5 mr-2 text-primary flex-shrink-0" />
@@ -108,8 +96,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
