@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MapComponent from "../components/MapComponent";
 
 const Contacto = () => {
   const { toast } = useToast();
@@ -44,22 +45,22 @@ const Contacto = () => {
     {
       icon: MapPin,
       title: "Dirección",
-      content: "Av. 8 de Octubre 1234, Montevideo, Uruguay",
+      content: "Volteadores 1753 entre Av. Italia y Almirón, Montevideo, Uruguay",
     },
     {
       icon: Phone,
       title: "Teléfono",
-      content: "+598 99 123 456",
+      content: "+598 098 138 668 (Pablo Silva, Jefe de Grupo)",
     },
     {
       icon: Mail,
       title: "Email",
-      content: "contacto@septimo.scout.uy",
+      content: "scoutsseptimo7@gmail.com",
     },
     {
       icon: Clock,
       title: "Horarios",
-      content: "Sábados 14:00 - 18:00",
+      content: "Sábados 15:00h - 18:00h ",
     },
   ];
 
@@ -182,11 +183,8 @@ const Contacto = () => {
               {/* Map Placeholder */}
               <Card>
                 <CardContent className="p-0">
-                  <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-muted-foreground">Mapa de ubicación</p>
-                    </div>
+                  <div className="w-full h-64 rounded-lg overflow-hidden">
+                    <MapComponent />
                   </div>
                 </CardContent>
               </Card>
