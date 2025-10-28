@@ -16,10 +16,10 @@ const Footer = () => {
             </div>
             <p className="text-gray-400 mb-4">Formando líderes comprometidos desde 1964. Una comunidad de aventura, valores y crecimiento personal.</p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
+              <a href="https://facebook.com/gruposcoutseptimomontevideo" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
+              <a href="https://instagram.com/grupo_scout_septimo" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
             </div>
@@ -83,10 +83,10 @@ const Footer = () => {
             © 2025 Grupo Scout Séptimo de Montevideo. Todos los derechos reservados.
           </p>
           <div className="flex space-x-6 text-sm">
-            <Link to="/privacidad" className="hover:text-primary transition-colors">
+            <Link to="#" className="hover:text-primary transition-colors">
               Política de Privacidad
             </Link>
-            <Link to="/terminos" className="hover:text-primary transition-colors">
+            <Link to="#" className="hover:text-primary transition-colors">
               Términos y Condiciones
             </Link>
           </div>

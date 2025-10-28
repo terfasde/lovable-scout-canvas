@@ -18,7 +18,7 @@ const Bauen = () => {
     position: "3° Lugar"
   }, {
     year: "2020",
-    position: "Cancelado - COVID pandemia"
+    position: "Cancelado - COVID"
   }, {
     year: "2019",
     position: "1° Lugar"
