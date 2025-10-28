@@ -35,16 +35,7 @@ const About = () => {
               y eventos como el BAUEN, cultivamos el liderazgo, la autonomía y el 
               servicio en cada uno de nuestros scouts.
             </p>
-            <div className="flex gap-4 text-sm">
-              <div className="px-4 py-2 bg-primary/5 rounded-lg">
-                <div className="font-bold text-primary">200+</div>
-                <div className="text-muted-foreground">Miembros activos</div>
-              </div>
-              <div className="px-4 py-2 bg-accent/5 rounded-lg">
-                <div className="font-bold text-accent">50+</div>
-                <div className="text-muted-foreground">Eventos al año</div>
-              </div>
-            </div>
+            
           </div>
           <div className="relative">
             <img src={communityImage} alt="Comunidad Scout Séptimo" className="rounded-2xl shadow-2xl w-full" />
