@@ -7,8 +7,8 @@ const containerStyle = {
 };
 
 const center = {
-  lat: -34.9011, // Montevideo
-  lng: -56.1645,
+  lat: -34.88597863841296, // Montevideo
+  lng: -56.09309381677225,
 };
 
 function MapComponent() {
