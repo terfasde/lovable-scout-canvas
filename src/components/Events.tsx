@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 const Events = () => {
   const events = [{
-    title: "Campamento de Verano 2025",
-    date: "15-22 Enero, 2025",
-    location: "Parque Nacional Santa Teresa",
-    participants: "150 scouts",
+    title: "Campamento de Verano 2026",
+    date: "22-26 Enero, 2026",
+    location: "Próximamente Revelado",
+    participants: "+100 scouts",
     type: "Campamento",
     status: "Próximamente",
     color: "primary"
