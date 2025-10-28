@@ -60,7 +60,7 @@ const Bauen = () => {
             </p>
             <Button size="lg" className="gap-2">
               <Calendar className="w-5 h-5" />
-              Próxima Edición 2025
+              Próxima Edición 2026
             </Button>
           </div>
         </div>
