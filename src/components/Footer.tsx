@@ -15,10 +15,7 @@ const Footer = () => {
                 <div className="text-sm text-gray-400">de Montevideo</div>
               </div>
             </div>
-            <p className="text-gray-400 mb-4">
-              Formando líderes comprometidos desde 1957. Una comunidad de aventura, 
-              valores y crecimiento personal.
-            </p>
+            <p className="text-gray-400 mb-4">Formando líderes comprometidos desde 1964. Una comunidad de aventura, valores y crecimiento personal.</p>
             <div className="flex space-x-4">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
                 <Facebook className="w-5 h-5" />
@@ -71,7 +68,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center">
                 <Phone className="w-5 h-5 mr-2 text-primary flex-shrink-0" />
-                <span className="text-sm">098138668</span>
+                <span className="text-sm">+598 098138668</span>
               </li>
               <li className="flex items-center">
                 <Mail className="w-5 h-5 mr-2 text-primary flex-shrink-0" />
