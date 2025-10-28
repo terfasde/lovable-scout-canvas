@@ -3,42 +3,44 @@ import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, Target, Users, Calendar, Award, Flame } from "lucide-react";
-
 const Bauen = () => {
-  const championships = [
-    { year: "2024", position: "1° Lugar" },
-    { year: "2023", position: "2° Lugar" },
-    { year: "2022", position: "1° Lugar" },
-    { year: "2021", position: "3° Lugar" },
-    { year: "2020", position: "Cancelado - COVID" },
-    { year: "2019", position: "1° Lugar" },
-  ];
-
-  const pruebas = [
-    {
-      icon: Target,
-      nombre: "Pruebas de Habilidad",
-      descripcion: "Desafíos que ponen a prueba las destrezas scouts individuales y grupales."
-    },
-    {
-      icon: Flame,
-      nombre: "Supervivencia",
-      descripcion: "Construcción de refugios, encendido de fuego y técnicas de campamento."
-    },
-    {
-      icon: Users,
-      nombre: "Trabajo en Equipo",
-      descripcion: "Actividades que requieren coordinación y cooperación entre patrullas."
-    },
-    {
-      icon: Award,
-      nombre: "Conocimientos Scout",
-      descripcion: "Preguntas sobre historia, técnicas y valores del movimiento scout."
-    }
-  ];
-
-  return (
-    <div className="min-h-screen">
+  const championships = [{
+    year: "2024",
+    position: "1° Lugar"
+  }, {
+    year: "2023",
+    position: "2° Lugar"
+  }, {
+    year: "2022",
+    position: "1° Lugar"
+  }, {
+    year: "2021",
+    position: "3° Lugar"
+  }, {
+    year: "2020",
+    position: "Cancelado - COVID"
+  }, {
+    year: "2019",
+    position: "1° Lugar"
+  }];
+  const pruebas = [{
+    icon: Target,
+    nombre: "Pruebas de Habilidad",
+    descripcion: "Desafíos que ponen a prueba las destrezas scouts individuales y grupales."
+  }, {
+    icon: Flame,
+    nombre: "Supervivencia",
+    descripcion: "Construcción de refugios, encendido de fuego y técnicas de campamento."
+  }, {
+    icon: Users,
+    nombre: "Trabajo en Equipo",
+    descripcion: "Actividades que requieren coordinación y cooperación entre patrullas."
+  }, {
+    icon: Award,
+    nombre: "Conocimientos Scout",
+    descripcion: "Preguntas sobre historia, técnicas y valores del movimiento scout."
+  }];
+  return <div className="min-h-screen">
       <Navigation />
       
       {/* Hero Section */}
@@ -72,11 +74,7 @@ const Bauen = () => {
               <CardContent className="p-8">
                 <h2 className="text-3xl font-bold mb-6 text-center">La Historia de BAUEN</h2>
                 <div className="space-y-4 text-muted-foreground text-lg">
-                  <p>
-                    En 2004, el Grupo Scout Séptimo de Montevideo decidió crear algo único: una competencia
-                    que pondría a prueba todas las habilidades scouts en un evento de tres días lleno de
-                    desafíos, camaradería y espíritu scout.
-                  </p>
+                  <p>En 2004, el Grupo Scout Séptimo de Montevideo decidió crear algo único: una competencia que pondría a prueba todas las habilidades scouts en un evento de 2 días lleno de desafíos, camaradería y espíritu scout.</p>
                   <p>
                     Desde entonces, BAUEN se ha convertido en el evento más esperado del calendario scout
                     uruguayo. Cada año, grupos de todo el país se preparan intensamente para competir por
@@ -108,9 +106,8 @@ const Bauen = () => {
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {pruebas.map((prueba, index) => {
-              const Icon = prueba.icon;
-              return (
-                <Card key={index} className="card-hover">
+            const Icon = prueba.icon;
+            return <Card key={index} className="card-hover">
                   <CardContent className="p-6">
                     <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                       <Icon className="w-6 h-6 text-primary" />
@@ -118,9 +115,8 @@ const Bauen = () => {
                     <h3 className="text-xl font-bold mb-2">{prueba.nombre}</h3>
                     <p className="text-muted-foreground">{prueba.descripcion}</p>
                   </CardContent>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
         </div>
       </section>
@@ -140,29 +136,16 @@ const Bauen = () => {
             </div>
 
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {championships.map((championship, index) => (
-                <Card 
-                  key={index} 
-                  className={`card-hover text-center ${
-                    championship.position.includes("1°") 
-                      ? "border-primary/50 bg-primary/5" 
-                      : ""
-                  }`}
-                >
+              {championships.map((championship, index) => <Card key={index} className={`card-hover text-center ${championship.position.includes("1°") ? "border-primary/50 bg-primary/5" : ""}`}>
                   <CardContent className="p-6">
                     <div className="text-3xl font-bold text-primary mb-2">
                       {championship.year}
                     </div>
-                    <div className={`text-lg font-semibold ${
-                      championship.position.includes("1°")
-                        ? "text-primary"
-                        : "text-muted-foreground"
-                    }`}>
+                    <div className={`text-lg font-semibold ${championship.position.includes("1°") ? "text-primary" : "text-muted-foreground"}`}>
                       {championship.position}
                     </div>
                   </CardContent>
-                </Card>
-              ))}
+                </Card>)}
             </div>
 
             <div className="mt-8 text-center">
@@ -181,8 +164,6 @@ const Bauen = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Bauen;
