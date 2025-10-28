@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logoImage from "@/assets/grupo-scout-logo.png";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -37,9 +38,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-              <span className="text-2xl font-bold text-primary-foreground">7°</span>
-            </div>
+            <img src={logoImage} alt="Grupo Scout Séptimo" className="w-12 h-12 object-contain" />
             <div className="hidden md:block">
               <div className="text-xl font-bold text-foreground">Grupo Scout</div>
               <div className="text-sm text-muted-foreground">Séptimo de Montevideo</div>

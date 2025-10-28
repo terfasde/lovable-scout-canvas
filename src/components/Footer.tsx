@@ -1,5 +1,6 @@
 import { Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+import logoImage from "@/assets/grupo-scout-logo.png";
 const Footer = () => {
   return <footer className="bg-scout-black text-gray-300">
       <div className="container mx-auto px-4 py-12">
@@ -7,9 +8,7 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">7°</span>
-              </div>
+              <img src={logoImage} alt="Grupo Scout Séptimo" className="w-12 h-12 object-contain" />
               <div>
                 <div className="text-xl font-bold text-white">Grupo Scout Séptimo</div>
                 <div className="text-sm text-gray-400">de Montevideo</div>
