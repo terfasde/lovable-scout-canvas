@@ -1,50 +1,24 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import emblemImage from "@/assets/scout-emblem.jpg";
+import { MapPin, Calendar, Users } from "lucide-react";
 
 const Historia = () => {
-  const milestones = [
+  const locales = [
     {
-      year: "1964",
-      title: "Fundación del Grupo",
-      description: "Nace el Grupo Scout Séptimo de Montevideo con un grupo de jóvenes visionarios comprometidos con los valores del escultismo.",
+      nombre: "Local Central",
+      direccion: "Av. Italia 3456, Montevideo",
+      año: "1965",
+      descripcion: "Nuestro local principal, donde se realizan las reuniones semanales y actividades regulares de todas las ramas.",
+      caracteristicas: ["Salón de reuniones", "Patio amplio", "Depósito de materiales", "Cocina equipada"]
     },
     {
-      year: "1965",
-      title: "Primer Local Propio",
-      description: "Inauguramos nuestro primer local, consolidando nuestra presencia en la comunidad.",
-    },
-    {
-      year: "2004",
-      title: "Nace BAUEN",
-      description: "Se crea la competencia BAUEN, que se convertirá en el evento más importante del escultismo uruguayo.",
-    },
-    {
-      year: "1990",
-      title: "Expansión de Ramas",
-      description: "Incorporamos todas las ramas del escultismo, desde castores hasta rovers, ofreciendo formación integral.",
-    },
-    {
-      year: "2007",
-      title: "50 Años de Historia",
-      description: "Celebramos medio siglo de trayectoria con un campamento histórico que reunió a generaciones de scouts.",
-    },
-    {
-      year: "2014",
-      title: "Cápsula del Tiempo",
-      description: "Enterramos una placa conmemorativa para celebrar nuestro centenario en el 2064, dejando un legado para las futuras generaciones de scouts.",
-    },
-    {
-      year: "2020",
-      title: "Adaptación Digital",
-      description: "Durante la pandemia, innovamos con actividades virtuales manteniendo vivo el espíritu scout.",
-    },
-    {
-      year: "2024",
-      title: "Campeones BAUEN 2024",
-      description: "Obtuvimos nuestro quinto campeonato en BAUEN, reafirmando nuestro compromiso con la excelencia.",
-    },
+      nombre: "Campo de Campamento",
+      direccion: "Ruta 8 Km 45, Canelones",
+      año: "1982",
+      descripcion: "Espacio natural donde realizamos nuestros campamentos y actividades al aire libre.",
+      caracteristicas: ["10 hectáreas", "Zona de fogones", "Arroyos naturales", "Senderos señalizados"]
+    }
   ];
 
   return (
@@ -56,78 +30,101 @@ const Historia = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-block px-4 py-2 bg-primary/10 rounded-full mb-4">
-              <span className="text-primary font-semibold">Nuestra Historia</span>
+              <span className="text-primary font-semibold">Nuestros Espacios</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              61 Años Construyendo Futuro
+              Historia de Nuestros Locales
             </h1>
             <p className="text-xl text-muted-foreground">
-              Desde 1964, hemos sido parte fundamental del movimiento scout uruguayo,
-              formando generaciones de líderes comprometidos con su comunidad.
+              Los espacios que han sido testigos de nuestra historia y el crecimiento de generaciones de scouts.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Timeline Section */}
+      {/* Locales Section */}
       <section className="section-padding">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <div className="text-center">
-              <img
-                src={emblemImage}
-                alt="Emblemas Scout"
-                className="w-full rounded-lg shadow-lg mb-4"
-              />
-            </div>
-            <div className="md:col-span-2 flex flex-col justify-center">
-              <h2 className="text-3xl font-bold mb-4">El Comienzo de una Tradición</h2>
-              <p className="text-lg text-muted-foreground mb-4">
-                El Grupo Scout Séptimo de Montevideo fue fundado en 1964 por un grupo de jóvenes
-                comprometidos con los ideales de Baden-Powell. Desde entonces, hemos crecido 
-                hasta convertirnos en uno de los grupos scouts más reconocidos del Uruguay.
-              </p>
-              <p className="text-lg text-muted-foreground">
-                A lo largo de más de seis décadas, hemos formado a miles de scouts, 
-                participado en innumerables campamentos, competencias y proyectos de servicio 
-                comunitario. Nuestra historia es la historia de compromiso, fraternidad y 
-                crecimiento constante.
-              </p>
-            </div>
+          <div className="space-y-12">
+            {locales.map((local, index) => (
+              <Card key={index} className="card-hover overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-8">
+                      <div className="inline-block px-3 py-1 bg-primary/10 rounded-full mb-4">
+                        <span className="text-primary font-semibold text-sm">Desde {local.año}</span>
+                      </div>
+                      <h2 className="text-3xl font-bold mb-4">{local.nombre}</h2>
+                      
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-start gap-3">
+                          <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                          <p className="text-muted-foreground">{local.direccion}</p>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <Calendar className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                          <p className="text-muted-foreground">Establecido en {local.año}</p>
+                        </div>
+                      </div>
+
+                      <p className="text-muted-foreground mb-6">
+                        {local.descripcion}
+                      </p>
+
+                      <div>
+                        <h3 className="font-semibold mb-3 flex items-center gap-2">
+                          <Users className="w-5 h-5 text-primary" />
+                          Características
+                        </h3>
+                        <ul className="space-y-2">
+                          {local.caracteristicas.map((caracteristica, idx) => (
+                            <li key={idx} className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-primary rounded-full"></div>
+                              <span className="text-muted-foreground">{caracteristica}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="bg-muted/50 p-8 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <MapPin className="w-16 h-16 text-primary" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">Próximamente: Fotos del local</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
-          {/* Timeline */}
-          <div className="relative">
-            {/* Vertical Line */}
-            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-primary/20"></div>
-
-            <div className="space-y-12">
-              {milestones.map((milestone, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col md:flex-row gap-8 items-center ${
-                    index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                  }`}
-                >
-                  <div className="flex-1">
-                    <Card className="card-hover">
-                      <CardContent className="p-6">
-                        <div className="text-4xl font-bold text-primary mb-2">
-                          {milestone.year}
-                        </div>
-                        <h3 className="text-xl font-bold mb-2">{milestone.title}</h3>
-                        <p className="text-muted-foreground">{milestone.description}</p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                  
-                  {/* Timeline Dot */}
-                  <div className="hidden md:block w-4 h-4 bg-primary rounded-full border-4 border-background shadow-lg z-10"></div>
-                  
-                  <div className="flex-1"></div>
+          {/* Historia adicional */}
+          <div className="mt-16 max-w-3xl mx-auto">
+            <Card className="card-hover">
+              <CardContent className="p-8">
+                <h2 className="text-2xl font-bold mb-4">Evolución de Nuestros Espacios</h2>
+                <div className="space-y-4 text-muted-foreground">
+                  <p>
+                    A lo largo de más de 60 años, nuestros locales han sido el corazón del Grupo Scout Séptimo de Montevideo.
+                    Desde nuestras primeras reuniones en 1964, hemos trabajado constantemente para mejorar y ampliar
+                    nuestras instalaciones.
+                  </p>
+                  <p>
+                    El local central ha sido renovado y adaptado múltiples veces para satisfacer las necesidades
+                    cambiantes de nuestras actividades. Cada rincón cuenta historias de campamentos planificados,
+                    promesas realizadas y amistades forjadas.
+                  </p>
+                  <p>
+                    Nuestro campo de campamento es un tesoro natural que cuidamos con dedicación. Es el lugar donde
+                    nuestros scouts aprenden sobre la naturaleza, desarrollan habilidades de supervivencia y crean
+                    recuerdos que durarán toda la vida.
+                  </p>
                 </div>
-              ))}
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>

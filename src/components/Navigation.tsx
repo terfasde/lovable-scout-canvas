@@ -18,8 +18,8 @@ const Navigation = () => {
 
   const navLinks = [
     { name: "Inicio", path: "/" },
+    { name: "Línea Temporal", path: "/linea-temporal" },
     { name: "Historia", path: "/historia" },
-    { name: "Locales", path: "/locales" },
     { name: "BAUEN", path: "/bauen" },
     { name: "Galería", path: "/galeria" },
     { name: "Contacto", path: "/contacto" },
