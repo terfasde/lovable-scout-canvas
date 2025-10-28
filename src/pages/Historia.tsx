@@ -31,6 +31,11 @@ const Historia = () => {
       description: "Celebramos medio siglo de trayectoria con un campamento histórico que reunió a generaciones de scouts.",
     },
     {
+      year: "2014",
+      title: "Cápsula del Tiempo",
+      description: "Enterramos una placa conmemorativa para celebrar nuestro centenario en el 2064, dejando un legado para las futuras generaciones de scouts.",
+    },
+    {
       year: "2020",
       title: "Adaptación Digital",
       description: "Durante la pandemia, innovamos con actividades virtuales manteniendo vivo el espíritu scout.",
