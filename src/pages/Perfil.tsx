@@ -7,14 +7,30 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Save } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Profile, canEditSeisena, canEditPatrulla, canEditPioneros, canEditRovers } from "@/types/profile";
+import { canEditSeisena, canEditPatrulla, canEditPioneros, canEditRovers } from "@/types/profile";
+import type { Database } from "@/integrations/supabase/types";
+
+type Tables = Database['public']['Tables'];
+type Profile = Tables['profiles']['Row']
+type ProfileInsert = Tables['profiles']['Insert'];
+type ProfileUpdate = Tables['profiles']['Update'];
 
 const Perfil = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    nombre_completo: string;
+    telefono: string;
+    email: string;
+    edad: number;
+    seisena: string;
+    patrulla: string;
+    equipo_pioneros: string;
+    comunidad_rovers: string;
+    password: string;
+  }>({
     nombre_completo: "",
     telefono: "",
     email: "",
@@ -53,7 +69,7 @@ const Perfil = () => {
       }
 
       if (profile) {
-        setProfile(profile);
+        setProfile(profile as Profile);
         setFormData({
           ...formData,
           nombre_completo: profile.nombre_completo || user.user_metadata?.nombre || "",
@@ -63,18 +79,19 @@ const Perfil = () => {
           seisena: profile.seisena || "",
           patrulla: profile.patrulla || "",
           equipo_pioneros: profile.equipo_pioneros || "",
-          comunidad_rovers: profile.comunidad_rovers || ""
+          comunidad_rovers: profile.comunidad_rovers || "",
+          password: ""
         });
       } else {
         // Crear perfil inicial
-        const { error: insertError } = await supabase.from("profiles").insert([
-          {
+        const { error: insertError } = await supabase
+          .from("profiles")
+          .insert({
             user_id: user.id,
             nombre_completo: user.user_metadata?.nombre || "",
             telefono: user.user_metadata?.telefono || "",
             email: user.email
-          }
-        ]);
+          });
         if (insertError) throw insertError;
         await getProfile(); // Recargar después de crear
       }
@@ -134,7 +151,7 @@ const Perfil = () => {
           equipo_pioneros: canEditPioneros(formData.edad) ? formData.equipo_pioneros : null,
           comunidad_rovers: canEditRovers(formData.edad) ? formData.comunidad_rovers : null,
           updated_at: new Date().toISOString()
-        });
+        } as Profile);
 
       if (profileError) throw profileError;
 
