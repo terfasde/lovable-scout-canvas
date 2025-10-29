@@ -178,21 +178,43 @@ const Perfil = () => {
       }
 
       // Actualizar perfil
+      const profileData: any = {
+        user_id: user.id,
+        nombre_completo: formData.nombre_completo,
+        telefono: formData.telefono,
+        edad: formData.edad,
+        updated_at: new Date().toISOString()
+      };
+
+      // Solo agregar campos si existen en la base de datos
+      if (formData.fecha_nacimiento) {
+        profileData.fecha_nacimiento = formData.fecha_nacimiento;
+      }
+
+      if (formData.edad >= 7 && formData.edad <= 20) {
+        profileData.seisena = formData.seisena || null;
+      }
+
+      if (formData.edad >= 11 && formData.edad <= 20) {
+        profileData.patrulla = formData.patrulla || null;
+      }
+
+      if (formData.edad >= 15 && formData.edad <= 20) {
+        profileData.equipo_pioneros = formData.equipo_pioneros || null;
+      }
+
+      if (formData.edad >= 18 && formData.edad <= 20) {
+        profileData.comunidad_rovers = formData.comunidad_rovers || null;
+      }
+
+      if (formData.edad >= 21 && formData.rol_adulto) {
+        profileData.rol_adulto = formData.rol_adulto;
+      }
+
       const { error: profileError } = await supabase
         .from("profiles")
-        .upsert({
-          user_id: user.id,
-          nombre_completo: formData.nombre_completo,
-          telefono: formData.telefono,
-          edad: formData.edad,
-          fecha_nacimiento: formData.fecha_nacimiento || null,
-          seisena: formData.edad >= 7 && formData.edad <= 20 ? formData.seisena : null,
-          patrulla: formData.edad >= 11 && formData.edad <= 20 ? formData.patrulla : null,
-          equipo_pioneros: formData.edad >= 15 && formData.edad <= 20 ? formData.equipo_pioneros : null,
-          comunidad_rovers: formData.edad >= 18 && formData.edad <= 20 ? formData.comunidad_rovers : null,
-          rol_adulto: formData.edad >= 21 ? formData.rol_adulto : null,
-          updated_at: new Date().toISOString()
-        } as Profile);
+        .update(profileData)
+        .eq('user_id', user.id);
 
       if (profileError) throw profileError;
 

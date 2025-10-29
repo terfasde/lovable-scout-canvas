@@ -24,6 +24,7 @@ export interface Database {
           equipo_pioneros: string | null
           comunidad_rovers: string | null
           rol_adulto: string | null
+          is_public: boolean | null
         }
         Insert: {
           id?: string
@@ -39,6 +40,7 @@ export interface Database {
           equipo_pioneros?: string | null
           comunidad_rovers?: string | null
           rol_adulto?: string | null
+          is_public?: boolean | null
         }
         Update: {
           id?: string
@@ -54,6 +56,7 @@ export interface Database {
           equipo_pioneros?: string | null
           comunidad_rovers?: string | null
           rol_adulto?: string | null
+          is_public?: boolean | null
         }
       }
     }

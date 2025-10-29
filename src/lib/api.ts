@@ -18,9 +18,11 @@ export async function getProfile(userId: string) {
 
 // Actualizar un perfil
 export async function updateProfile(profile: Partial<Profile> & { user_id: string }) {
+  // Evitar duplicados por unique(user_id): usar update basado en filtro
   const { error } = await supabase
     .from('profiles')
-    .upsert(profile)
+    .update(profile)
+    .eq('user_id', profile.user_id)
 
   if (error) throw error
 }
@@ -47,9 +49,21 @@ export async function createEvento(evento: Record<string, any>) {
 
 // Marcar perfil como público/privado (campo libre, casteado a any porque no está en los tipos generados)
 export async function setProfilePublic(userId: string, isPublic: boolean) {
-  const { error } = await supabase
+  // Primero intentamos actualizar; si no hay filas afectadas, insertamos esqueleto
+  const { data, error } = await supabase
     .from('profiles')
-    .upsert({ user_id: userId, is_public: isPublic } as any)
+    .update({ is_public: isPublic } as any)
+    .eq('user_id', userId)
+    .select('user_id')
 
   if (error) throw error
+
+  if (!data || data.length === 0) {
+    // Crear registro mínimo si no existía
+    const { error: insertError } = await supabase
+      .from('profiles')
+      .insert({ user_id: userId, nombre_completo: '', telefono: '', is_public: isPublic } as any)
+
+    if (insertError) throw insertError
+  }
 }
