@@ -1,79 +1,105 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Hand } from "lucide-react";
+import { ArrowRight, Users, Hand, Calendar, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-scouts.jpg";
 const Hero = () => {
-  return <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image with Enhanced Overlay */}
       <div className="absolute inset-0 z-0">
-        <img src={heroImage} alt="Scouts del Séptimo en aventura" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-scout-black/80 via-scout-black/60 to-transparent"></div>
+        <img 
+          src={heroImage} 
+          alt="Scouts del Séptimo en aventura" 
+          className="w-full h-full object-cover scale-105 transition-transform duration-[10000ms] hover:scale-100" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-scout-black/85 via-scout-black/70 to-scout-black/40"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-scout-black/60 via-transparent to-transparent"></div>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 z-10 pt-20">
-        <div className="max-w-3xl">
-          <div className="animate-fade-in">
-            <div className="inline-block px-4 py-2 bg-primary/10 backdrop-blur-sm border border-primary/30 rounded-full mb-6">
-              <span className="text-primary font-semibold">Desde 1964 formando líderes</span>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 z-10 pt-20 pb-16">
+        <div className="max-w-4xl">
+          <div className="animate-fade-in space-y-8">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/15 backdrop-blur-md border border-primary/40 rounded-full shadow-lg">
+              <Calendar className="w-4 h-4 text-primary" />
+              <span className="text-primary font-semibold text-sm md:text-base">Desde 1964 formando líderes</span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              <span className="text-primary"> Grupo Scout Séptimo
-              <br /></span>
-              <span> de Montevideo</span>
+            {/* Main Title */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-tight">
+              <span className="text-primary block mb-2">Grupo Scout Séptimo</span>
+              <span className="block">de Montevideo</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed">
+            {/* Description */}
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-100 leading-relaxed max-w-2xl">
               Una comunidad de aventura, valores y formación integral para jóvenes. 
               Construimos un futuro mejor a través del escultismo.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/auth">
-                <Button size="lg" variant="hero" className="text-lg">
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link to="/auth" className="group">
+                <Button 
+                  size="lg" 
+                  variant="hero" 
+                  className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                >
                   Únete al Grupo
-                  <ArrowRight className="ml-2" />
+                  <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
               </Link>
               
-              <a href="#historia">
-                <Button size="lg" variant="heroSecondary" className="text-lg">
-                  <Users className="mr-2" />
+              <Link to="/historia" className="group">
+                <Button 
+                  size="lg" 
+                  variant="heroSecondary" 
+                  className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-xl hover:scale-105"
+                >
+                  <Users className="mr-2 transition-transform duration-300 group-hover:scale-110" />
                   Conoce Nuestra Historia
                 </Button>
-              </a>
+              </Link>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/20">
-              <div>
-                <div className="text-3xl md:text-4xl font-bold text-primary">+61</div>
-                <div className="text-sm text-gray-300 mt-1">Años de historia</div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 mt-12 pt-8 border-t border-white/20">
+              <div className="group">
+                <div className="text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">+61</div>
+                <div className="text-sm md:text-base text-gray-300 mt-2 font-medium">Años de historia</div>
               </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-bold text-accent">+100</div>
-                <div className="text-sm text-gray-300 mt-1">Scouts activos</div>
+              <div className="group">
+                <div className="text-4xl md:text-5xl font-bold text-accent transition-transform duration-300 group-hover:scale-110">+100</div>
+                <div className="text-sm md:text-base text-gray-300 mt-2 font-medium">Scouts activos</div>
               </div>
-              
+              <div className="group col-span-2 sm:col-span-1">
+                <div className="flex items-center gap-2 text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
+                  <MapPin className="w-8 h-8 md:w-10 md:h-10" />
+                  <span>3</span>
+                </div>
+                <div className="text-sm md:text-base text-gray-300 mt-2 font-medium">Locales scouts</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scroll Indicator: desktop mouse, mobile finger on the right */}
-      <div className="hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white/50 rounded-full mt-2"></div>
+      {/* Scroll Indicator Desktop */}
+      <div className="hidden md:flex absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce flex-col items-center gap-2">
+        <div className="w-6 h-10 border-2 border-white/60 rounded-full flex justify-center transition-colors duration-300 hover:border-primary">
+          <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
         </div>
+        <span className="text-xs text-white/60 font-medium">Descubre más</span>
       </div>
 
-      {/* Mobile: finger swipe hint on the right (does not overlap stats) */}
+      {/* Mobile Scroll Indicator */}
       <div className="md:hidden pointer-events-none absolute bottom-20 right-4 z-10 animate-bounce">
-        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center shadow-sm">
-          <Hand className="w-5 h-5 text-white/90" />
+        <div className="w-12 h-12 bg-primary/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border border-primary/30">
+          <Hand className="w-6 h-6 text-primary" />
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
 export default Hero;

@@ -13,9 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Camera, FolderPlus, ImagePlus, Images, Trash2 } from "lucide-react";
+import { Camera, FolderPlus, ImagePlus, Images, Trash2, FolderX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { createAlbum, listAlbums, listImages, uploadImage, deleteImage } from "@/lib/gallery";
+import { createAlbum, listAlbums, listImages, uploadImage, deleteImage, deleteAlbum } from "@/lib/gallery";
 import { useToast } from "@/hooks/use-toast";
 
 // Lista de emails con permisos de administración separados por comas
@@ -54,7 +54,13 @@ const Galeria = () => {
         setIsAdmin(ADMIN_EMAILS.includes(email.toLowerCase()));
 
         // Cargar álbumes desde Storage
-        const storageAlbums = await listAlbums().catch(() => []);
+        console.log("Cargando álbumes...");
+        const storageAlbums = await listAlbums().catch((err) => {
+          console.error("Error cargando álbumes:", err);
+          return [];
+        });
+        console.log("Álbumes encontrados:", storageAlbums);
+        
         if (storageAlbums.length) {
           setAlbums(storageAlbums);
           setSelected(storageAlbums[0].name);
@@ -174,6 +180,32 @@ const Galeria = () => {
     }
   };
 
+  const handleDeleteAlbum = async () => {
+    if (!selected) return;
+    if (!confirm(`¿Estás seguro de que quieres eliminar el álbum "${selected}" y todas sus fotos?`)) return;
+    
+    try {
+      setLoadingImages(true);
+      await deleteAlbum(selected);
+      const updated = await listAlbums().catch(() => []);
+      setAlbums(updated);
+      setSelected(updated.length > 0 ? updated[0].name : "");
+      setImages([]);
+      toast({
+        title: "Álbum eliminado",
+        description: `El álbum "${selected}" se eliminó correctamente.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `No se pudo eliminar el álbum: ${error}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingImages(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -202,10 +234,15 @@ const Galeria = () => {
               </Button>
               <div>
                 <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={handleUpload} className="hidden" id="upload-input" />
-                <Button variant="outline" onClick={() => document.getElementById("upload-input")?.click()} className="gap-2">
+                <Button variant="outline" onClick={() => document.getElementById("upload-input")?.click()} className="gap-2" disabled={!selected}>
                   <ImagePlus className="w-4 h-4" /> Subir fotos
                 </Button>
               </div>
+              {selected && (
+                <Button variant="outline" onClick={handleDeleteAlbum} className="gap-2 text-destructive hover:text-destructive">
+                  <FolderX className="w-4 h-4" /> Eliminar álbum
+                </Button>
+              )}
             </div>
           </div>
         </section>
@@ -214,19 +251,28 @@ const Galeria = () => {
       {/* Albums pills */}
       <section className="pb-6">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {albums.map((a) => (
-              <button
-                key={a.name}
-                onClick={() => setSelected(a.name)}
-                className={`px-4 py-2 rounded-full text-sm border transition-colors ${
-                  selected === a.name ? "bg-primary text-primary-foreground" : "hover:bg-accent-hover"
-                }`}
-              >
-                {a.name}
-              </button>
-            ))}
-          </div>
+          {!loading && albums.length === 0 ? (
+            <div className="text-center text-muted-foreground py-4">
+              <p className="text-sm">
+                {isAdmin ? "No hay álbumes todavía. Crea tu primer álbum arriba." : "No hay álbumes disponibles."}
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2 justify-center">
+              {albums.map((a) => (
+                <button
+                  key={a.name}
+                  onClick={() => setSelected(a.name)}
+                  disabled={loadingImages}
+                  className={`px-4 py-2 rounded-full text-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    selected === a.name ? "bg-primary text-primary-foreground" : "hover:bg-accent-hover"
+                  }`}
+                >
+                  {a.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

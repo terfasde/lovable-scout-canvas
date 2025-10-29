@@ -69,16 +69,17 @@ const Contacto = () => {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-b from-primary/5 to-background">
-        <div className="container mx-auto px-4">
+      <section className="pt-32 pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-block px-4 py-2 bg-primary/10 rounded-full mb-4">
-              <span className="text-primary font-semibold">Contacto</span>
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-6 shadow-sm">
+              <Mail className="w-4 h-4 text-primary" />
+              <span className="text-primary font-semibold text-sm md:text-base">Contacto</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
               ¿Quieres unirte al Séptimo?
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
               Estamos aquí para responder tus preguntas y ayudarte a formar parte 
               de nuestra comunidad scout.
             </p>
@@ -88,14 +89,17 @@ const Contacto = () => {
 
       {/* Contact Section */}
       <section className="section-padding">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Contact Form */}
             <div>
-              <h2 className="text-3xl font-bold mb-6">Envíanos un mensaje</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">Envíanos un mensaje</h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                Completa el formulario y nos pondremos en contacto contigo a la brevedad.
+              </p>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold">
                     Nombre completo *
                   </label>
                   <Input
@@ -105,12 +109,13 @@ const Contacto = () => {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     placeholder="Juan Pérez"
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold">
                     Email *
                   </label>
                   <Input
@@ -120,12 +125,13 @@ const Contacto = () => {
                       setFormData({ ...formData, email: e.target.value })
                     }
                     placeholder="juan@ejemplo.com"
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary"
                     required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold">
                     Teléfono
                   </label>
                   <Input
@@ -135,11 +141,12 @@ const Contacto = () => {
                       setFormData({ ...formData, phone: e.target.value })
                     }
                     placeholder="+598 99 123 456"
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold">
                     Mensaje *
                   </label>
                   <Textarea
@@ -149,30 +156,43 @@ const Contacto = () => {
                     }
                     placeholder="Cuéntanos cómo podemos ayudarte..."
                     rows={6}
+                    className="transition-all duration-300 focus:ring-2 focus:ring-primary resize-none"
                     required
                   />
                 </div>
 
-                <Button type="submit" size="lg" variant="hero" className="w-full">
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  variant="hero" 
+                  className="w-full text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                >
+                  <Mail className="mr-2 w-5 h-5" />
                   Enviar Mensaje
                 </Button>
               </form>
             </div>
 
             {/* Contact Info */}
-            <div>
-              <h2 className="text-3xl font-bold mb-6">Información de contacto</h2>
-              <div className="space-y-4 mb-8">
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Información de contacto</h2>
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  Encuentra toda la información para comunicarte con nosotros.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
                 {contactInfo.map((info, index) => (
-                  <Card key={index} className="card-hover">
+                  <Card key={index} className="card-hover border-2 hover:border-primary/50 transition-all duration-500">
                     <CardContent className="p-6">
-                      <div className="flex items-start">
-                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                          <info.icon className="w-6 h-6 text-primary" />
+                      <div className="flex items-start gap-4">
+                        <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 hover:scale-110">
+                          <info.icon className="w-7 h-7 text-primary" />
                         </div>
-                        <div>
-                          <h3 className="font-bold mb-1">{info.title}</h3>
-                          <p className="text-muted-foreground">{info.content}</p>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-lg mb-2">{info.title}</h3>
+                          <p className="text-muted-foreground leading-relaxed">{info.content}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -180,10 +200,10 @@ const Contacto = () => {
                 ))}
               </div>
 
-              {/* Map Placeholder */}
-              <Card>
+              {/* Map */}
+              <Card className="overflow-hidden shadow-xl border-2">
                 <CardContent className="p-0">
-                  <div className="w-full h-64 rounded-lg overflow-hidden">
+                  <div className="w-full h-80 rounded-lg overflow-hidden">
                     <MapComponent />
                   </div>
                 </CardContent>

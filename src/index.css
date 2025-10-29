@@ -144,7 +144,7 @@ All colors MUST be HSL.
   }
   
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    @apply transition-all duration-500 hover:shadow-lg hover:-translate-y-6;
   }
   
   .section-padding {
