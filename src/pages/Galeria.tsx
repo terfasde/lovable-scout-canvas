@@ -3,9 +3,20 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Camera, FolderPlus, ImagePlus, Images } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Camera, FolderPlus, ImagePlus, Images, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { createAlbum, listAlbums, listImages, uploadImage } from "@/lib/gallery";
+import { createAlbum, listAlbums, listImages, uploadImage, deleteImage } from "@/lib/gallery";
+import { useToast } from "@/hooks/use-toast";
 
 // Lista de emails con permisos de administración separados por comas
 const ADMIN_EMAILS = (import.meta.env.VITE_GALLERY_ADMIN_EMAILS || "admin@example.com")
@@ -17,29 +28,22 @@ type Album = {
   coverUrl?: string;
 };
 
-const sampleAlbums: Record<string, string[]> = {
-  Campamentos: [
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1470246973918-29a93221c455?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=800&auto=format&fit=crop",
-  ],
-  BAUEN: [
-    "https://images.unsplash.com/photo-1573167243872-43c6433b9d40?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=800&auto=format&fit=crop",
-  ],
-  "Actividades Grupales": [
-    "https://images.unsplash.com/photo-1520975922284-4fe8cdd143ba?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1520975867597-0f6159b7a8f8?q=80&w=800&auto=format&fit=crop",
-  ],
+type ImageData = {
+  url: string;
+  path: string; // Para poder eliminar
 };
 
 const Galeria = () => {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [selected, setSelected] = useState<string>("");
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingImages, setLoadingImages] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [newAlbumName, setNewAlbumName] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     (async () => {
@@ -49,7 +53,7 @@ const Galeria = () => {
         const email = user?.email || "";
         setIsAdmin(ADMIN_EMAILS.includes(email.toLowerCase()));
 
-        // Intentar cargar desde Storage
+        // Cargar álbumes desde Storage
         const storageAlbums = await listAlbums().catch(() => []);
         if (storageAlbums.length) {
           setAlbums(storageAlbums);
@@ -57,11 +61,8 @@ const Galeria = () => {
           const imgs = await listImages(storageAlbums[0].name).catch(() => []);
           setImages(imgs);
         } else {
-          // Fallback: álbunes de ejemplo
-          const sample = Object.keys(sampleAlbums).map((k) => ({ name: k }));
-          setAlbums(sample);
-          setSelected(sample[0]?.name || "");
-          setImages(sampleAlbums[sample[0]?.name || ""] || []);
+          setAlbums([]);
+          setImages([]);
         }
       } finally {
         setLoading(false);
@@ -72,35 +73,105 @@ const Galeria = () => {
   useEffect(() => {
     (async () => {
       if (!selected) return;
-      if (sampleAlbums[selected]) {
-        setImages(sampleAlbums[selected]);
-        return;
-      }
+      setLoadingImages(true);
       const imgs = await listImages(selected).catch(() => []);
       setImages(imgs);
+      setLoadingImages(false);
     })();
   }, [selected]);
 
   const handleCreateAlbum = async () => {
-    const name = prompt("Nombre del álbum/carpeta:");
-    if (!name) return;
-    await createAlbum(name);
-    const updated = await listAlbums().catch(() => []);
-    setAlbums(updated);
-    setSelected(name);
-    const imgs = await listImages(name).catch(() => []);
-    setImages(imgs);
+    if (!newAlbumName.trim()) {
+      toast({
+        title: "Error",
+        description: "El nombre del álbum no puede estar vacío",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      setLoadingImages(true);
+      setShowCreateDialog(false);
+      await createAlbum(newAlbumName.trim());
+      const updated = await listAlbums().catch(() => []);
+      setAlbums(updated);
+      setSelected(newAlbumName.trim());
+      const imgs = await listImages(newAlbumName.trim()).catch(() => []);
+      setImages(imgs);
+      setNewAlbumName("");
+      toast({
+        title: "Álbum creado",
+        description: `El álbum "${newAlbumName.trim()}" se creó exitosamente.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `No se pudo crear el álbum: ${error}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingImages(false);
+    }
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || !selected) return;
-    for (const file of Array.from(files)) {
-      await uploadImage(selected, file);
+    if (!files || !selected) {
+      toast({
+        title: "Error",
+        description: "Primero selecciona un álbum",
+        variant: "destructive",
+      });
+      return;
     }
-    const imgs = await listImages(selected).catch(() => []);
-    setImages(imgs);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    
+    try {
+      setLoadingImages(true);
+      
+      for (const file of Array.from(files)) {
+        await uploadImage(selected, file);
+      }
+      
+      const imgs = await listImages(selected).catch(() => []);
+      setImages(imgs);
+      toast({
+        title: "Fotos subidas",
+        description: `${files.length} foto(s) subida(s) exitosamente.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error al subir fotos",
+        description: `${error}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingImages(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDelete = async (imagePath: string) => {
+    if (!confirm("¿Estás seguro de que quieres eliminar esta imagen?")) return;
+    
+    try {
+      setLoadingImages(true);
+      await deleteImage(imagePath);
+      const imgs = await listImages(selected).catch(() => []);
+      setImages(imgs);
+      toast({
+        title: "Imagen eliminada",
+        description: "La imagen se eliminó correctamente.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `No se pudo eliminar la imagen: ${error}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingImages(false);
+    }
   };
 
   return (
@@ -126,7 +197,7 @@ const Galeria = () => {
         <section className="pb-2">
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center gap-3 justify-center">
-              <Button variant="outline" onClick={handleCreateAlbum} className="gap-2">
+              <Button variant="outline" onClick={() => setShowCreateDialog(true)} className="gap-2">
                 <FolderPlus className="w-4 h-4" /> Crear álbum
               </Button>
               <div>
@@ -162,16 +233,28 @@ const Galeria = () => {
       {/* Instagram-like grid */}
       <section className="pb-16">
         <div className="container mx-auto px-2 md:px-4">
-          {loading ? (
+          {loadingImages ? (
             <div className="flex justify-center py-20">
               <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : images.length ? (
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 md:gap-2">
-              {images.map((src, idx) => (
-                <Card key={idx} className="rounded-none overflow-hidden">
+              {images.map((img, idx) => (
+                <Card key={idx} className="rounded-none overflow-hidden group relative">
                   <div className="relative aspect-square">
-                    <img src={src} alt={`foto-${idx}`} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={img.url} alt={`foto-${idx}`} className="w-full h-full object-cover" loading="lazy" />
+                    {isAdmin && (
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => handleDelete(img.path)}
+                          className="rounded-full"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </Card>
               ))}
@@ -184,6 +267,43 @@ const Galeria = () => {
           )}
         </div>
       </section>
+
+      {/* Dialog para crear álbum */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Crear nuevo álbum</DialogTitle>
+            <DialogDescription>
+              Ingresa el nombre del álbum o carpeta para organizar tus fotos.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="album-name">Nombre del álbum</Label>
+              <Input
+                id="album-name"
+                placeholder="Ej: Campamento 2025"
+                value={newAlbumName}
+                onChange={(e) => setNewAlbumName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleCreateAlbum();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleCreateAlbum}>
+              <FolderPlus className="w-4 h-4 mr-2" />
+              Crear álbum
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
