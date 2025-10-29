@@ -13,13 +13,13 @@ const Events = () => {
   }, {
     title: "BAUEN - Competencia Nacional",
     date: "Próximamente Anunciado",
-    location: "Montevideo",
+    location: "Parque Barofio, Montevideo",
     participants: "+200 scouts",
     type: "Competencia, Construcción, Hermandad",
     status: "Próximamente",
     color: "primary"
   }, {
-    title: "Lentejeada Anual, Servicio Comunitario",
+    title: "Lentejeada Solidaria, Servicio Comunitario",
     date: "Próximamente",
     location: "Club de Pesca Ramirez",
     participants: "+30 scouts, Fundación Álvarez Carldeyro Barcia",
