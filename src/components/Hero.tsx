@@ -19,9 +19,9 @@ const Hero = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Grupo Scout
-              <br />
-              <span className="text-primary">Séptimo</span> de Montevideo
+              <span className="text-primary"> Grupo Scout Séptimo
+              <br /></span>
+              <span> de Montevideo</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed">
