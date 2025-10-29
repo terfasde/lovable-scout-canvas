@@ -26,13 +26,8 @@ const Historia = () => {
       description: "Incorporamos todas las ramas del escultismo, desde castores hasta rovers, ofreciendo formación integral.",
     },
     {
-      year: "2007",
-      title: "50 Años de Historia",
-      description: "Celebramos medio siglo de trayectoria con un campamento histórico que reunió a generaciones de scouts.",
-    },
-    {
       year: "2014",
-      title: "Cápsula del Tiempo",
+      title: "Aniversario 50 Años",
       description: "Enterramos una placa conmemorativa para celebrar nuestro centenario en el 2064, dejando un legado para las futuras generaciones de scouts.",
     },
     {

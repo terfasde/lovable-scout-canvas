@@ -4,10 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Save } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ArrowLeft, Eye, EyeOff, Save, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { canEditSeisena, canEditPatrulla, canEditPioneros, canEditRovers } from "@/types/profile";
+import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
 
 type Tables = Database['public']['Tables'];
@@ -238,219 +238,252 @@ const Perfil = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="h-20"></div>
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
       </div>
     );
   }
 
+  const getInitials = (nombre: string) => {
+    const parts = nombre.trim().split(" ");
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    }
+    return nombre.substring(0, 2).toUpperCase();
+  };
+
   return (
-    <div className="min-h-screen bg-background py-12 px-4">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>Tu Perfil Scout</CardTitle>
-          <CardDescription>Actualiza tu información personal y scout</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Datos personales */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Datos Personales</h3>
-              
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="nombre_completo">Nombre completo</Label>
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="h-20"></div>
+      
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-8">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/perfil')}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-semibold">Editar perfil</h1>
+            <p className="text-sm text-muted-foreground">Actualiza tu información personal y scout</p>
+          </div>
+        </div>
+
+        {/* Avatar Section */}
+        <div className="flex items-center gap-6 mb-8 pb-8 border-b">
+          <Avatar className="w-24 h-24">
+            <AvatarFallback className="text-3xl font-semibold bg-primary text-primary-foreground">
+              {formData.nombre_completo ? getInitials(formData.nombre_completo) : <User className="w-12 h-12" />}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-xl font-medium mb-1">{formData.nombre_completo || 'Usuario Scout'}</h2>
+            <p className="text-sm text-muted-foreground">{userEmail}</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Datos personales */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Información Personal</h3>
+            
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="nombre_completo">Nombre completo</Label>
+                <Input
+                  id="nombre_completo"
+                  name="nombre_completo"
+                  value={formData.nombre_completo}
+                  onChange={handleChange}
+                  required
+                  className="bg-background"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="fecha_nacimiento">Fecha de nacimiento (opcional)</Label>
+                <Input
+                  id="fecha_nacimiento"
+                  name="fecha_nacimiento"
+                  type="date"
+                  value={formData.fecha_nacimiento}
+                  onChange={handleChange}
+                  className="bg-background"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edad">Edad</Label>
+                <Input
+                  id="edad"
+                  name="edad"
+                  type="number"
+                  min="7"
+                  max="99"
+                  value={formData.edad || ""}
+                  onChange={handleChange}
+                  disabled={!!formData.fecha_nacimiento}
+                  required
+                  className="bg-background"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="rama_actual">Rama actual</Label>
+                <Input
+                  id="rama_actual"
+                  type="text"
+                  value={ramaActual}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Correo electrónico</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={userEmail}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="password">Nueva contraseña (opcional)</Label>
+                <div className="relative">
                   <Input
-                    id="nombre_completo"
-                    name="nombre_completo"
-                    value={formData.nombre_completo}
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
                     onChange={handleChange}
-                    required
+                    placeholder="Dejar vacío para mantener"
+                    className="bg-background pr-10"
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="telefono">Teléfono</Label>
-                  <Input
-                    id="telefono"
-                    name="telefono"
-                    type="tel"
-                    value={formData.telefono}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="fecha_nacimiento">Fecha de nacimiento (opcional)</Label>
-                  <Input
-                    id="fecha_nacimiento"
-                    name="fecha_nacimiento"
-                    type="date"
-                    value={formData.fecha_nacimiento}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="edad">Edad</Label>
-                  <Input
-                    id="edad"
-                    name="edad"
-                    type="number"
-                    min="7"
-                    max="99"
-                    value={formData.edad || ""}
-                    onChange={handleChange}
-                    disabled={!!formData.fecha_nacimiento}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="rama_actual">Rama actual</Label>
-                  <Input
-                    id="rama_actual"
-                    type="text"
-                    value={ramaActual}
-                    disabled
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Correo electrónico</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={userEmail}
-                    disabled
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Nueva contraseña (opcional)</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Dejar vacío para mantener"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(s => !s)}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground p-1"
-                    >
-                      {showPassword ? (
-                        <Eye className="w-4 h-4" />
-                      ) : (
-                        <EyeOff className="w-4 h-4" />
-                      )}
-                      <span className="sr-only">
-                        {showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                      </span>
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(s => !s)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                  >
+                    {showPassword ? (
+                      <Eye className="w-4 h-4" />
+                    ) : (
+                      <EyeOff className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Datos Scout */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Información Scout</h3>
-              
-              <div className="grid gap-4 md:grid-cols-2">
-                {formData.edad >= 7 && formData.edad <= 20 && (
-                  <div className="space-y-2">
-                    <Label htmlFor="seisena">Seisena (Manada)</Label>
-                    <Input
-                      id="seisena"
-                      name="seisena"
-                      value={formData.seisena}
-                      onChange={handleChange}
-                      placeholder="Ej: Seisena Roja"
-                    />
-                  </div>
-                )}
+          {/* Datos Scout */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Información Scout</h3>
+            
+            <div className="grid gap-4 md:grid-cols-2">
+              {formData.edad >= 7 && formData.edad <= 20 && (
+                <div className="space-y-2">
+                  <Label htmlFor="seisena">Seisena (Manada)</Label>
+                  <Input
+                    id="seisena"
+                    name="seisena"
+                    value={formData.seisena}
+                    onChange={handleChange}
+                    placeholder="Ej: Seisena Roja"
+                    className="bg-background"
+                  />
+                </div>
+              )}
 
-                {formData.edad >= 11 && formData.edad <= 20 && (
-                  <div className="space-y-2">
-                    <Label htmlFor="patrulla">Patrulla (Tropa)</Label>
-                    <Input
-                      id="patrulla"
-                      name="patrulla"
-                      value={formData.patrulla}
-                      onChange={handleChange}
-                      placeholder="Ej: Patrulla Halcón"
-                    />
-                  </div>
-                )}
+              {formData.edad >= 11 && formData.edad <= 20 && (
+                <div className="space-y-2">
+                  <Label htmlFor="patrulla">Patrulla (Tropa)</Label>
+                  <Input
+                    id="patrulla"
+                    name="patrulla"
+                    value={formData.patrulla}
+                    onChange={handleChange}
+                    placeholder="Ej: Patrulla Halcón"
+                    className="bg-background"
+                  />
+                </div>
+              )}
 
-                {formData.edad >= 15 && formData.edad <= 20 && (
-                  <div className="space-y-2">
-                    <Label htmlFor="equipo_pioneros">Equipo de Pioneros</Label>
-                    <Input
-                      id="equipo_pioneros"
-                      name="equipo_pioneros"
-                      value={formData.equipo_pioneros}
-                      onChange={handleChange}
-                      placeholder="Ej: Equipo Alpha"
-                    />
-                  </div>
-                )}
+              {formData.edad >= 15 && formData.edad <= 20 && (
+                <div className="space-y-2">
+                  <Label htmlFor="equipo_pioneros">Equipo de Pioneros</Label>
+                  <Input
+                    id="equipo_pioneros"
+                    name="equipo_pioneros"
+                    value={formData.equipo_pioneros}
+                    onChange={handleChange}
+                    placeholder="Ej: Equipo Alpha"
+                    className="bg-background"
+                  />
+                </div>
+              )}
 
-                {formData.edad >= 18 && formData.edad <= 20 && (
-                  <div className="space-y-2">
-                    <Label htmlFor="comunidad_rovers">Comunidad Rovers</Label>
-                    <Input
-                      id="comunidad_rovers"
-                      name="comunidad_rovers"
-                      value={formData.comunidad_rovers}
-                      onChange={handleChange}
-                      placeholder="Ej: Comunidad Caminantes"
-                    />
-                  </div>
-                )}
+              {formData.edad >= 18 && formData.edad <= 20 && (
+                <div className="space-y-2">
+                  <Label htmlFor="comunidad_rovers">Comunidad Rovers</Label>
+                  <Input
+                    id="comunidad_rovers"
+                    name="comunidad_rovers"
+                    value={formData.comunidad_rovers}
+                    onChange={handleChange}
+                    placeholder="Ej: Comunidad Caminantes"
+                    className="bg-background"
+                  />
+                </div>
+              )}
 
-                {formData.edad >= 21 && (
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="rol_adulto">Rol en el grupo</Label>
-                    <select
-                      id="rol_adulto"
-                      name="rol_adulto"
-                      value={formData.rol_adulto}
-                      onChange={handleChange}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Selecciona una opción</option>
-                      <option value="No educador/a">No educador/a</option>
-                      <option value="Educador/a">Educador/a</option>
-                      <option value="Miembro del Comité">Miembro del Comité</option>
-                      <option value="Familiar de Scout">Familiar de Scout</option>
-                    </select>
-                  </div>
-                )}
-              </div>
+              {formData.edad >= 21 && (
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="rol_adulto">Rol en el grupo</Label>
+                  <select
+                    id="rol_adulto"
+                    name="rol_adulto"
+                    value={formData.rol_adulto}
+                    onChange={handleChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="No educador/a">No educador/a</option>
+                    <option value="Educador/a">Educador/a</option>
+                    <option value="Miembro del Comité">Miembro del Comité</option>
+                    <option value="Familiar de Scout">Familiar de Scout</option>
+                  </select>
+                </div>
+              )}
             </div>
+          </div>
 
-            <Button type="submit" className="w-full" disabled={saving}>
+          <div className="flex gap-3 pt-4">
+            <Button type="submit" className="flex-1 gap-2" disabled={saving}>
               {saving ? (
-                <span className="flex items-center gap-2">
+                <>
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
                   Guardando...
-                </span>
+                </>
               ) : (
-                <span className="flex items-center gap-2">
+                <>
                   <Save className="w-4 h-4" />
                   Guardar cambios
-                </span>
+                </>
               )}
             </Button>
-          </form>
-        </CardContent>
-      </Card>
+            <Button type="button" variant="outline" onClick={() => navigate('/perfil')}>
+              Cancelar
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
