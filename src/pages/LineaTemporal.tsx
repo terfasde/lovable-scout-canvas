@@ -36,9 +36,9 @@ const Historia = () => {
       description: "Durante la pandemia, innovamos con actividades virtuales manteniendo vivo el espíritu scout.",
     },
     {
-      year: "2024",
-      title: "Campeones BAUEN 2024",
-      description: "Obtuvimos nuestro quinto campeonato en BAUEN, reafirmando nuestro compromiso con la excelencia.",
+      year: "2025",
+      title: "20 años del BAUEN",
+      description: "Celebramos dos décadas de la competencia BAUEN.",
     },
   ];
 

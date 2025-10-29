@@ -19,7 +19,7 @@ const About = () => {
       title: "Manada",
       description: "Niños de 7 a 10 años, aprenden jugando y descubriendo el mundo scout",
       route: "manada",
-  hoverClass: "hover:bg-yellow-200 hover:text-foreground"
+  hoverClass: "hover:bg-accent-hover/30 hover:text-foreground"
     },
     {
       icon: Compass,
@@ -54,7 +54,7 @@ const About = () => {
       title: "Comité",
       description: "Padres y colaboradores que apoyan la gestión del grupo",
       route: "comite",
-  hoverClass: "hover:bg-orange-200 hover:text-foreground"
+  hoverClass: "hover:bg-accent-hover/30 hover:text-foreground"
     }
   ];
 

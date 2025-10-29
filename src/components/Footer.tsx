@@ -35,13 +35,13 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/historia" className="hover:text-primary transition-colors">
-                  Historia
+                <Link to="/linea-temporal" className="hover:text-primary transition-colors">
+                  Línea Temporal
                 </Link>
               </li>
               <li>
-                <Link to="/locales" className="hover:text-primary transition-colors">
-                  Locales
+                <Link to="/historia" className="hover:text-primary transition-colors">
+                  Historia
                 </Link>
               </li>
               <li>
@@ -50,8 +50,18 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/eventos" className="hover:text-primary transition-colors">
+                  Eventos
+                </Link>
+              </li>
+              <li>
                 <Link to="/galeria" className="hover:text-primary transition-colors">
                   Galería
+                </Link>
+              </li>
+              <li>
+                <Link to="/contacto" className="hover:text-primary transition-colors">
+                  Contacto
                 </Link>
               </li>
             </ul>

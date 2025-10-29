@@ -28,6 +28,8 @@ All colors MUST be HSL.
 
     --accent: 60 100% 50%;
     --accent-foreground: 0 0% 10%;
+  /* Hover accent (less bright yellow for hover states) */
+  --accent-hover: 60 95% 45%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
@@ -96,6 +98,8 @@ All colors MUST be HSL.
 
     --accent: 60 100% 50%;
     --accent-foreground: 0 0% 10%;
+  /* Hover accent (less bright yellow for hover states) */
+  --accent-hover: 60 95% 45%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;

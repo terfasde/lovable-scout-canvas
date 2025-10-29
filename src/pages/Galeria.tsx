@@ -13,7 +13,6 @@ const Galeria = () => {
       icon: Mountain,
       title: "Campamentos",
       description: "Nuestras aventuras en la naturaleza",
-      count: "250+ fotos"
     },
     {
       icon: Award,
