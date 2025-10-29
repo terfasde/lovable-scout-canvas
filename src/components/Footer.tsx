@@ -2,6 +2,7 @@ import { Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import logoImage from "@/assets/grupo-scout-logo.png";
 const Footer = () => {
+  const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   return <footer className="bg-scout-black text-gray-300">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -30,37 +31,37 @@ const Footer = () => {
             <h3 className="text-white font-bold mb-4">Enlaces Rápidos</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="hover:text-primary transition-colors">
+                <Link to="/" onClick={scrollTop} className="hover:text-primary transition-colors">
                   Inicio
                 </Link>
               </li>
               <li>
-                <Link to="/linea-temporal" className="hover:text-primary transition-colors">
+                <Link to="/linea-temporal" onClick={scrollTop} className="hover:text-primary transition-colors">
                   Línea Temporal
                 </Link>
               </li>
               <li>
-                <Link to="/historia" className="hover:text-primary transition-colors">
+                <Link to="/historia" onClick={scrollTop} className="hover:text-primary transition-colors">
                   Historia
                 </Link>
               </li>
               <li>
-                <Link to="/bauen" className="hover:text-primary transition-colors">
+                <Link to="/bauen" onClick={scrollTop} className="hover:text-primary transition-colors">
                   BAUEN
                 </Link>
               </li>
               <li>
-                <Link to="/eventos" className="hover:text-primary transition-colors">
+                <Link to="/eventos" onClick={scrollTop} className="hover:text-primary transition-colors">
                   Eventos
                 </Link>
               </li>
               <li>
-                <Link to="/galeria" className="hover:text-primary transition-colors">
+                <Link to="/galeria" onClick={scrollTop} className="hover:text-primary transition-colors">
                   Galería
                 </Link>
               </li>
               <li>
-                <Link to="/contacto" className="hover:text-primary transition-colors">
+                <Link to="/contacto" onClick={scrollTop} className="hover:text-primary transition-colors">
                   Contacto
                 </Link>
               </li>
