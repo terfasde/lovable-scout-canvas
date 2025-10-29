@@ -22,6 +22,7 @@ const Navigation = () => {
     { name: "Línea Temporal", path: "/linea-temporal" },
     { name: "Historia", path: "/historia" },
     { name: "BAUEN", path: "/bauen" },
+    { name: "Eventos", path: "/eventos" },
     { name: "Galería", path: "/galeria" },
     { name: "Contacto", path: "/contacto" },
   ];
