@@ -59,10 +59,36 @@ export async function setProfilePublic(userId: string, isPublic: boolean) {
   if (error) throw error
 
   if (!data || data.length === 0) {
-    // Crear registro mínimo si no existía
+    let existingProfile: Profile | null = null
+    try {
+      existingProfile = await getProfile(userId)
+    } catch {
+      existingProfile = null
+    }
+
+    const { data: authData } = await supabase.auth.getUser()
+    const authUser = authData.user
+
+    const nombreFallback = existingProfile?.nombre_completo || authUser?.user_metadata?.nombre || authUser?.email || 'Perfil sin nombre'
+    const telefonoFallback = existingProfile?.telefono || authUser?.user_metadata?.telefono || ''
+
+    const insertPayload: Partial<Profile> & { user_id: string } = {
+      user_id: userId,
+      nombre_completo: nombreFallback,
+      telefono: telefonoFallback,
+      edad: existingProfile?.edad ?? null,
+      seisena: existingProfile?.seisena ?? null,
+      patrulla: existingProfile?.patrulla ?? null,
+      equipo_pioneros: existingProfile?.equipo_pioneros ?? null,
+      comunidad_rovers: existingProfile?.comunidad_rovers ?? null,
+      fecha_nacimiento: existingProfile?.fecha_nacimiento ?? null,
+      rol_adulto: existingProfile?.rol_adulto ?? null,
+      is_public: isPublic,
+    }
+
     const { error: insertError } = await supabase
       .from('profiles')
-      .insert({ user_id: userId, nombre_completo: '', telefono: '', is_public: isPublic } as any)
+      .insert(insertPayload as any)
 
     if (insertError) throw insertError
   }
