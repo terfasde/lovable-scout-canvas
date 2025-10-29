@@ -13,6 +13,9 @@ import Contacto from "./pages/Contacto"
 import Eventos from "./pages/Eventos"
 import Auth from "./pages/Auth"
 import Perfil from "./pages/Perfil"
+import PerfilView from "./pages/PerfilView"
+import PerfilCompartir from "./pages/PerfilCompartir"
+import PerfilPublic from "./pages/PerfilPublic"
 import NotFound from "./pages/NotFound"
 import Manada from "./pages/ramas/manada"
 import Tropa from "./pages/ramas/tropa"
@@ -78,7 +81,10 @@ const App = () => (
             <Route path="/contacto" element={<Contacto />} />
             <Route path="/eventos" element={<Eventos />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/perfil" element={<Perfil />} />
+            <Route path="/perfil" element={<PerfilView />} />
+            <Route path="/perfil/editar" element={<Perfil />} />
+            <Route path="/perfil/compartir" element={<PerfilCompartir />} />
+            <Route path="/perfil/public/:id" element={<PerfilPublic />} />
 
             {/* Ramas */}
             <Route path="/ramas/manada" element={<Manada />} />

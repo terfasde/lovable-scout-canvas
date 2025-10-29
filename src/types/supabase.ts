@@ -18,10 +18,12 @@ export interface Database {
           nombre_completo: string
           telefono: string
           edad: number
+          fecha_nacimiento: string | null
           seisena: string | null
           patrulla: string | null
           equipo_pioneros: string | null
           comunidad_rovers: string | null
+          rol_adulto: string | null
         }
         Insert: {
           id?: string
@@ -31,10 +33,12 @@ export interface Database {
           nombre_completo: string
           telefono: string
           edad?: number
+          fecha_nacimiento?: string | null
           seisena?: string | null
           patrulla?: string | null
           equipo_pioneros?: string | null
           comunidad_rovers?: string | null
+          rol_adulto?: string | null
         }
         Update: {
           id?: string
@@ -44,10 +48,12 @@ export interface Database {
           nombre_completo?: string
           telefono?: string
           edad?: number
+          fecha_nacimiento?: string | null
           seisena?: string | null
           patrulla?: string | null
           equipo_pioneros?: string | null
           comunidad_rovers?: string | null
+          rol_adulto?: string | null
         }
       }
     }

@@ -23,27 +23,55 @@ const Perfil = () => {
   const [formData, setFormData] = useState<{
     nombre_completo: string;
     telefono: string;
-    email: string;
     edad: number;
+    fecha_nacimiento: string;
     seisena: string;
     patrulla: string;
     equipo_pioneros: string;
     comunidad_rovers: string;
+    rol_adulto: string;
     password: string;
   }>({
     nombre_completo: "",
     telefono: "",
-    email: "",
     edad: 0,
+    fecha_nacimiento: "",
     seisena: "",
     patrulla: "",
     equipo_pioneros: "",
     comunidad_rovers: "",
+    rol_adulto: "",
     password: ""
   });
+  const [ramaActual, setRamaActual] = useState("");
 
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Calcular edad automáticamente si hay fecha de nacimiento
+  useEffect(() => {
+    if (formData.fecha_nacimiento) {
+      const hoy = new Date();
+      const nacimiento = new Date(formData.fecha_nacimiento);
+      let años = hoy.getFullYear() - nacimiento.getFullYear();
+      const m = hoy.getMonth() - nacimiento.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+        años--;
+      }
+      setFormData(prev => ({ ...prev, edad: años }));
+    }
+  }, [formData.fecha_nacimiento]);
+
+  // Determinar rama actual según edad
+  useEffect(() => {
+    const edad = formData.edad;
+    if (edad >= 21) setRamaActual("Adulto");
+    else if (edad >= 18) setRamaActual("Rover");
+    else if (edad >= 15) setRamaActual("Pionero");
+    else if (edad >= 11) setRamaActual("Tropa");
+    else if (edad >= 7) setRamaActual("Manada");
+    else setRamaActual("");
+  }, [formData.edad]);
 
   useEffect(() => {
     getProfile();
@@ -68,18 +96,27 @@ const Perfil = () => {
         throw error;
       }
 
+      console.log('User data:', user);
+      console.log('Profile data:', profile);
+
+      // Obtener los datos del usuario
+      const userMetadata = user.user_metadata || {};
+      const userNombre = userMetadata.nombre || profile?.nombre_completo || "";
+      const userTelefono = userMetadata.telefono || profile?.telefono || "";
+
       if (profile) {
         setProfile(profile as Profile);
         setFormData({
           ...formData,
-          nombre_completo: profile.nombre_completo || user.user_metadata?.nombre || "",
-          telefono: profile.telefono || user.user_metadata?.telefono || "",
-          email: user.email || "",
+          nombre_completo: userNombre,
+          telefono: userTelefono,
           edad: profile.edad || 0,
+          fecha_nacimiento: profile.fecha_nacimiento || "",
           seisena: profile.seisena || "",
           patrulla: profile.patrulla || "",
           equipo_pioneros: profile.equipo_pioneros || "",
           comunidad_rovers: profile.comunidad_rovers || "",
+          rol_adulto: profile.rol_adulto || "",
           password: ""
         });
       } else {
@@ -88,9 +125,8 @@ const Perfil = () => {
           .from("profiles")
           .insert({
             user_id: user.id,
-            nombre_completo: user.user_metadata?.nombre || "",
-            telefono: user.user_metadata?.telefono || "",
-            email: user.email
+            nombre_completo: userNombre,
+            telefono: userTelefono
           });
         if (insertError) throw insertError;
         await getProfile(); // Recargar después de crear
@@ -106,13 +142,24 @@ const Perfil = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: name === "edad" ? parseInt(value) || 0 : value
     }));
   };
+
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    // Obtener el email del usuario cuando se carga el componente
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) {
+        setUserEmail(user.email);
+      }
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,14 +168,6 @@ const Perfil = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No hay sesión activa");
-
-      // Actualizar email si cambió
-      if (formData.email !== user.email) {
-        const { error: emailError } = await supabase.auth.updateUser({ 
-          email: formData.email 
-        });
-        if (emailError) throw emailError;
-      }
 
       // Actualizar contraseña si se proporcionó una nueva
       if (formData.password) {
@@ -146,10 +185,12 @@ const Perfil = () => {
           nombre_completo: formData.nombre_completo,
           telefono: formData.telefono,
           edad: formData.edad,
-          seisena: canEditSeisena(formData.edad) ? formData.seisena : null,
-          patrulla: canEditPatrulla(formData.edad) ? formData.patrulla : null,
-          equipo_pioneros: canEditPioneros(formData.edad) ? formData.equipo_pioneros : null,
-          comunidad_rovers: canEditRovers(formData.edad) ? formData.comunidad_rovers : null,
+          fecha_nacimiento: formData.fecha_nacimiento || null,
+          seisena: formData.edad >= 7 && formData.edad <= 20 ? formData.seisena : null,
+          patrulla: formData.edad >= 11 && formData.edad <= 20 ? formData.patrulla : null,
+          equipo_pioneros: formData.edad >= 15 && formData.edad <= 20 ? formData.equipo_pioneros : null,
+          comunidad_rovers: formData.edad >= 18 && formData.edad <= 20 ? formData.comunidad_rovers : null,
+          rol_adulto: formData.edad >= 21 ? formData.rol_adulto : null,
           updated_at: new Date().toISOString()
         } as Profile);
 
@@ -207,20 +248,6 @@ const Perfil = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="edad">Edad</Label>
-                  <Input
-                    id="edad"
-                    name="edad"
-                    type="number"
-                    min="7"
-                    max="99"
-                    value={formData.edad || ""}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="telefono">Teléfono</Label>
                   <Input
                     id="telefono"
@@ -233,14 +260,48 @@ const Perfil = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="fecha_nacimiento">Fecha de nacimiento (opcional)</Label>
+                  <Input
+                    id="fecha_nacimiento"
+                    name="fecha_nacimiento"
+                    type="date"
+                    value={formData.fecha_nacimiento}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="edad">Edad</Label>
+                  <Input
+                    id="edad"
+                    name="edad"
+                    type="number"
+                    min="7"
+                    max="99"
+                    value={formData.edad || ""}
+                    onChange={handleChange}
+                    disabled={!!formData.fecha_nacimiento}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="rama_actual">Rama actual</Label>
+                  <Input
+                    id="rama_actual"
+                    type="text"
+                    value={ramaActual}
+                    disabled
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="email">Correo electrónico</Label>
                   <Input
                     id="email"
-                    name="email"
                     type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
+                    value={userEmail}
+                    disabled
                   />
                 </div>
 
@@ -279,31 +340,33 @@ const Perfil = () => {
               <h3 className="text-lg font-medium">Información Scout</h3>
               
               <div className="grid gap-4 md:grid-cols-2">
-                {canEditSeisena(formData.edad) && (
+                {formData.edad >= 7 && formData.edad <= 20 && (
                   <div className="space-y-2">
-                    <Label htmlFor="seisena">Seisena</Label>
+                    <Label htmlFor="seisena">Seisena (Manada)</Label>
                     <Input
                       id="seisena"
                       name="seisena"
                       value={formData.seisena}
                       onChange={handleChange}
+                      placeholder="Ej: Seisena Roja"
                     />
                   </div>
                 )}
 
-                {canEditPatrulla(formData.edad) && (
+                {formData.edad >= 11 && formData.edad <= 20 && (
                   <div className="space-y-2">
-                    <Label htmlFor="patrulla">Patrulla</Label>
+                    <Label htmlFor="patrulla">Patrulla (Tropa)</Label>
                     <Input
                       id="patrulla"
                       name="patrulla"
                       value={formData.patrulla}
                       onChange={handleChange}
+                      placeholder="Ej: Patrulla Halcón"
                     />
                   </div>
                 )}
 
-                {canEditPioneros(formData.edad) && (
+                {formData.edad >= 15 && formData.edad <= 20 && (
                   <div className="space-y-2">
                     <Label htmlFor="equipo_pioneros">Equipo de Pioneros</Label>
                     <Input
@@ -311,11 +374,12 @@ const Perfil = () => {
                       name="equipo_pioneros"
                       value={formData.equipo_pioneros}
                       onChange={handleChange}
+                      placeholder="Ej: Equipo Alpha"
                     />
                   </div>
                 )}
 
-                {canEditRovers(formData.edad) && (
+                {formData.edad >= 18 && formData.edad <= 20 && (
                   <div className="space-y-2">
                     <Label htmlFor="comunidad_rovers">Comunidad Rovers</Label>
                     <Input
@@ -323,7 +387,27 @@ const Perfil = () => {
                       name="comunidad_rovers"
                       value={formData.comunidad_rovers}
                       onChange={handleChange}
+                      placeholder="Ej: Comunidad Caminantes"
                     />
+                  </div>
+                )}
+
+                {formData.edad >= 21 && (
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="rol_adulto">Rol en el grupo</Label>
+                    <select
+                      id="rol_adulto"
+                      name="rol_adulto"
+                      value={formData.rol_adulto}
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="">Selecciona una opción</option>
+                      <option value="No educador/a">No educador/a</option>
+                      <option value="Educador/a">Educador/a</option>
+                      <option value="Miembro del Comité">Miembro del Comité</option>
+                      <option value="Familiar de Scout">Familiar de Scout</option>
+                    </select>
                   </div>
                 )}
               </div>
