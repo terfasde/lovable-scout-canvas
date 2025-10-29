@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-scouts.jpg";
 const Hero = () => {
   return <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -29,15 +30,19 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" variant="hero" className="text-lg">
-                Únete al Grupo
-                <ArrowRight className="ml-2" />
-              </Button>
+              <Link to="/auth">
+                <Button size="lg" variant="hero" className="text-lg">
+                  Únete al Grupo
+                  <ArrowRight className="ml-2" />
+                </Button>
+              </Link>
               
-              <Button size="lg" variant="heroSecondary" className="text-lg">
-                <Users className="mr-2" />
-                Conoce Nuestra Historia
-              </Button>
+              <a href="#historia">
+                <Button size="lg" variant="heroSecondary" className="text-lg">
+                  <Users className="mr-2" />
+                  Conoce Nuestra Historia
+                </Button>
+              </a>
             </div>
 
             {/* Stats */}

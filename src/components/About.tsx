@@ -27,7 +27,7 @@ const About = () => {
   ];
 
   return (
-    <section className="section-padding bg-background">
+    <section id="historia" className="section-padding bg-background">
       <div className="container mx-auto px-4">
         {/* Main Introduction */}
         <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
