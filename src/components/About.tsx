@@ -1,5 +1,15 @@
 import { Shield, Heart, Compass, Award, Tent, Users, Flame, History } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import communityImage from "@/assets/community-scouts.jpg";
 
 const About = () => {
@@ -7,32 +17,44 @@ const About = () => {
     {
       icon: Heart,
       title: "Manada",
-      description: "Niños de 7 a 11 años, aprenden jugando y descubriendo el mundo scout"
+      description: "Niños de 7 a 11 años, aprenden jugando y descubriendo el mundo scout",
+      route: "manada",
+  hoverClass: "hover:bg-yellow-200 hover:text-foreground"
     },
     {
       icon: Compass,
       title: "Tropa",
-      description: "Jóvenes de 11 a 14 años, desarrollan habilidades y trabajo en equipo"
+      description: "Jóvenes de 11 a 14 años, desarrollan habilidades y trabajo en equipo",
+      route: "tropa",
+  hoverClass: "hover:bg-emerald-200 hover:text-foreground"
     },
     {
       icon: Tent,
       title: "Pioneros",
-      description: "Adolescentes de 14 a 17 años, lideran proyectos y asumen responsabilidades"
+      description: "Adolescentes de 14 a 17 años, lideran proyectos y asumen responsabilidades",
+      route: "pioneros",
+  hoverClass: "hover:bg-sky-200 hover:text-foreground"
     },
     {
       icon: Flame,
       title: "Rovers",
-      description: "Jóvenes adultos de 17 a 21 años, servicio a la comunidad y liderazgo"
+      description: "Jóvenes adultos de 17 a 21 años, servicio a la comunidad y liderazgo",
+      route: "rovers",
+  hoverClass: "hover:bg-rose-200 hover:text-foreground"
     },
     {
       icon: Users,
       title: "Staff",
-      description: "Educadores scouts que guían y acompañan el desarrollo de las ramas"
+      description: "Educadores scouts que guían y acompañan el desarrollo de las ramas",
+      route: "staff",
+  hoverClass: "hover:bg-neutral-800 hover:text-white"
     },
     {
       icon: Shield,
       title: "Comité",
-      description: "Padres y colaboradores que apoyan la gestión del grupo"
+      description: "Padres y colaboradores que apoyan la gestión del grupo",
+      route: "comite",
+  hoverClass: "hover:bg-orange-200 hover:text-foreground"
     }
   ];
 
@@ -65,15 +87,41 @@ const About = () => {
         {/* Branches Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-16 overflow-x-auto">
           {branches.map((branch, index) => (
-            <Card key={index} className="card-hover border-none shadow-sm min-w-[160px] aspect-square">
-              <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
-                  <branch.icon className="w-6 h-6 text-primary" />
+            <Dialog key={index}>
+                <DialogTrigger asChild>
+                  <Card className={`card-hover border-none shadow-sm min-w-[160px] aspect-square cursor-pointer transition-colors duration-200 ${branch.hoverClass}`}>
+                  <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+                        <branch.icon className="w-6 h-6 text-current" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">{branch.title}</h3>
+                    <p className="text-xs text-muted-foreground line-clamp-3">{branch.description}</p>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+
+              <DialogContent className="max-w-4xl">
+                <div className="grid md:grid-cols-2 gap-6 items-start">
+                  <div>
+                    <DialogTitle>{branch.title}</DialogTitle>
+                    <DialogDescription>
+                      <p className="mt-2 text-muted-foreground">{branch.description}</p>
+                      <p className="mt-4 text-muted-foreground">Aquí puedes ampliar con más información sobre la rama: actividades típicas, edades, objetivos y datos de contacto o reuniones.</p>
+                    </DialogDescription>
+                  </div>
+
+                  <div className="w-full">
+                    <img src={communityImage} alt={branch.title} className="w-full rounded-lg object-cover max-h-[420px]" />
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold mb-2">{branch.title}</h3>
-                <p className="text-xs text-muted-foreground line-clamp-3">{branch.description}</p>
-              </CardContent>
-            </Card>
+                <div className="mt-6 flex items-center gap-3 justify-end">
+                  <Button asChild variant="outline" size="sm">
+                    <Link to={`/ramas/${branch.route}`}>Más información</Link>
+                  </Button>
+                  <DialogClose />
+                </div>
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
 
