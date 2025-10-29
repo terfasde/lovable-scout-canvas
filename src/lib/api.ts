@@ -37,10 +37,19 @@ export async function getEventos() {
 }
 
 // Crear un evento
-export async function createEvento(evento: Omit<Database['public']['Tables']['eventos']['Row'], 'id' | 'created_at'>) {
+export async function createEvento(evento: Record<string, any>) {
   const { error } = await supabase
     .from('eventos')
     .insert(evento)
+
+  if (error) throw error
+}
+
+// Marcar perfil como público/privado (campo libre, casteado a any porque no está en los tipos generados)
+export async function setProfilePublic(userId: string, isPublic: boolean) {
+  const { error } = await supabase
+    .from('profiles')
+    .upsert({ user_id: userId, is_public: isPublic } as any)
 
   if (error) throw error
 }

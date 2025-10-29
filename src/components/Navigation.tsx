@@ -239,7 +239,6 @@ const Navigation = () => {
                             user_id: user.id,
                             nombre_completo: nombre,
                             telefono,
-                            email: emailLocal,
                             edad: edad ?? null,
                             seisena: seisena || null,
                             patrulla: patrulla || null,

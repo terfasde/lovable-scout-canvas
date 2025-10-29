@@ -184,7 +184,7 @@ const Auth = () => {
                   <Input
                     id="login-email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="pepe@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -269,7 +269,7 @@ const Auth = () => {
                   <Input
                     id="signup-nombre"
                     type="text"
-                    placeholder="Tu nombre completo"
+                    placeholder="Pepe González"
                     value={nombreCompleto}
                     onChange={(e) => setNombreCompleto(e.target.value)}
                     required
@@ -280,7 +280,7 @@ const Auth = () => {
                   <Input
                     id="signup-telefono"
                     type="tel"
-                    placeholder="+598 9 123 4567"
+                    placeholder="+598 123 456 789"
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
                     required
@@ -291,7 +291,7 @@ const Auth = () => {
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="tu@email.com"
+                    placeholder="pepe@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
