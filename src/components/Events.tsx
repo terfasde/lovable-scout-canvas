@@ -8,21 +8,21 @@ const Events = () => {
     location: "Próximamente Revelado",
     participants: "+100 scouts",
     type: "Campamento",
-    status: "Próximamente",
+    status: "Confirmado para más adelante",
     color: "primary"
   }, {
     title: "BAUEN - Competencia Nacional",
-    date: "5-7 Marzo, 2025",
+    date: "Próximamente Anunciado",
     location: "Montevideo",
     participants: "200+ scouts",
-    type: "Competencia",
-    status: "Inscripciones Abiertas",
-    color: "accent"
+    type: "Competencia, Construcción, Hermandad",
+    status: "Próximamente",
+    color: "primary"
   }, {
-    title: "Jornada de Servicio Comunitario",
-    date: "20 Abril, 2025",
-    location: "Barrio La Teja",
-    participants: "80 scouts",
+    title: "Lentejeada Anual, Servicio Comunitario",
+    date: "Próximamente",
+    location: "Club de Pesca Ramirez",
+    participants: "+30 scouts, Fundación Álvarez Carldeyro Barcia",
     type: "Servicio",
     status: "Confirmado",
     color: "primary"
