@@ -14,7 +14,7 @@ const Events = () => {
     title: "BAUEN - Competencia Nacional",
     date: "Próximamente Anunciado",
     location: "Montevideo",
-    participants: "200+ scouts",
+    participants: "+200 scouts",
     type: "Competencia, Construcción, Hermandad",
     status: "Próximamente",
     color: "primary"
