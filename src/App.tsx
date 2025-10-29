@@ -11,6 +11,7 @@ import Galeria from "./pages/Galeria";
 import Contacto from "./pages/Contacto";
 import Eventos from "./pages/Eventos";
 import Auth from "./pages/Auth";
+import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
 import Manada from "./pages/ramas/manada";
 import Tropa from "./pages/ramas/tropa";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/eventos" element={<Eventos />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/perfil" element={<Perfil />} />
           {/* Ramas pages */}
           <Route path="/ramas/manada" element={<Manada />} />
           <Route path="/ramas/tropa" element={<Tropa />} />

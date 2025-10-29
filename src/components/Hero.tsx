@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users } from "lucide-react";
+import { ArrowRight, Users, Hand } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-scouts.jpg";
 const Hero = () => {
@@ -61,10 +61,17 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+      {/* Scroll Indicator: desktop mouse, mobile finger on the right */}
+      <div className="hidden md:block absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
         <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
           <div className="w-1 h-3 bg-white/50 rounded-full mt-2"></div>
+        </div>
+      </div>
+
+      {/* Mobile: finger swipe hint on the right (does not overlap stats) */}
+      <div className="md:hidden pointer-events-none absolute bottom-20 right-4 z-10 animate-bounce">
+        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center shadow-sm">
+          <Hand className="w-5 h-5 text-white/90" />
         </div>
       </div>
     </section>;

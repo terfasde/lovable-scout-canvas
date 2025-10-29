@@ -17,7 +17,7 @@ const About = () => {
     {
       icon: Heart,
       title: "Manada",
-      description: "Niños de 7 a 11 años, aprenden jugando y descubriendo el mundo scout",
+      description: "Niños de 7 a 10 años, aprenden jugando y descubriendo el mundo scout",
       route: "manada",
   hoverClass: "hover:bg-yellow-200 hover:text-foreground"
     },
@@ -31,16 +31,16 @@ const About = () => {
     {
       icon: Tent,
       title: "Pioneros",
-      description: "Adolescentes de 14 a 17 años, lideran proyectos y asumen responsabilidades",
+      description: "Adolescentes de 15 a 17 años, lideran proyectos y asumen responsabilidades",
       route: "pioneros",
   hoverClass: "hover:bg-sky-200 hover:text-foreground"
     },
     {
       icon: Flame,
       title: "Rovers",
-      description: "Jóvenes adultos de 17 a 21 años, servicio a la comunidad y liderazgo",
+      description: "Jóvenes adultos de 18 a 20 años, servicio a la comunidad y liderazgo",
       route: "rovers",
-  hoverClass: "hover:bg-rose-200 hover:text-foreground"
+  hoverClass: "hover:bg-rose-300 hover:text-foreground"
     },
     {
       icon: Users,

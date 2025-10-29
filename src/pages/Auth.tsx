@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +13,10 @@ import logoImage from "@/assets/grupo-scout-logo.png";
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [nombreCompleto, setNombreCompleto] = useState("");
+  const [showPasswordLogin, setShowPasswordLogin] = useState(false);
+  const [showPasswordSignup, setShowPasswordSignup] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -45,8 +50,12 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl
-        }
+          emailRedirectTo: redirectUrl,
+          data: {
+            nombre: nombreCompleto || null,
+            telefono: telefono || null,
+          },
+        },
       });
 
       if (error) {
@@ -70,6 +79,8 @@ const Auth = () => {
         });
         setEmail("");
         setPassword("");
+        setTelefono("");
+        setNombreCompleto("");
       }
     } catch (error) {
       toast({
@@ -178,14 +189,30 @@ const Auth = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="login-password">Contraseña</Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className="relative">
+                    <Input
+                      id="login-password"
+                      type={showPasswordLogin ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      aria-pressed={showPasswordLogin}
+                      aria-label={showPasswordLogin ? "Ocultar contraseña" : "Ver contraseña"}
+                      onClick={() => setShowPasswordLogin((s) => !s)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 inline-flex items-center text-muted-foreground p-1"
+                    >
+                      {showPasswordLogin ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                      <span className="sr-only">{showPasswordLogin ? "Ocultar contraseña" : "Ver contraseña"}</span>
+                    </button>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
@@ -235,6 +262,28 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
+                  <Label htmlFor="signup-nombre">Nombre completo</Label>
+                  <Input
+                    id="signup-nombre"
+                    type="text"
+                    placeholder="Tu nombre completo"
+                    value={nombreCompleto}
+                    onChange={(e) => setNombreCompleto(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-telefono">Teléfono</Label>
+                  <Input
+                    id="signup-telefono"
+                    type="tel"
+                    placeholder="+598 9 123 4567"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="signup-email">Correo electrónico</Label>
                   <Input
                     id="signup-email"
@@ -247,15 +296,31 @@ const Auth = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Contraseña</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="signup-password"
+                      type={showPasswordSignup ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      aria-pressed={showPasswordSignup}
+                      aria-label={showPasswordSignup ? "Ocultar contraseña" : "Ver contraseña"}
+                      onClick={() => setShowPasswordSignup((s) => !s)}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 inline-flex items-center text-muted-foreground p-1"
+                    >
+                      {showPasswordSignup ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                      <span className="sr-only">{showPasswordSignup ? "Ocultar contraseña" : "Ver contraseña"}</span>
+                    </button>
+                  </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Registrando..." : "Registrarse"}
