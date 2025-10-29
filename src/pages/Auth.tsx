@@ -73,10 +73,13 @@ const Auth = () => {
           });
         }
       } else {
+        // Inform the user to confirm their email — show a clear popup/toast
         toast({
-          title: "¡Registro exitoso!",
-          description: "Tu cuenta ha sido creada. Ya puedes iniciar sesión.",
+          title: "Confirma tu correo electrónico",
+          description: `Te enviamos un correo a ${email}. Abre ese email y haz clic en el enlace de confirmación (revisa también la carpeta de spam).`,
         });
+
+        // Clear form fields after signup
         setEmail("");
         setPassword("");
         setTelefono("");
