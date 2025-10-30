@@ -34,8 +34,6 @@ const Hero = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 z-10 pt-20 pb-16">
         <div className="max-w-4xl">
           <div className="animate-fade-in space-y-8">
-           
-            
             {/* Main Title */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight">
               <span className="text-primary block mb-2">Grupo Scout Séptimo</span>

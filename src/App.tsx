@@ -18,6 +18,7 @@ import Perfil from "./pages/Perfil"
 import PerfilView from "./pages/PerfilView"
 import PerfilCompartir from "./pages/PerfilCompartir"
 import PerfilPublic from "./pages/PerfilPublic"
+import Usuarios from "./pages/Usuarios"
 import NotFound from "./pages/NotFound"
 import Manada from "./pages/ramas/manada"
 import Tropa from "./pages/ramas/tropa"
@@ -90,7 +91,8 @@ const App = () => (
             <Route path="/perfil" element={<PerfilView />} />
             <Route path="/perfil/editar" element={<Perfil />} />
             <Route path="/perfil/compartir" element={<PerfilCompartir />} />
-            <Route path="/perfil/public/:id" element={<PerfilPublic />} />
+            <Route path="/perfil-public/:id" element={<PerfilPublic />} />
+            <Route path="/usuarios" element={<Usuarios />} />
 
             {/* Ramas */}
             <Route path="/ramas/manada" element={<Manada />} />

@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
 import { getProfile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Share2 } from "lucide-react";
+import { Settings, Share2, Check, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
+import { getPendingRequestsForMe, acceptFollow, rejectFollow, getFollowersCount, getFollowingCount, getFollowersWithProfiles, getFollowingWithProfiles } from "@/lib/follows";
 
 type Tables = Database['public']['Tables'];
 type Profile = Tables['profiles']['Row'];
@@ -16,6 +19,14 @@ const PerfilView = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userEmail, setUserEmail] = useState("");
+  const [pending, setPending] = useState<{ follower_id: string; created_at: string }[]>([]);
+  const [userId, setUserId] = useState<string>("");
+  const [followersCount, setFollowersCount] = useState<number>(0);
+  const [followingCount, setFollowingCount] = useState<number>(0);
+  const [followersOpen, setFollowersOpen] = useState(false);
+  const [followingOpen, setFollowingOpen] = useState(false);
+  const [followersList, setFollowersList] = useState<Array<{ follower_id: string; created_at: string; follower?: { id: string; nombre_completo: string | null; avatar_url: string | null } }>>([]);
+  const [followingList, setFollowingList] = useState<Array<{ followed_id: string; created_at: string; followed?: { id: string; nombre_completo: string | null; avatar_url: string | null } }>>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -27,8 +38,19 @@ const PerfilView = () => {
           navigate('/auth');
           return;
         }
+        setUserId(user.id);
         setUserEmail(user.email || "");
         const p = await getProfile(user.id).catch(() => null);
+        // Load pending follow requests for me
+        const { data: pend } = await getPendingRequestsForMe();
+        setPending(pend ? pend.map((x: any) => ({ follower_id: String(x.follower_id), created_at: String(x.created_at) })) : []);
+        // Load counts
+        const [{ count: fCount }, { count: gCount }] = await Promise.all([
+          getFollowersCount(user.id),
+          getFollowingCount(user.id)
+        ]);
+        setFollowersCount(fCount || 0);
+        setFollowingCount(gCount || 0);
         setProfile(p ?? null);
       } catch (err: any) {
         toast({ title: 'Error', description: err?.message || 'No se pudo cargar el perfil', variant: 'destructive' });
@@ -37,6 +59,57 @@ const PerfilView = () => {
       }
     })();
   }, []);
+
+  // Lazy load lists when dialogs open
+  useEffect(() => {
+    (async () => {
+      try {
+        if (followersOpen && userId) {
+          const { data, error } = await getFollowersWithProfiles(userId, 0, 49);
+          if (!error) {
+            setFollowersList(
+              (data || []).map((x: any) => ({
+                follower_id: String(x.follower_id),
+                created_at: String(x.created_at),
+                follower: x.follower ? {
+                  id: String(x.follower.id),
+                  nombre_completo: x.follower.nombre_completo ?? null,
+                  avatar_url: x.follower.avatar_url ?? null,
+                } : undefined,
+              }))
+            );
+          }
+        }
+      } catch (err) {
+        // ignore
+      }
+    })();
+  }, [followersOpen, userId]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (followingOpen && userId) {
+          const { data, error } = await getFollowingWithProfiles(userId, 0, 49);
+          if (!error) {
+            setFollowingList(
+              (data || []).map((x: any) => ({
+                followed_id: String(x.followed_id),
+                created_at: String(x.created_at),
+                followed: x.followed ? {
+                  id: String(x.followed.id),
+                  nombre_completo: x.followed.nombre_completo ?? null,
+                  avatar_url: x.followed.avatar_url ?? null,
+                } : undefined,
+              }))
+            );
+          }
+        }
+      } catch (err) {
+        // ignore
+      }
+    })();
+  }, [followingOpen, userId]);
 
   const getRamaActual = (edad: number | null) => {
     if (!edad) return "No especificada";
@@ -119,7 +192,7 @@ const PerfilView = () => {
             </div>
 
             {/* Stats */}
-            <div className="flex gap-6 sm:gap-8 mb-4 justify-center sm:justify-start">
+            <div className="flex flex-wrap gap-6 sm:gap-8 mb-4 justify-center sm:justify-start">
               <div className="text-center sm:text-left">
                 <span className="font-semibold text-sm sm:text-base">{profile.edad || '0'}</span>
                 <span className="text-muted-foreground ml-1 text-xs sm:text-sm">años</span>
@@ -128,6 +201,14 @@ const PerfilView = () => {
                 <span className="font-semibold text-sm sm:text-base">{getRamaActual(profile.edad)}</span>
                 <span className="text-muted-foreground ml-1 text-xs sm:text-sm">Rama</span>
               </div>
+              <button type="button" onClick={() => setFollowersOpen(true)} className="text-center sm:text-left hover:text-primary transition-colors">
+                <span className="font-semibold text-sm sm:text-base">{followersCount}</span>
+                <span className="text-muted-foreground ml-1 text-xs sm:text-sm">Seguidores</span>
+              </button>
+              <button type="button" onClick={() => setFollowingOpen(true)} className="text-center sm:text-left hover:text-primary transition-colors">
+                <span className="font-semibold text-sm sm:text-base">{followingCount}</span>
+                <span className="text-muted-foreground ml-1 text-xs sm:text-sm">Siguiendo</span>
+              </button>
             </div>
 
             {/* Bio / Info */}
@@ -195,9 +276,109 @@ const PerfilView = () => {
               <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Perfil</h3>
               <p className="text-sm sm:text-base">{(profile as any).is_public ? '🌍 Público' : '🔒 Privado'}</p>
             </div>
+
+            {/* Solicitudes de seguimiento pendientes */}
+            <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
+              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">Solicitudes de seguimiento</h3>
+              {pending.length === 0 ? (
+                <p className="text-sm sm:text-base text-muted-foreground">No tienes solicitudes.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {pending.map((req) => (
+                    <li key={req.follower_id} className="flex items-center justify-between gap-2">
+                      <span className="text-sm">{req.follower_id.slice(0, 8)}… quiere seguirte</span>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="default" className="gap-1" onClick={async () => {
+                          const { error } = await acceptFollow(req.follower_id);
+                          if (error) return toast({ title: 'Error', description: (error as any).message || 'No se pudo aceptar', variant: 'destructive' });
+                          setPending((p) => p.filter(x => x.follower_id !== req.follower_id));
+                          setFollowersCount((c) => c + 1);
+                          toast({ title: 'Solicitud aceptada' });
+                        }}>
+                          <Check className="w-4 h-4" /> Aceptar
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-1" onClick={async () => {
+                          const { error } = await rejectFollow(req.follower_id);
+                          if (error) return toast({ title: 'Error', description: (error as any).message || 'No se pudo rechazar', variant: 'destructive' });
+                          setPending((p) => p.filter(x => x.follower_id !== req.follower_id));
+                          toast({ title: 'Solicitud rechazada' });
+                        }}>
+                          <X className="w-4 h-4" /> Rechazar
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Dialog: Seguidores */}
+      <Dialog open={followersOpen} onOpenChange={(o) => setFollowersOpen(o)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Seguidores</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] pr-3">
+            <ul className="space-y-3">
+              {followersList.length === 0 && (
+                <li className="text-sm text-muted-foreground">No tienes seguidores aún.</li>
+              )}
+              {followersList.map((item) => {
+                const prof = (item as any).follower as { id: string; nombre_completo: string | null; avatar_url: string | null } | undefined;
+                const displayName = prof?.nombre_completo || `${item.follower_id.slice(0,8)}…`;
+                return (
+                  <li key={item.follower_id} className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <UserAvatar avatarUrl={prof?.avatar_url || undefined} userName={displayName} size="sm" />
+                      <div className="min-w-0">
+                        <p className="text-sm truncate">{displayName}</p>
+                        <p className="text-xs text-muted-foreground truncate">{item.follower_id}</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => navigate(`/perfil-public/${item.follower_id}`)}>Ver perfil</Button>
+                  </li>
+                );
+              })}
+            </ul>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: Siguiendo */}
+      <Dialog open={followingOpen} onOpenChange={(o) => setFollowingOpen(o)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Siguiendo</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] pr-3">
+            <ul className="space-y-3">
+              {followingList.length === 0 && (
+                <li className="text-sm text-muted-foreground">Aún no sigues a nadie.</li>
+              )}
+              {followingList.map((item) => {
+                const prof = (item as any).followed as { id: string; nombre_completo: string | null; avatar_url: string | null } | undefined;
+                const displayName = prof?.nombre_completo || `${item.followed_id.slice(0,8)}…`;
+                return (
+                  <li key={item.followed_id} className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <UserAvatar avatarUrl={prof?.avatar_url || undefined} userName={displayName} size="sm" />
+                      <div className="min-w-0">
+                        <p className="text-sm truncate">{displayName}</p>
+                        <p className="text-xs text-muted-foreground truncate">{item.followed_id}</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => navigate(`/perfil-public/${item.followed_id}`)}>Ver perfil</Button>
+                  </li>
+                );
+              })}
+            </ul>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }

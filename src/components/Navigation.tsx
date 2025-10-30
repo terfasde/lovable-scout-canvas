@@ -57,6 +57,7 @@ const Navigation = () => {
     { name: "BAUEN", path: "/bauen" },
     { name: "Eventos", path: "/eventos" },
     { name: "Galería", path: "/galeria" },
+    { name: "Usuarios", path: "/usuarios" },
     { name: "Contacto", path: "/contacto" },
   ];
 
@@ -102,7 +103,7 @@ const Navigation = () => {
             <img src={logoImage} alt="Grupo Scout Séptimo" className="w-12 h-12 object-contain" />
             <div className="hidden md:block">
               <div className="text-xl font-bold text-foreground">Grupo Scout Séptimo</div>
-              <div className="text-sm text-muted-foreground">de Montevideo</div>
+              <div className="text-sm text-muted-foreground dark:text-foreground">de Montevideo</div>
             </div>
           </Link>
 
