@@ -111,7 +111,7 @@ const Usuarios = () => {
   }, [searchTerm, ramaFilter, visibilityFilter, sortBy, profiles]);
 
   const applySorting = (data: Profile[]) => {
-    let sorted = [...data];
+    const sorted = [...data];
     
     if (sortBy === "name") {
       sorted.sort((a, b) => 

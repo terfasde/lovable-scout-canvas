@@ -47,12 +47,12 @@ export async function createEvento(evento: Record<string, any>) {
   if (error) throw error
 }
 
-// Marcar perfil como público/privado (campo libre, casteado a any porque no está en los tipos generados)
+// Marcar perfil como público/privado
 export async function setProfilePublic(userId: string, isPublic: boolean) {
   // Primero intentamos actualizar; si no hay filas afectadas, insertamos esqueleto
   const { data, error } = await supabase
     .from('profiles')
-    .update({ is_public: isPublic } as any)
+    .update({ is_public: isPublic })
     .eq('user_id', userId)
     .select('user_id')
 
@@ -72,7 +72,7 @@ export async function setProfilePublic(userId: string, isPublic: boolean) {
     const nombreFallback = existingProfile?.nombre_completo || authUser?.user_metadata?.nombre || authUser?.email || 'Perfil sin nombre'
     const telefonoFallback = existingProfile?.telefono || authUser?.user_metadata?.telefono || ''
 
-    const insertPayload: Partial<Profile> & { user_id: string } = {
+    const insertPayload: Database['public']['Tables']['profiles']['Insert'] = {
       user_id: userId,
       nombre_completo: nombreFallback,
       telefono: telefonoFallback,
@@ -84,11 +84,13 @@ export async function setProfilePublic(userId: string, isPublic: boolean) {
       fecha_nacimiento: existingProfile?.fecha_nacimiento ?? null,
       rol_adulto: existingProfile?.rol_adulto ?? null,
       is_public: isPublic,
+      username: existingProfile?.username ?? null,
+      username_updated_at: existingProfile?.username_updated_at ?? null,
     }
 
     const { error: insertError } = await supabase
       .from('profiles')
-      .insert(insertPayload as any)
+      .insert(insertPayload)
 
     if (insertError) throw insertError
   }
