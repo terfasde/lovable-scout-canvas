@@ -1,13 +1,29 @@
 -- Agregar campo username a profiles
-alter table public.profiles add column if not exists username text unique;
+alter table public.profiles add column if not exists username text;
 alter table public.profiles add column if not exists username_updated_at timestamptz;
 
--- Crear índice para búsquedas rápidas por username
+-- Crear índice para búsquedas rápidas por username (solo si no existe)
 create index if not exists idx_profiles_username on public.profiles(username);
 
--- Agregar constraint para formato de username (solo letras, números, guiones y puntos)
-alter table public.profiles add constraint username_format 
-  check (username ~* '^[a-z0-9._-]{3,30}$');
+-- Agregar constraint único para username (drop primero si existe)
+do $$ 
+begin
+  if not exists (
+    select 1 from pg_constraint 
+    where conname = 'profiles_username_key' 
+    and conrelid = 'public.profiles'::regclass
+  ) then
+    alter table public.profiles add constraint profiles_username_key unique (username);
+  end if;
+end $$;
+
+-- Agregar constraint para formato de username (drop primero si existe)
+do $$ 
+begin
+  alter table public.profiles drop constraint if exists username_format;
+  alter table public.profiles add constraint username_format 
+    check (username ~* '^[a-z0-9._-]{3,30}$');
+end $$;
 
 -- Función para validar cambio de username (máximo cada 7 días)
 create or replace function check_username_change()

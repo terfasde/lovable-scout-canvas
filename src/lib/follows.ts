@@ -21,6 +21,27 @@ export async function followUser(targetUserId: string) {
   const me = await getMyUserId();
   if (!me) return { error: new Error("No autenticado") } as const;
   if (me === targetUserId) return { error: new Error("No puedes seguirte a ti mismo") } as const;
+  
+  // Check if relationship already exists
+  const { data: existing } = await supabase
+    .from("follows")
+    .select("status")
+    .eq("follower_id", me)
+    .eq("followed_id", targetUserId)
+    .maybeSingle();
+  
+  if (existing) {
+    if (existing.status === "pending") {
+      return { error: new Error("Ya tienes una solicitud pendiente") } as const;
+    }
+    if (existing.status === "accepted") {
+      return { error: new Error("Ya sigues a este usuario") } as const;
+    }
+    if (existing.status === "blocked") {
+      return { error: new Error("No puedes seguir a este usuario") } as const;
+    }
+  }
+  
   const { error } = await supabase.from("follows").insert({
     follower_id: me,
     followed_id: targetUserId,
@@ -86,21 +107,42 @@ export async function getFollowing(userId: string) {
 export async function getPendingRequestsForMe() {
   const me = await getMyUserId();
   if (!me) return { data: [], error: new Error("No autenticado") } as const;
-  return supabase
+  
+  // Get pending follows
+  const { data: follows, error: followsError } = await supabase
     .from("follows")
-    .select(`
-      follower_id,
-      created_at,
-      follower:profiles!follows_follower_id_fkey(
-        id,
-        nombre_completo,
-        avatar_url,
-        username
-      )
-    `)
+    .select("follower_id, created_at")
     .eq("followed_id", me)
     .eq("status", "pending")
     .order("created_at", { ascending: false });
+  
+  if (followsError || !follows) {
+    return { data: [], error: followsError };
+  }
+  
+  // Get follower profiles separately
+  const followerIds = follows.map(f => f.follower_id);
+  if (followerIds.length === 0) {
+    return { data: [], error: null };
+  }
+  
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("user_id, nombre_completo, avatar_url, username")
+    .in("user_id", followerIds);
+  
+  if (profilesError) {
+    return { data: [], error: profilesError };
+  }
+  
+  // Merge data
+  const result = follows.map(f => ({
+    follower_id: f.follower_id,
+    created_at: f.created_at,
+    follower: profiles?.find(p => p.user_id === f.follower_id) || null
+  }));
+  
+  return { data: result, error: null };
 }
 
 // Counts
@@ -122,25 +164,79 @@ export async function getFollowingCount(userId: string) {
 
 // Lists with optional joined profiles (subject to RLS; may be null)
 export async function getFollowersWithProfiles(userId: string, from = 0, to = 49) {
-  return supabase
+  // Get follows
+  const { data: follows, error: followsError } = await supabase
     .from("follows")
-    .select(
-      "follower_id, created_at, follower:profiles!follower_id(id, nombre_completo, avatar_url)"
-    )
+    .select("follower_id, created_at")
     .eq("followed_id", userId)
     .eq("status", "accepted")
     .order("created_at", { ascending: false })
     .range(from, to);
+  
+  if (followsError || !follows) {
+    return { data: [], error: followsError };
+  }
+  
+  // Get profiles separately
+  const followerIds = follows.map(f => f.follower_id);
+  if (followerIds.length === 0) {
+    return { data: [], error: null };
+  }
+  
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("user_id, nombre_completo, avatar_url, username")
+    .in("user_id", followerIds);
+  
+  if (profilesError) {
+    return { data: [], error: profilesError };
+  }
+  
+  // Merge data
+  const result = follows.map(f => ({
+    follower_id: f.follower_id,
+    created_at: f.created_at,
+    follower: profiles?.find(p => p.user_id === f.follower_id) || null
+  }));
+  
+  return { data: result, error: null };
 }
 
 export async function getFollowingWithProfiles(userId: string, from = 0, to = 49) {
-  return supabase
+  // Get follows
+  const { data: follows, error: followsError } = await supabase
     .from("follows")
-    .select(
-      "followed_id, created_at, followed:profiles!followed_id(id, nombre_completo, avatar_url)"
-    )
+    .select("followed_id, created_at")
     .eq("follower_id", userId)
     .eq("status", "accepted")
     .order("created_at", { ascending: false })
     .range(from, to);
+  
+  if (followsError || !follows) {
+    return { data: [], error: followsError };
+  }
+  
+  // Get profiles separately
+  const followedIds = follows.map(f => f.followed_id);
+  if (followedIds.length === 0) {
+    return { data: [], error: null };
+  }
+  
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("user_id, nombre_completo, avatar_url, username")
+    .in("user_id", followedIds);
+  
+  if (profilesError) {
+    return { data: [], error: profilesError };
+  }
+  
+  // Merge data
+  const result = follows.map(f => ({
+    followed_id: f.followed_id,
+    created_at: f.created_at,
+    followed: profiles?.find(p => p.user_id === f.followed_id) || null
+  }));
+  
+  return { data: result, error: null };
 }

@@ -25,8 +25,8 @@ const PerfilView = () => {
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followersOpen, setFollowersOpen] = useState(false);
   const [followingOpen, setFollowingOpen] = useState(false);
-  const [followersList, setFollowersList] = useState<Array<{ follower_id: string; created_at: string; follower?: { id: string; nombre_completo: string | null; avatar_url: string | null } }>>([]);
-  const [followingList, setFollowingList] = useState<Array<{ followed_id: string; created_at: string; followed?: { id: string; nombre_completo: string | null; avatar_url: string | null } }>>([]);
+  const [followersList, setFollowersList] = useState<Array<{ follower_id: string; created_at: string; follower?: { id: string; nombre_completo: string | null; avatar_url: string | null; username?: string | null } }>>([]);
+  const [followingList, setFollowingList] = useState<Array<{ followed_id: string; created_at: string; followed?: { id: string; nombre_completo: string | null; avatar_url: string | null; username?: string | null } }>>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -47,7 +47,7 @@ const PerfilView = () => {
           follower_id: String(x.follower_id),
           created_at: String(x.created_at),
           follower: x.follower ? {
-            id: String(x.follower.id),
+            id: String(x.follower.user_id || x.follower.id),
             nombre_completo: x.follower.nombre_completo ?? null,
             avatar_url: x.follower.avatar_url ?? null,
             username: x.follower.username ?? null,
@@ -81,9 +81,10 @@ const PerfilView = () => {
                 follower_id: String(x.follower_id),
                 created_at: String(x.created_at),
                 follower: x.follower ? {
-                  id: String(x.follower.id),
+                  id: String(x.follower.user_id || x.follower.id),
                   nombre_completo: x.follower.nombre_completo ?? null,
                   avatar_url: x.follower.avatar_url ?? null,
+                  username: x.follower.username ?? null,
                 } : undefined,
               }))
             );
@@ -106,9 +107,10 @@ const PerfilView = () => {
                 followed_id: String(x.followed_id),
                 created_at: String(x.created_at),
                 followed: x.followed ? {
-                  id: String(x.followed.id),
+                  id: String(x.followed.user_id || x.followed.id),
                   nombre_completo: x.followed.nombre_completo ?? null,
                   avatar_url: x.followed.avatar_url ?? null,
+                  username: x.followed.username ?? null,
                 } : undefined,
               }))
             );
@@ -358,15 +360,16 @@ const PerfilView = () => {
                 <li className="text-sm text-muted-foreground">No tienes seguidores aún.</li>
               )}
               {followersList.map((item) => {
-                const prof = (item as any).follower as { id: string; nombre_completo: string | null; avatar_url: string | null } | undefined;
-                const displayName = prof?.nombre_completo || `${item.follower_id.slice(0,8)}…`;
+                const prof = (item as any).follower as { id: string; nombre_completo: string | null; avatar_url: string | null; username?: string | null } | undefined;
+                const displayName = prof?.nombre_completo || `Usuario ${item.follower_id.slice(0,8)}…`;
+                const username = prof?.username;
                 return (
                   <li key={item.follower_id} className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <UserAvatar avatarUrl={prof?.avatar_url || undefined} userName={displayName} size="sm" />
                       <div className="min-w-0">
-                        <p className="text-sm truncate">{displayName}</p>
-                        <p className="text-xs text-muted-foreground truncate">{item.follower_id}</p>
+                        <p className="text-sm font-medium truncate">{displayName}</p>
+                        {username && <p className="text-xs text-muted-foreground truncate">@{username}</p>}
                       </div>
                     </div>
                     <Button variant="outline" size="sm" onClick={() => navigate(`/perfil-public/${item.follower_id}`)}>Ver perfil</Button>
@@ -390,15 +393,16 @@ const PerfilView = () => {
                 <li className="text-sm text-muted-foreground">Aún no sigues a nadie.</li>
               )}
               {followingList.map((item) => {
-                const prof = (item as any).followed as { id: string; nombre_completo: string | null; avatar_url: string | null } | undefined;
-                const displayName = prof?.nombre_completo || `${item.followed_id.slice(0,8)}…`;
+                const prof = (item as any).followed as { id: string; nombre_completo: string | null; avatar_url: string | null; username?: string | null } | undefined;
+                const displayName = prof?.nombre_completo || `Usuario ${item.followed_id.slice(0,8)}…`;
+                const username = prof?.username;
                 return (
                   <li key={item.followed_id} className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <UserAvatar avatarUrl={prof?.avatar_url || undefined} userName={displayName} size="sm" />
                       <div className="min-w-0">
-                        <p className="text-sm truncate">{displayName}</p>
-                        <p className="text-xs text-muted-foreground truncate">{item.followed_id}</p>
+                        <p className="text-sm font-medium truncate">{displayName}</p>
+                        {username && <p className="text-xs text-muted-foreground truncate">@{username}</p>}
                       </div>
                     </div>
                     <Button variant="outline" size="sm" onClick={() => navigate(`/perfil-public/${item.followed_id}`)}>Ver perfil</Button>

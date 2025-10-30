@@ -33,9 +33,29 @@ using (
   )
 );
 
+-- 4) Permitir ver perfil básico de quien te envió o a quien enviaste solicitud pendiente
+-- Esto es necesario para que puedas ver quién te sigue y decidir aceptar/rechazar
+drop policy if exists profiles_read_pending_relation on public.profiles;
+create policy profiles_read_pending_relation
+on public.profiles for select
+to authenticated
+using (
+  exists (
+    select 1 from public.follows f
+    where (
+      -- Yo soy el seguido y esta persona me envió solicitud
+      (f.followed_id = auth.uid() and f.follower_id = profiles.user_id)
+      -- O yo soy el seguidor y envié solicitud a esta persona
+      or (f.follower_id = auth.uid() and f.followed_id = profiles.user_id)
+    )
+    and f.status = 'pending'
+  )
+);
+
 -- Opcional: permitir que usuarios no autenticados vean perfiles públicos
 -- drop policy if exists profiles_read_public_anon on public.profiles;
 -- create policy profiles_read_public_anon
 -- on public.profiles for select
 -- to anon
 -- using ( coalesce(is_public, false) = true );
+

@@ -311,6 +311,11 @@ const Perfil = () => {
         updated_at: new Date().toISOString()
       };
 
+      // Agregar username si se proporcionó
+      if (formData.username && formData.username.trim()) {
+        profileData.username = formData.username.trim().toLowerCase();
+      }
+
       // Solo agregar campos si existen en la base de datos
       if (formData.fecha_nacimiento) {
         profileData.fecha_nacimiento = formData.fecha_nacimiento;
@@ -480,6 +485,51 @@ const Perfil = () => {
                   required
                   className="bg-background"
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="username">
+                  Nombre de usuario
+                  {formData.username_updated_at && (() => {
+                    const lastUpdate = new Date(formData.username_updated_at);
+                    const daysSince = Math.floor((Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
+                    const daysRemaining = 7 - daysSince;
+                    
+                    if (daysRemaining > 0) {
+                      return (
+                        <span className="ml-2 text-xs text-muted-foreground font-normal">
+                          (podrás cambiar en {daysRemaining} día{daysRemaining !== 1 ? 's' : ''})
+                        </span>
+                      );
+                    }
+                    return (
+                      <span className="ml-2 text-xs text-green-600 dark:text-green-400 font-normal">
+                        (puedes cambiar ahora)
+                      </span>
+                    );
+                  })()}
+                </Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+                  <Input
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={(e) => {
+                      const value = e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, '');
+                      setFormData(prev => ({ ...prev, username: value }));
+                    }}
+                    placeholder="usuario.ejemplo"
+                    pattern="[a-z0-9._-]{3,30}"
+                    minLength={3}
+                    maxLength={30}
+                    className="bg-background pl-8"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  3-30 caracteres. Solo letras, números, puntos, guiones.
+                  {!formData.username && " Solo se puede cambiar cada 7 días."}
+                </p>
               </div>
 
               <div className="space-y-2">
