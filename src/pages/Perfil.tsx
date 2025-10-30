@@ -40,6 +40,8 @@ const Perfil = () => {
     rol_adulto: string;
     password: string;
     avatar_url: string | null;
+    username: string;
+    username_updated_at: string | null;
   }>({
     nombre_completo: "",
     telefono: "",
@@ -51,7 +53,9 @@ const Perfil = () => {
     comunidad_rovers: "",
     rol_adulto: "",
     password: "",
-    avatar_url: null
+    avatar_url: null,
+    username: "",
+    username_updated_at: null
   });
   const [ramaActual, setRamaActual] = useState("");
 
@@ -128,7 +132,9 @@ const Perfil = () => {
           comunidad_rovers: profile.comunidad_rovers || "",
           rol_adulto: profile.rol_adulto || "",
           password: "",
-          avatar_url: profile.avatar_url || null
+          avatar_url: profile.avatar_url || null,
+          username: (profile as any).username || "",
+          username_updated_at: (profile as any).username_updated_at || null
         });
       } else {
         // Crear perfil inicial

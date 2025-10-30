@@ -88,7 +88,16 @@ export async function getPendingRequestsForMe() {
   if (!me) return { data: [], error: new Error("No autenticado") } as const;
   return supabase
     .from("follows")
-    .select("follower_id, created_at")
+    .select(`
+      follower_id,
+      created_at,
+      follower:profiles!follows_follower_id_fkey(
+        id,
+        nombre_completo,
+        avatar_url,
+        username
+      )
+    `)
     .eq("followed_id", me)
     .eq("status", "pending")
     .order("created_at", { ascending: false });

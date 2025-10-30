@@ -19,7 +19,7 @@ const PerfilView = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userEmail, setUserEmail] = useState("");
-  const [pending, setPending] = useState<{ follower_id: string; created_at: string }[]>([]);
+  const [pending, setPending] = useState<{ follower_id: string; created_at: string; follower?: { id: string; nombre_completo: string | null; avatar_url: string | null; username?: string | null } }[]>([]);
   const [userId, setUserId] = useState<string>("");
   const [followersCount, setFollowersCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
@@ -43,7 +43,16 @@ const PerfilView = () => {
         const p = await getProfile(user.id).catch(() => null);
         // Load pending follow requests for me
         const { data: pend } = await getPendingRequestsForMe();
-        setPending(pend ? pend.map((x: any) => ({ follower_id: String(x.follower_id), created_at: String(x.created_at) })) : []);
+        setPending(pend ? pend.map((x: any) => ({
+          follower_id: String(x.follower_id),
+          created_at: String(x.created_at),
+          follower: x.follower ? {
+            id: String(x.follower.id),
+            nombre_completo: x.follower.nombre_completo ?? null,
+            avatar_url: x.follower.avatar_url ?? null,
+            username: x.follower.username ?? null,
+          } : undefined,
+        })) : []);
         // Load counts
         const [{ count: fCount }, { count: gCount }] = await Promise.all([
           getFollowersCount(user.id),
@@ -166,7 +175,12 @@ const PerfilView = () => {
           <div className="flex-1 min-w-0 w-full">
             {/* Username y botones */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 mb-4 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-normal">{profile.nombre_completo || 'Usuario Scout'}</h1>
+              <div className="flex flex-col items-center sm:items-start">
+                <h1 className="text-xl sm:text-2xl font-normal">{profile.nombre_completo || 'Usuario Scout'}</h1>
+                {(profile as any).username && (
+                  <p className="text-sm text-muted-foreground">@{(profile as any).username}</p>
+                )}
+              </div>
               <div className="flex gap-2 w-full sm:w-auto">
                 <Button 
                   variant="outline" 
@@ -286,8 +300,25 @@ const PerfilView = () => {
                 <ul className="space-y-2">
                   {pending.map((req) => (
                     <li key={req.follower_id} className="flex items-center justify-between gap-2">
-                      <span className="text-sm">{req.follower_id.slice(0, 8)}… quiere seguirte</span>
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <UserAvatar
+                          avatarUrl={req.follower?.avatar_url}
+                          userName={req.follower?.nombre_completo}
+                          size="sm"
+                          className="w-8 h-8 flex-shrink-0"
+                        />
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-medium truncate">
+                            {req.follower?.nombre_completo || 'Usuario'}
+                          </span>
+                          {req.follower?.username && (
+                            <span className="text-xs text-muted-foreground truncate">
+                              @{req.follower.username}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 flex-shrink-0">
                         <Button size="sm" variant="default" className="gap-1" onClick={async () => {
                           const { error } = await acceptFollow(req.follower_id);
                           if (error) return toast({ title: 'Error', description: (error as any).message || 'No se pudo aceptar', variant: 'destructive' });
