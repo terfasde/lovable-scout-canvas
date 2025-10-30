@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import UserAvatar from "@/components/UserAvatar";
 import { getProfile } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Share2, User } from "lucide-react";
+import { Settings, Share2 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -48,14 +48,6 @@ const PerfilView = () => {
     return "No especificada";
   };
 
-  const getInitials = (nombre: string) => {
-    const parts = nombre.trim().split(" ");
-    if (parts.length >= 2) {
-      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    }
-    return nombre.substring(0, 2).toUpperCase();
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -88,13 +80,14 @@ const PerfilView = () => {
       
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header estilo Instagram */}
-        <div className="flex items-start gap-8 mb-8 pb-8 border-b">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-8 pb-8 border-b">
           {/* Avatar */}
-          <Avatar className="w-32 h-32 md:w-40 md:h-40">
-            <AvatarFallback className="text-4xl font-semibold bg-primary text-primary-foreground">
-              {profile.nombre_completo ? getInitials(profile.nombre_completo) : <User className="w-16 h-16" />}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            avatarUrl={profile.avatar_url}
+            userName={profile.nombre_completo}
+            size="xl"
+            className="w-32 h-32 md:w-40 md:h-40 text-4xl"
+          />
 
           {/* Info y acciones */}
           <div className="flex-1 min-w-0">

@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ArrowLeft, Eye, EyeOff, Save, User } from "lucide-react";
+import UserAvatar from "@/components/UserAvatar";
+import AvatarCropDialog from "@/components/AvatarCropDialog";
+import { ArrowLeft, Eye, EyeOff, Save, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
@@ -20,6 +21,13 @@ const Perfil = () => {
   const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [showCropDialog, setShowCropDialog] = useState(false);
+  const [tempImageSrc, setTempImageSrc] = useState<string>("");
+  const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
+  
   const [formData, setFormData] = useState<{
     nombre_completo: string;
     telefono: string;
@@ -31,6 +39,7 @@ const Perfil = () => {
     comunidad_rovers: string;
     rol_adulto: string;
     password: string;
+    avatar_url: string | null;
   }>({
     nombre_completo: "",
     telefono: "",
@@ -41,7 +50,8 @@ const Perfil = () => {
     equipo_pioneros: "",
     comunidad_rovers: "",
     rol_adulto: "",
-    password: ""
+    password: "",
+    avatar_url: null
   });
   const [ramaActual, setRamaActual] = useState("");
 
@@ -117,7 +127,8 @@ const Perfil = () => {
           equipo_pioneros: profile.equipo_pioneros || "",
           comunidad_rovers: profile.comunidad_rovers || "",
           rol_adulto: profile.rol_adulto || "",
-          password: ""
+          password: "",
+          avatar_url: profile.avatar_url || null
         });
       } else {
         // Crear perfil inicial
@@ -161,6 +172,104 @@ const Perfil = () => {
     });
   }, []);
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Archivo inválido",
+        description: "Por favor selecciona una imagen",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validar tamaño (máx 4MB)
+    if (file.size > 4 * 1024 * 1024) {
+      toast({
+        title: "Archivo muy grande",
+        description: "La imagen no debe superar 4MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Crear preview temporal para el crop
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setTempImageSrc(reader.result as string);
+      setShowCropDialog(true);
+    };
+    reader.readAsDataURL(file);
+    
+    // Resetear el input para permitir seleccionar el mismo archivo
+    e.target.value = "";
+  };
+
+  const handleCropComplete = (croppedImage: Blob) => {
+    // Convertir blob a file
+    const fileName = `avatar-${Date.now()}.jpg`;
+    const croppedFile = new File([croppedImage], fileName, { type: "image/jpeg" });
+    
+    setAvatarFile(croppedFile);
+    setCroppedBlob(croppedImage);
+    
+    // Crear preview del crop
+    const previewUrl = URL.createObjectURL(croppedImage);
+    setAvatarPreview(previewUrl);
+  };
+
+  const uploadAvatar = async (userId: string): Promise<string | null> => {
+    if (!avatarFile) return null;
+
+    try {
+      setUploadingAvatar(true);
+
+      // Eliminar avatar anterior si existe
+      if (formData.avatar_url) {
+        const oldPath = formData.avatar_url.split('/').pop();
+        if (oldPath) {
+          await supabase.storage.from('avatars').remove([`${userId}/${oldPath}`]);
+        }
+      }
+
+      // Subir nuevo avatar
+      const fileExt = avatarFile.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${userId}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, avatarFile, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Obtener URL pública
+      const { data } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error: any) {
+      toast({
+        title: "Error al subir imagen",
+        description: error.message,
+        variant: "destructive"
+      });
+      return null;
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const removeAvatarPreview = () => {
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setCroppedBlob(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -168,6 +277,15 @@ const Perfil = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No hay sesión activa");
+
+      // Subir avatar si hay uno nuevo
+      let avatarUrl = formData.avatar_url;
+      if (avatarFile) {
+        const uploadedUrl = await uploadAvatar(user.id);
+        if (uploadedUrl) {
+          avatarUrl = uploadedUrl;
+        }
+      }
 
       // Actualizar contraseña si se proporcionó una nueva
       if (formData.password) {
@@ -183,6 +301,7 @@ const Perfil = () => {
         nombre_completo: formData.nombre_completo,
         telefono: formData.telefono,
         edad: formData.edad,
+        avatar_url: avatarUrl,
         updated_at: new Date().toISOString()
       };
 
@@ -223,8 +342,10 @@ const Perfil = () => {
         description: "Tus cambios han sido guardados."
       });
 
-      // Limpiar contraseña después de actualizar
-      setFormData(prev => ({ ...prev, password: "" }));
+      // Limpiar contraseña y avatar temporal después de actualizar
+      setFormData(prev => ({ ...prev, password: "", avatar_url: avatarUrl }));
+      setAvatarFile(null);
+      setAvatarPreview(null);
     } catch (error: any) {
       toast({
         title: "Error al actualizar",
@@ -248,14 +369,6 @@ const Perfil = () => {
     );
   }
 
-  const getInitials = (nombre: string) => {
-    const parts = nombre.trim().split(" ");
-    if (parts.length >= 2) {
-      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    }
-    return nombre.substring(0, 2).toUpperCase();
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -274,15 +387,74 @@ const Perfil = () => {
         </div>
 
         {/* Avatar Section */}
-        <div className="flex items-center gap-6 mb-8 pb-8 border-b">
-          <Avatar className="w-24 h-24">
-            <AvatarFallback className="text-3xl font-semibold bg-primary text-primary-foreground">
-              {formData.nombre_completo ? getInitials(formData.nombre_completo) : <User className="w-12 h-12" />}
-            </AvatarFallback>
-          </Avatar>
-          <div>
+        <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-8 border-b">
+          <div className="relative">
+            <UserAvatar
+              avatarUrl={avatarPreview || formData.avatar_url}
+              userName={formData.nombre_completo}
+              size="xl"
+            />
+            {avatarPreview && (
+              <button
+                onClick={removeAvatarPreview}
+                className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
+                type="button"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <div className="flex-1 text-center sm:text-left">
             <h2 className="text-xl font-medium mb-1">{formData.nombre_completo || 'Usuario Scout'}</h2>
-            <p className="text-sm text-muted-foreground">{userEmail}</p>
+            <p className="text-sm text-muted-foreground mb-3">{userEmail}</p>
+            <div className="flex gap-2 justify-center sm:justify-start">
+              <Label htmlFor="avatar-upload" className="cursor-pointer">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium">
+                  <Upload className="w-4 h-4" />
+                  {formData.avatar_url ? 'Cambiar foto' : 'Subir foto'}
+                </div>
+              </Label>
+              <Input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+              />
+              {formData.avatar_url && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      const { data: { user } } = await supabase.auth.getUser();
+                      if (!user) return;
+                      
+                      await supabase
+                        .from("profiles")
+                        .update({ avatar_url: null })
+                        .eq("user_id", user.id);
+                      
+                      setFormData(prev => ({ ...prev, avatar_url: null }));
+                      toast({
+                        title: "Foto eliminada",
+                        description: "Tu foto de perfil ha sido eliminada"
+                      });
+                    } catch (error: any) {
+                      toast({
+                        title: "Error",
+                        description: error.message,
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
+                  Eliminar foto
+                </Button>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">JPG, PNG o GIF. Máximo 4MB</p>
           </div>
         </div>
 
@@ -484,6 +656,14 @@ const Perfil = () => {
           </div>
         </form>
       </div>
+
+      {/* Avatar Crop Dialog */}
+      <AvatarCropDialog
+        open={showCropDialog}
+        imageSrc={tempImageSrc}
+        onClose={() => setShowCropDialog(false)}
+        onCropComplete={handleCropComplete}
+      />
     </div>
   );
 };

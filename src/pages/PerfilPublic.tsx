@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
 
 const PerfilPublic = () => {
@@ -42,8 +43,17 @@ const PerfilPublic = () => {
     <div className="min-h-screen bg-background py-12 px-4">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>{profile.nombre_completo}</CardTitle>
-          <CardDescription>Perfil público</CardDescription>
+          <div className="flex items-center gap-4">
+            <UserAvatar
+              avatarUrl={profile.avatar_url}
+              userName={profile.nombre_completo}
+              size="lg"
+            />
+            <div>
+              <CardTitle>{profile.nombre_completo}</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">Perfil público</p>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

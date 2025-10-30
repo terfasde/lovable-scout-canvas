@@ -10,21 +10,17 @@ const Hero = () => {
         <img 
           src={heroImage} 
           alt="Scouts del Séptimo en aventura" 
-          className="w-full h-full object-cover scale-105 transition-transform duration-[10000ms] hover:scale-100" 
+          className="w-full h-full object-cover scale-[1.02]" 
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-scout-black/85 via-scout-black/70 to-scout-black/40"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-scout-black/60 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-scout-black/75 via-scout-black/60 to-scout-black/35"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-scout-black/50 via-transparent to-transparent"></div>
       </div>
 
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 z-10 pt-20 pb-16">
         <div className="max-w-4xl">
           <div className="animate-fade-in space-y-8">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/15 backdrop-blur-md border border-primary/40 rounded-full shadow-lg">
-              <Calendar className="w-4 h-4 text-primary" />
-              <span className="text-primary font-semibold text-sm md:text-base">Desde 1964 formando líderes</span>
-            </div>
+           
             
             {/* Main Title */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-tight">

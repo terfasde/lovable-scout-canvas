@@ -148,6 +148,34 @@ All colors MUST be HSL.
   }
   
   .section-padding {
-    @apply py-16 md:py-24;
+    @apply py-14 md:py-20;
+  }
+}
+
+/* Background animations */
+@layer utilities {
+  @keyframes blob {
+    0% { transform: translate3d(0,0,0) scale(1); }
+    33% { transform: translate3d(6%, -3%, 0) scale(1.02); }
+    66% { transform: translate3d(-3%, 6%, 0) scale(0.99); }
+    100% { transform: translate3d(0,0,0) scale(1); }
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 0%; }
+  }
+
+  .bg-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(56px) saturate(1.1);
+    animation: blob 42s ease-in-out infinite alternate;
+  }
+
+  .animate-gradient-slow {
+    background-size: 200% 200%;
+    animation: gradientShift 60s ease-in-out infinite;
   }
 }

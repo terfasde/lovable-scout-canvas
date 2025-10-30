@@ -1,52 +1,29 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, Eye, EyeOff } from "lucide-react";
+import { Menu, X, LogOut, User, Share2, Settings } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { getProfile, updateProfile } from "@/lib/api";
 import logoImage from "@/assets/grupo-scout-logo.png";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  // Profile form state
-  const [profileLoaded, setProfileLoaded] = useState(false);
-  const [nombre, setNombre] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [emailLocal, setEmailLocal] = useState("");
-  const [edad, setEdad] = useState<number | null>(null);
-  const [seisena, setSeisena] = useState("");
-  const [patrulla, setPatrulla] = useState("");
-  const [equipoPioneros, setEquipoPioneros] = useState("");
-  const [comunidadRovers, setComunidadRovers] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,6 +32,22 @@ const Navigation = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Lock body scroll and close on Escape when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setIsMobileMenuOpen(false);
+      };
+      window.addEventListener("keydown", onKeyDown);
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener("keydown", onKeyDown);
+      };
+    }
+  }, [isMobileMenuOpen]);
 
   const navLinks = [
     { name: "Inicio", path: "/" },
@@ -74,17 +67,16 @@ const Navigation = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        const profile = await getProfile(user.id).catch(() => null);
+        
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("nombre_completo, avatar_url")
+          .eq("user_id", user.id)
+          .single();
+        
         if (profile) {
-          setNombre(profile.nombre_completo || "");
-          setTelefono(profile.telefono || "");
-          setEmailLocal(profile.email || user.email || "");
-          setEdad(profile.edad ?? null);
-          setSeisena(profile.seisena || "");
-          setPatrulla(profile.patrulla || "");
-          setEquipoPioneros(profile.equipo_pioneros || "");
-          setComunidadRovers(profile.comunidad_rovers || "");
-          setProfileLoaded(true);
+          setUserName(profile.nombre_completo || null);
+          setAvatarUrl(profile.avatar_url || null);
         }
       } catch (err) {
         // ignore silently
@@ -92,10 +84,14 @@ const Navigation = () => {
     })();
   }, []);
 
+  const showSolidBg = isScrolled || isMobileMenuOpen;
+
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-md shadow-md" : "bg-transparent"
+        showSolidBg
+          ? "bg-background/95 backdrop-blur-md shadow-md"
+          : "bg-background/60 backdrop-blur md:bg-transparent md:backdrop-blur-0 md:shadow-none"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -109,63 +105,15 @@ const Navigation = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                  isActive(link.path)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* Profile + Mobile Menu Button */}
-          <div className="flex items-center space-x-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center rounded-full focus:outline-none" aria-label="Abrir perfil">
-                  <Avatar>
-                    <AvatarFallback>GS</AvatarFallback>
-                  </Avatar>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onSelect={() => navigate('/perfil')}>Entrar al perfil</DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate('/perfil/editar')}>Actualizar perfil</DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate('/perfil/compartir')}>Compartir perfil</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={async () => { await supabase.auth.signOut(); navigate('/auth'); }}>Cerrar sesión</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </Button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 animate-fade-in">
-            <div className="flex flex-col space-y-2">
+          {/* Desktop Navigation + Profile */}
+          <div className="hidden md:flex items-center space-x-6">
+            {/* Nav Links */}
+            <div className="flex items-center space-x-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`px-4 py-3 rounded-md font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
                     isActive(link.path)
                       ? "bg-primary text-primary-foreground"
                       : "text-foreground hover:bg-muted"
@@ -175,7 +123,161 @@ const Navigation = () => {
                 </Link>
               ))}
             </div>
+
+            {/* Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="inline-flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all hover:ring-2 hover:ring-primary/30"
+                  aria-label="Abrir perfil"
+                >
+                  <UserAvatar 
+                    avatarUrl={avatarUrl} 
+                    userName={userName}
+                    size="md"
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{userName || "Usuario"}</p>
+                    <p className="text-xs leading-none text-muted-foreground">Mi cuenta</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate('/perfil')} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Ver perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate('/perfil/editar')} className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Editar perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate('/perfil/compartir')} className="cursor-pointer">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  <span>Compartir perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onSelect={async () => { 
+                    await supabase.auth.signOut(); 
+                    navigate('/auth'); 
+                    toast({
+                      title: "Sesión cerrada",
+                      description: "Has cerrado sesión correctamente"
+                    });
+                  }} 
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Cerrar sesión</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+
+          {/* Mobile Menu Button + Profile */}
+          <div className="flex md:hidden items-center space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="inline-flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all hover:ring-2 hover:ring-primary/30"
+                  aria-label="Abrir perfil"
+                >
+                  <UserAvatar 
+                    avatarUrl={avatarUrl} 
+                    userName={userName}
+                    size="md"
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{userName || "Usuario"}</p>
+                    <p className="text-xs leading-none text-muted-foreground">Mi cuenta</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => navigate('/perfil')} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Ver perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate('/perfil/editar')} className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Editar perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate('/perfil/compartir')} className="cursor-pointer">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  <span>Compartir perfil</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onSelect={async () => { 
+                    await supabase.auth.signOut(); 
+                    navigate('/auth'); 
+                    toast({
+                      title: "Sesión cerrada",
+                      description: "Has cerrado sesión correctamente"
+                    });
+                  }} 
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Cerrar sesión</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-controls="mobile-menu"
+              aria-expanded={isMobileMenuOpen}
+              aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <>
+            {/* Overlay to close on outside click */}
+            <div
+              className="md:hidden fixed inset-0 top-20 z-30 bg-black/25"
+              aria-hidden="true"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <div
+              id="mobile-menu"
+              className="md:hidden fixed inset-x-0 top-20 z-40 bg-background/95 backdrop-blur-md border-t border-border animate-fade-in"
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="container mx-auto px-4 py-4">
+                <div className="flex flex-col divide-y divide-border rounded-lg overflow-hidden shadow-lg">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
+                        isActive(link.path)
+                          ? "bg-primary text-primary-foreground"
+                          : "text-foreground hover:bg-muted"
+                      } ${isActive(link.path) ? "border-l-4 border-primary" : ""}`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </nav>

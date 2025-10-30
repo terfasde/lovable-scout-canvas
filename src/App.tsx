@@ -25,6 +25,7 @@ import Rovers from "./pages/ramas/rovers"
 import Staff from "./pages/ramas/staff"
 import Comite from "./pages/ramas/comite"
 import { supabase } from "../supabase/client"
+import BackgroundFX from "@/components/BackgroundFX"
 
 const queryClient = new QueryClient()
 
@@ -73,6 +74,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <SupabaseUserProvider>
+          <BackgroundFX />
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
