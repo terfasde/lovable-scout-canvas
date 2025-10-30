@@ -48,17 +48,17 @@ const Historia = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-6 shadow-sm">
-              <Calendar className="w-4 h-4 text-primary" />
-              <span className="text-primary font-semibold text-sm md:text-base">Nuestra Historia</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">Nuestra Historia</span>
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
               61 Años Construyendo Futuro
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
               Desde 1964, hemos sido parte fundamental del movimiento scout uruguayo,
               formando generaciones de líderes comprometidos con su comunidad.
             </p>
@@ -69,7 +69,7 @@ const Historia = () => {
       {/* Timeline Section */}
       <section className="section-padding">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mb-16">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 mb-12 sm:mb-16">
             <div className="text-center lg:text-left">
               <img
                 src={emblemImage}
@@ -77,14 +77,14 @@ const Historia = () => {
                 className="w-full rounded-xl shadow-2xl mb-4 transition-transform duration-300 hover:scale-105"
               />
             </div>
-            <div className="lg:col-span-2 flex flex-col justify-center space-y-6">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">El Comienzo de una Tradición</h2>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+            <div className="lg:col-span-2 flex flex-col justify-center space-y-4 sm:space-y-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">El Comienzo de una Tradición</h2>
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                 El Grupo Scout Séptimo de Montevideo fue fundado en 1964 por un grupo de jóvenes
                 comprometidos con los ideales de Baden-Powell. Desde entonces, hemos crecido 
                 hasta convertirnos en uno de los grupos scouts más reconocidos del Uruguay.
               </p>
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                 A lo largo de más de seis décadas, hemos formado a miles de scouts, 
                 participado en innumerables campamentos, competencias y proyectos de servicio 
                 comunitario. Nuestra historia es la historia de compromiso, fraternidad y 
@@ -98,22 +98,22 @@ const Historia = () => {
             {/* Vertical Line */}
             <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-primary via-accent to-primary"></div>
 
-            <div className="space-y-16">
+            <div className="space-y-12 sm:space-y-16">
               {milestones.map((milestone, index) => (
                 <div
                   key={index}
-                  className={`flex flex-col md:flex-row gap-8 items-center ${
+                  className={`flex flex-col md:flex-row gap-6 sm:gap-8 items-center ${
                     index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
                 >
                   <div className="flex-1">
                     <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 shadow-lg">
-                      <CardContent className="p-6 lg:p-8">
-                        <div className="text-5xl md:text-6xl font-bold text-primary mb-4 transition-transform duration-300 hover:scale-110">
+                      <CardContent className="p-5 sm:p-6 lg:p-8">
+                        <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary mb-3 sm:mb-4 transition-transform duration-300 hover:scale-110">
                           {milestone.year}
                         </div>
-                        <h3 className="text-2xl md:text-3xl font-bold mb-4">{milestone.title}</h3>
-                        <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">{milestone.title}</h3>
+                        <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
                           {milestone.description}
                         </p>
                       </CardContent>

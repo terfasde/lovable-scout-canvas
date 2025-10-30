@@ -103,14 +103,14 @@ const AvatarCropDialog = ({ open, imageSrc, onClose, onCropComplete }: AvatarCro
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Ajustar foto de perfil</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">Ajustar foto de perfil</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Crop Area */}
-          <div className="relative w-full h-[400px] bg-muted rounded-lg overflow-hidden">
+          <div className="relative w-full h-[300px] sm:h-[400px] bg-muted rounded-lg overflow-hidden">
             <Cropper
               image={imageSrc}
               crop={crop}
@@ -126,13 +126,13 @@ const AvatarCropDialog = ({ open, imageSrc, onClose, onCropComplete }: AvatarCro
 
           {/* Zoom Controls */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex items-center justify-between text-xs sm:text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
-                <ZoomOut className="w-4 h-4" />
+                <ZoomOut className="w-3 h-3 sm:w-4 sm:h-4" />
                 Zoom
               </span>
               <span className="flex items-center gap-1">
-                <ZoomIn className="w-4 h-4" />
+                <ZoomIn className="w-3 h-3 sm:w-4 sm:h-4" />
               </span>
             </div>
             <Slider
@@ -150,11 +150,11 @@ const AvatarCropDialog = ({ open, imageSrc, onClose, onCropComplete }: AvatarCro
           </p>
         </div>
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+        <DialogFooter className="flex-col sm:flex-row gap-2">
+          <Button variant="outline" onClick={onClose} disabled={loading} className="w-full sm:w-auto">
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={loading}>
+          <Button onClick={handleSave} disabled={loading} className="w-full sm:w-auto">
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>

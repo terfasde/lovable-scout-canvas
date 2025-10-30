@@ -211,36 +211,36 @@ const Galeria = () => {
       <Navigation />
 
       {/* Hero */}
-      <section className="pt-32 pb-6">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-4 sm:pb-6">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
-              <Camera className="w-5 h-5 text-primary" />
-              <span className="text-primary font-semibold">Galería</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
+              <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-primary font-semibold text-xs sm:text-sm">Galería</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-2">Momentos del Grupo</h1>
-            <p className="text-muted-foreground">Explora los álbumes y revive nuestras actividades</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">Momentos del Grupo</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Explora los álbumes y revive nuestras actividades</p>
           </div>
         </div>
       </section>
 
       {/* Admin bar */}
       {isAdmin && (
-        <section className="pb-2">
+        <section className="pb-2 sm:pb-3">
           <div className="container mx-auto px-4">
-            <div className="flex flex-wrap items-center gap-3 justify-center">
-              <Button variant="outline" onClick={() => setShowCreateDialog(true)} className="gap-2">
-                <FolderPlus className="w-4 h-4" /> Crear álbum
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 justify-center">
+              <Button variant="outline" size="sm" onClick={() => setShowCreateDialog(true)} className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                <FolderPlus className="w-3 h-3 sm:w-4 sm:h-4" /> Crear álbum
               </Button>
               <div>
                 <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={handleUpload} className="hidden" id="upload-input" />
-                <Button variant="outline" onClick={() => document.getElementById("upload-input")?.click()} className="gap-2" disabled={!selected}>
-                  <ImagePlus className="w-4 h-4" /> Subir fotos
+                <Button variant="outline" size="sm" onClick={() => document.getElementById("upload-input")?.click()} className="gap-1 sm:gap-2 text-xs sm:text-sm" disabled={!selected}>
+                  <ImagePlus className="w-3 h-3 sm:w-4 sm:h-4" /> Subir fotos
                 </Button>
               </div>
               {selected && (
-                <Button variant="outline" onClick={handleDeleteAlbum} className="gap-2 text-destructive hover:text-destructive">
-                  <FolderX className="w-4 h-4" /> Eliminar álbum
+                <Button variant="outline" size="sm" onClick={handleDeleteAlbum} className="gap-1 sm:gap-2 text-xs sm:text-sm text-destructive hover:text-destructive">
+                  <FolderX className="w-3 h-3 sm:w-4 sm:h-4" /> Eliminar
                 </Button>
               )}
             </div>
@@ -249,11 +249,11 @@ const Galeria = () => {
       )}
 
       {/* Albums pills */}
-      <section className="pb-6">
+      <section className="pb-4 sm:pb-6">
         <div className="container mx-auto px-4">
           {!loading && albums.length === 0 ? (
             <div className="text-center text-muted-foreground py-4">
-              <p className="text-sm">
+              <p className="text-xs sm:text-sm">
                 {isAdmin ? "No hay álbumes todavía. Crea tu primer álbum arriba." : "No hay álbumes disponibles."}
               </p>
             </div>
@@ -264,7 +264,7 @@ const Galeria = () => {
                   key={a.name}
                   onClick={() => setSelected(a.name)}
                   disabled={loadingImages}
-                  className={`px-4 py-2 rounded-full text-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     selected === a.name ? "bg-primary text-primary-foreground" : "hover:bg-accent-hover"
                   }`}
                 >
@@ -277,14 +277,14 @@ const Galeria = () => {
       </section>
 
       {/* Instagram-like grid */}
-      <section className="pb-16">
-        <div className="container mx-auto px-2 md:px-4">
+      <section className="pb-12 sm:pb-16">
+        <div className="container mx-auto px-1 sm:px-2 md:px-4">
           {loadingImages ? (
-            <div className="flex justify-center py-20">
-              <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <div className="flex justify-center py-16 sm:py-20">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
           ) : images.length ? (
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 md:gap-2">
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0.5 sm:gap-1 md:gap-2">
               {images.map((img, idx) => (
                 <Card key={idx} className="rounded-none overflow-hidden group relative">
                   <div className="relative aspect-square">
@@ -295,9 +295,9 @@ const Galeria = () => {
                           variant="destructive"
                           size="icon"
                           onClick={() => handleDelete(img.path)}
-                          className="rounded-full"
+                          className="rounded-full w-8 h-8 sm:w-10 sm:h-10"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                         </Button>
                       </div>
                     )}
@@ -306,9 +306,9 @@ const Galeria = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center text-muted-foreground py-20">
-              <Images className="w-10 h-10 mx-auto mb-3" />
-              No hay imágenes en este álbum todavía.
+            <div className="text-center text-muted-foreground py-16 sm:py-20">
+              <Images className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-3" />
+              <p className="text-xs sm:text-sm">No hay imágenes en este álbum todavía.</p>
             </div>
           )}
         </div>

@@ -23,13 +23,13 @@ const Hero = () => {
            
             
             {/* Main Title */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight">
               <span className="text-primary block mb-2">Grupo Scout Séptimo</span>
               <span className="block">de Montevideo</span>
             </h1>
             
             {/* Description */}
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-100 leading-relaxed max-w-2xl">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100 leading-relaxed max-w-2xl">
               Una comunidad de aventura, valores y formación integral para jóvenes. 
               Construimos un futuro mejor a través del escultismo.
             </p>
@@ -60,21 +60,21 @@ const Hero = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 mt-12 pt-8 border-t border-white/20">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/20">
               <div className="group">
-                <div className="text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">+61</div>
-                <div className="text-sm md:text-base text-gray-300 mt-2 font-medium">Años de historia</div>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">+61</div>
+                <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">Años de historia</div>
               </div>
               <div className="group">
-                <div className="text-4xl md:text-5xl font-bold text-accent transition-transform duration-300 group-hover:scale-110">+100</div>
-                <div className="text-sm md:text-base text-gray-300 mt-2 font-medium">Scouts activos</div>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent transition-transform duration-300 group-hover:scale-110">+100</div>
+                <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">Scouts activos</div>
               </div>
               <div className="group col-span-2 sm:col-span-1">
-                <div className="flex items-center gap-2 text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
-                  <MapPin className="w-8 h-8 md:w-10 md:h-10" />
+                <div className="flex items-center gap-2 text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
+                  <MapPin className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
                   <span>3</span>
                 </div>
-                <div className="text-sm md:text-base text-gray-300 mt-2 font-medium">Locales scouts</div>
+                <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">Locales scouts</div>
               </div>
             </div>
           </div>
