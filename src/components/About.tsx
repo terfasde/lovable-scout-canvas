@@ -162,14 +162,10 @@ const About = () => {
               Quiénes Somos
             </h2>
             <p className="text-base text-muted-foreground leading-relaxed">
-              El método scout se sustenta en cuatro pilares fundamentales que guían nuestro desarrollo y actividades. 
-              Estos pilares representan la esencia del escultismo y son la base sobre la que construimos el carácter, 
-              las habilidades y los valores de nuestros jóvenes.
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
             </p>
             <p className="text-base text-muted-foreground leading-relaxed">
-              La Promesa y la Ley Scout, junto con la vida en la naturaleza, el aprendizaje por la acción y el 
-              desarrollo de valores y virtudes, forman un método educativo integral que ha demostrado su efectividad 
-              a lo largo de más de un siglo de escultismo mundial.
+              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>
             <div className="pt-4">
               <Button asChild size="lg">
