@@ -14,6 +14,7 @@ import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import logoImage from "@/assets/grupo-scout-logo.png";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -100,8 +101,8 @@ const Navigation = () => {
           <Link to="/" className="flex items-center space-x-3">
             <img src={logoImage} alt="Grupo Scout Séptimo" className="w-12 h-12 object-contain" />
             <div className="hidden md:block">
-              <div className="text-xl font-bold text-foreground">Grupo Scout</div>
-              <div className="text-sm text-muted-foreground">Séptimo de Montevideo</div>
+              <div className="text-xl font-bold text-foreground">Grupo Scout Séptimo</div>
+              <div className="text-sm text-muted-foreground">de Montevideo</div>
             </div>
           </Link>
 
@@ -123,6 +124,9 @@ const Navigation = () => {
                 </Link>
               ))}
             </div>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Profile Dropdown */}
             <DropdownMenu>
@@ -179,6 +183,7 @@ const Navigation = () => {
 
           {/* Mobile Menu Button + Profile */}
           <div className="flex md:hidden items-center space-x-2">
+            <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button

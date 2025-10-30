@@ -19,8 +19,8 @@ const About = () => {
       title: "Manada",
       description: "Niños de 7 a 10 años, aprenden jugando y descubriendo el mundo scout",
       route: "manada",
-      hoverClass: "hover:bg-[#FEB21A] hover:text-gray-900",
-      hoverIconClass: "group-hover:text-gray-900"
+  hoverClass: "hover:bg-[#FEB21A] hover:text-white",
+  hoverIconClass: "group-hover:text-white"
     },
     {
       icon: Compass,
@@ -109,7 +109,7 @@ const About = () => {
                         <branch.icon className={`w-7 h-7 text-current transition-colors duration-300 ${branch.hoverIconClass}`} />
                       </div>
                       <h3 className="text-base font-bold transition-colors duration-300">{branch.title}</h3>
-                      <p className="text-xs text-muted-foreground group-hover:text-current/90 line-clamp-2 transition-colors duration-300">
+                      <p className="text-xs text-muted-foreground group-hover:text-white line-clamp-2 transition-colors duration-300">
                         {branch.description}
                       </p>
                     </CardContent>

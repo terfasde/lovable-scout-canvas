@@ -2,7 +2,21 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Hand, Calendar, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-scouts.jpg";
+import { useToast } from "@/hooks/use-toast";
+import { useSupabaseUser } from "@/App";
 const Hero = () => {
+  const { toast } = useToast();
+  const { user } = useSupabaseUser();
+  
+  const handleJoinClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+    if (user) {
+      // Evita navegar a /auth si ya está logueado
+      e.preventDefault();
+      toast({
+        title: "gracias por se parte de la pagina web oficial del Grupo scout septimo",
+      });
+    }
+  };
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Enhanced Overlay */}
@@ -25,7 +39,7 @@ const Hero = () => {
             {/* Main Title */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight">
               <span className="text-primary block mb-2">Grupo Scout Séptimo</span>
-              <span className="block">de Montevideo</span>
+              <span className="block text-white drop-shadow-lg">de Montevideo</span>
             </h1>
             
             {/* Description */}
@@ -36,13 +50,13 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
-              <Link to="/auth" className="group">
+              <Link to="/auth" className="group" onClick={handleJoinClick}>
                 <Button 
                   size="lg" 
                   variant="hero" 
                   className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-2xl hover:scale-105"
                 >
-                  Únete al Grupo
+                  Registrate en nuestra web
                   <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -72,7 +86,7 @@ const Hero = () => {
               <div className="group col-span-2 sm:col-span-1">
                 <div className="flex items-center gap-2 text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
                   <MapPin className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
-                  <span>3</span>
+                  <span>1</span>
                 </div>
                 <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">Locales scouts</div>
               </div>
