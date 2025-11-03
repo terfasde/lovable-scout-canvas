@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { isLocalBackend, apiFetch } from "@/lib/backend";
 import Navigation from "@/components/Navigation";
 import UserAvatar from "@/components/UserAvatar";
 import { Input } from "@/components/ui/input";
@@ -76,28 +77,39 @@ const Usuarios = () => {
         setCurrentUserId(user.id);
         setUserEmail(user.email || "");
 
-        // Preferir RPC que lista el directorio completo (bypasa RLS de profiles con SECURITY DEFINER)
-        const { data: rpcData, error: rpcError } = await supabase.rpc('list_profiles_directory');
-
-        let data: any[] | null = rpcData as any[] | null;
-        if (rpcError) {
-          // Fallback a lectura directa (respetando RLS)
-          const { data: d2, error: e2 } = await supabase
-            .from('profiles')
-            .select('user_id, nombre_completo, avatar_url, edad, is_public')
-            .order('nombre_completo', { ascending: true });
-          if (e2) throw e2;
-          data = d2 as any[] | null;
+        let rows: Profile[] = [];
+        if (isLocalBackend()) {
+          const data = await apiFetch('/profiles/directory?q=&limit=200&offset=0');
+          rows = (data as any[]).map((r: any) => ({
+            user_id: String(r.user_id),
+            nombre_completo: r.nombre_completo ?? null,
+            avatar_url: r.avatar_url ?? null,
+            edad: r.edad ?? null,
+            is_public: r.is_public ?? null,
+            username: r.username ?? null,
+          }));
+        } else {
+          // Preferir RPC que lista el directorio completo (bypasa RLS de profiles con SECURITY DEFINER)
+          const { data: rpcData, error: rpcError } = await supabase.rpc('list_profiles_directory');
+          let data: any[] | null = rpcData as any[] | null;
+          if (rpcError) {
+            // Fallback a lectura directa (respetando RLS)
+            const { data: d2, error: e2 } = await supabase
+              .from('profiles')
+              .select('user_id, nombre_completo, avatar_url, edad, is_public')
+              .order('nombre_completo', { ascending: true });
+            if (e2) throw e2;
+            data = d2 as any[] | null;
+          }
+          rows = (data || []).map((r: any) => ({
+            user_id: String(r.user_id),
+            nombre_completo: r.nombre_completo ?? null,
+            avatar_url: r.avatar_url ?? null,
+            edad: r.edad ?? null,
+            is_public: r.is_public ?? null,
+            username: r.username ?? null,
+          }));
         }
-
-        const rows: Profile[] = (data || []).map((r: any) => ({
-          user_id: String(r.user_id),
-          nombre_completo: r.nombre_completo ?? null,
-          avatar_url: r.avatar_url ?? null,
-          edad: r.edad ?? null,
-          is_public: r.is_public ?? null,
-          username: r.username ?? null,
-        }));
 
         setProfiles(rows);
         setFilteredProfiles(rows);

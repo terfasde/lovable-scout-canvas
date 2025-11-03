@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { isLocalBackend, apiFetch } from "@/lib/backend";
+import { getFollowers, getFollowing } from "@/lib/follows";
+import { createOrGetConversation, listDMs, sendDM } from "@/lib/dms";
 import { useToast } from "@/hooks/use-toast";
 import { Smile, Sticker } from "lucide-react";
 import {
@@ -69,37 +72,50 @@ export default function Mensajes() {
 
   useEffect(() => {
     (async () => {
+      if (isLocalBackend()) {
+        // me
+        const me = await apiFetch('/profiles/me') as any;
+        const myId = String(me.id || me.user_id);
+        setCurrentUserId(myId);
+        // mutuals
+        const { data: iFollow } = await getFollowing(myId);
+        const { data: followsMe } = await getFollowers(myId);
+        const iFollowSet = new Set<string>((iFollow || []).map((f: any) => String(f.followed_id || f.following_id)));
+        const followsMeSet = new Set<string>((followsMe || []).map((f: any) => String(f.follower_id)));
+        const mutuals = new Set<string>();
+        iFollowSet.forEach((id) => { if (followsMeSet.has(id)) mutuals.add(id); });
+        setMutualFollows(mutuals);
+        // Directory = perfiles de mutuals
+        const ids = Array.from(mutuals);
+        const profiles = ids.length ? await apiFetch('/profiles/batch', { method: 'POST', body: JSON.stringify({ ids }) }) : [];
+        setDirectory((profiles as any[]).map(p => ({
+          user_id: String((p as any).user_id),
+          nombre_completo: (p as any).nombre_completo ?? null,
+          username: (p as any).username ?? null,
+          avatar_url: (p as any).avatar_url ?? null,
+        })));
+        return;
+      }
+      // Supabase path
       const { data: userData } = await supabase.auth.getUser();
       if (userData.user) {
         setCurrentUserId(userData.user.id);
-        
-        // Obtener follows mutuos (yo sigo Y me siguen)
         const { data: iFollow } = await supabase
           .from('follows')
           .select('followed_id')
           .eq('follower_id', userData.user.id)
           .eq('status', 'accepted');
-        
         const { data: followsMe } = await supabase
           .from('follows')
           .select('follower_id')
           .eq('followed_id', userData.user.id)
           .eq('status', 'accepted');
-        
         const iFollowSet = new Set((iFollow || []).map(f => f.followed_id));
         const followsMeSet = new Set((followsMe || []).map(f => f.follower_id));
-        
-        // Intersección: usuarios que sigo Y me siguen
         const mutuals = new Set<string>();
-        iFollowSet.forEach(id => {
-          if (followsMeSet.has(id)) {
-            mutuals.add(id);
-          }
-        });
-        
+        iFollowSet.forEach(id => { if (followsMeSet.has(id)) mutuals.add(id); });
         setMutualFollows(mutuals);
       }
-      
       const { data, error } = await supabase.rpc('list_profiles_directory');
       if (error) {
         console.error(error);
@@ -117,7 +133,7 @@ export default function Mensajes() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     // Filtrar: solo usuarios que se siguen mutuamente (excluyendo el usuario actual)
-    let users = directory.filter(u => 
+    const users = directory.filter(u => 
       u.user_id !== currentUserId && mutualFollows.has(u.user_id)
     );
     
@@ -134,16 +150,36 @@ export default function Mensajes() {
   const startConversation = async () => {
     if (!selectedUser) return;
     try {
-      const { data, error } = await supabase.rpc('create_or_get_conversation', { other_user_id: selectedUser.user_id });
-      if (error) throw error;
-      setConversationId(String(data));
-      loadMessages(String(data));
+      if (isLocalBackend()) {
+        const convo = await createOrGetConversation(selectedUser.user_id);
+        setConversationId(convo.id);
+        loadMessages(convo.id);
+      } else {
+        const { data, error } = await supabase.rpc('create_or_get_conversation', { other_user_id: selectedUser.user_id });
+        if (error) throw error;
+        setConversationId(String(data));
+        loadMessages(String(data));
+      }
     } catch (e: any) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }
   };
 
   const loadMessages = async (convId: string) => {
+    if (isLocalBackend()) {
+      try {
+        const data = await listDMs(convId);
+        const messagesWithSender: MessageWithSender[] = (data as Message[]).map(msg => {
+          const sender = directory.find(u => u.user_id === msg.sender_id);
+          return { ...msg, sender_username: sender?.username, sender_name: sender?.nombre_completo };
+        });
+        setMessages(messagesWithSender);
+        setTimeout(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, 100);
+      } catch (error: any) {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      }
+      return;
+    }
     const { data, error } = await supabase
       .from('messages')
       .select('*')
@@ -153,80 +189,51 @@ export default function Mensajes() {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
       return;
     }
-    
-    // Enriquecer mensajes con info del sender
     const messagesWithSender: MessageWithSender[] = (data as Message[]).map(msg => {
       const sender = directory.find(u => u.user_id === msg.sender_id);
-      return {
-        ...msg,
-        sender_username: sender?.username,
-        sender_name: sender?.nombre_completo,
-      };
+      return { ...msg, sender_username: sender?.username, sender_name: sender?.nombre_completo };
     });
-    
     setMessages(messagesWithSender);
-    
-    // Scroll automático al último mensaje
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+    setTimeout(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, 100);
   };
   
-  // Real-time subscription para mensajes nuevos
+  // Real-time/polling para mensajes nuevos
   useEffect(() => {
     if (!conversationId) return;
-    
+    if (isLocalBackend()) {
+      const interval = setInterval(() => { loadMessages(conversationId); }, 1500);
+      return () => clearInterval(interval);
+    }
     const channel = supabase
       .channel(`messages:${conversationId}`)
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
-        }, 
-        (payload) => {
-          const newMsg = payload.new as Message;
-          const sender = directory.find(u => u.user_id === newMsg.sender_id);
-          const enriched: MessageWithSender = {
-            ...newMsg,
-            sender_username: sender?.username,
-            sender_name: sender?.nombre_completo,
-          };
-          
-          setMessages(prev => {
-            // Evitar duplicados
-            if (prev.some(m => m.id === enriched.id)) return prev;
-            return [...prev, enriched];
-          });
-          
-          // Scroll automático
-          setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-          }, 100);
-        }
-      )
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${conversationId}` }, (payload) => {
+        const newMsg = payload.new as Message;
+        const sender = directory.find(u => u.user_id === newMsg.sender_id);
+        const enriched: MessageWithSender = { ...newMsg, sender_username: sender?.username, sender_name: sender?.nombre_completo };
+        setMessages(prev => { if (prev.some(m => m.id === enriched.id)) return prev; return [...prev, enriched]; });
+        setTimeout(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, 100);
+      })
       .subscribe();
-    
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [conversationId, directory]);
 
   const send = async () => {
     if (!conversationId || !newMessage.trim()) return;
     
-    const { data: userData } = await supabase.auth.getUser();
-    const sender_id = userData.user?.id;
-    
     const tempMessage = newMessage.trim();
     setNewMessage(""); // Limpiar inmediatamente para mejor UX
     
     try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({ conversation_id: conversationId, sender_id, content: tempMessage });
-      if (error) throw error;
+      if (isLocalBackend()) {
+        await sendDM(conversationId, tempMessage);
+      } else {
+        const { data: userData } = await supabase.auth.getUser();
+        const sender_id = userData.user?.id;
+        const { error } = await supabase
+          .from('messages')
+          .insert({ conversation_id: conversationId, sender_id, content: tempMessage });
+        if (error) throw error;
+      }
     } catch (e: any) {
       setNewMessage(tempMessage); // Restaurar mensaje si falla
       toast({ title: 'Error', description: e.message, variant: 'destructive' });

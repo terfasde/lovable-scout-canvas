@@ -1,0 +1,35 @@
+services:
+  web:
+    image: node:20
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BACKEND=local
+      - VITE_API_BASE=http://localhost:8080
+      - CHOKIDAR_USEPOLLING=true
+      # Si usas Supabase en partes no migradas, pasa tus claves aquí o en un .env
+      # - VITE_SUPABASE_URL=
+      # - VITE_SUPABASE_ANON_KEY=
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    depends_on:
+      - server
+
+  server:
+    image: node:20
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - PORT=8080
+      - ORIGIN=http://localhost:5173
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+      - ./server/data:/app/server/data
+      - ./server/uploads:/app/server/uploads

@@ -37,6 +37,7 @@ import {
   inviteMembers,
   type GroupMessageWithSender
 } from "@/lib/groups";
+import { isLocalBackend } from "@/lib/backend";
 
 export default function GrupoDetail() {
   const { id } = useParams();
@@ -63,42 +64,53 @@ export default function GrupoDetail() {
     loadGroupData();
   }, [id]);
 
-  // Real-time subscription para mensajes
+  // Real-time/polling de mensajes
   useEffect(() => {
     if (!id) return;
+    if (isLocalBackend()) {
+      const interval = setInterval(async () => {
+        try {
+          const msgs = await listGroupMessages(id);
+          setMessages(msgs);
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        } catch (e) {
+          // ignore polling errors
+        }
+      }, 1500);
+      return () => clearInterval(interval);
+    }
 
     const channel = supabase
       .channel(`group_messages:${id}`)
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
           table: 'group_messages',
-          filter: `group_id=eq.${id}`
-        }, 
+          filter: `group_id=eq.${id}`,
+        },
         async (payload) => {
           const newMsg = payload.new as any;
-          
-          // Enriquecer con datos del sender
+
           const { data: profile } = await supabase
             .from('profiles')
             .select('user_id, nombre_completo, username, avatar_url')
             .eq('user_id', newMsg.sender_id)
             .single();
-          
+
           const enriched: GroupMessageWithSender = {
             ...newMsg,
             sender_name: profile?.nombre_completo,
             sender_username: profile?.username,
-            sender_avatar: profile?.avatar_url
+            sender_avatar: profile?.avatar_url,
           };
-          
-          setMessages(prev => {
-            if (prev.some(m => m.id === enriched.id)) return prev;
+
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === enriched.id)) return prev;
             return [...prev, enriched];
           });
-          
-          // Scroll automático
+
           setTimeout(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
           }, 100);

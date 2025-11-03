@@ -1,11 +1,37 @@
 import { supabase } from '@/integrations/supabase/client'
 import type { Database } from '@/integrations/supabase/types'
+import { isLocalBackend, apiFetch } from '@/lib/backend'
 
 // Tipo para el perfil
 type Profile = Database['public']['Tables']['profiles']['Row']
 
+// Calcular edad desde fecha de nacimiento
+function calculateAge(fechaNacimiento: string | null): number | null {
+  if (!fechaNacimiento) return null
+  try {
+    const birth = new Date(fechaNacimiento)
+    if (isNaN(birth.getTime())) return null
+    const now = new Date()
+    let years = now.getFullYear() - birth.getFullYear()
+    const m = now.getMonth() - birth.getMonth()
+    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) years--
+    return years
+  } catch {
+    return null
+  }
+}
+
 // Obtener un perfil
 export async function getProfile(userId: string) {
+  if (isLocalBackend()) {
+    // En backend local, el endpoint devuelve el perfil del usuario autenticado (me)
+    const me = await apiFetch('/profiles/me') as any
+    // Calcular edad desde fecha_nacimiento
+    if (me && me.fecha_nacimiento) {
+      me.edad = calculateAge(me.fecha_nacimiento)
+    }
+    return me as Profile
+  }
   const { data, error } = await supabase
     .from('profiles')
     .select()
@@ -18,6 +44,22 @@ export async function getProfile(userId: string) {
 
 // Actualizar un perfil
 export async function updateProfile(profile: Partial<Profile> & { user_id: string }) {
+  if (isLocalBackend()) {
+    // Mapea campos relevantes al backend local
+    const body: any = {}
+    if (profile.nombre_completo !== undefined) body.nombre_completo = profile.nombre_completo
+    if (profile.telefono !== undefined) body.telefono = profile.telefono
+    if ((profile as any).is_public !== undefined) body.is_public = (profile as any).is_public
+    if ((profile as any).avatar_url !== undefined) body.avatar_url = (profile as any).avatar_url
+    if ((profile as any).fecha_nacimiento !== undefined) body.fecha_nacimiento = (profile as any).fecha_nacimiento
+    if ((profile as any).rol_adulto !== undefined) body.rol_adulto = (profile as any).rol_adulto
+    if ((profile as any).seisena !== undefined) body.seisena = (profile as any).seisena
+    if ((profile as any).patrulla !== undefined) body.patrulla = (profile as any).patrulla
+    if ((profile as any).equipo_pioneros !== undefined) body.equipo_pioneros = (profile as any).equipo_pioneros
+    if ((profile as any).comunidad_rovers !== undefined) body.comunidad_rovers = (profile as any).comunidad_rovers
+    await apiFetch('/profiles/me', { method: 'PUT', body: JSON.stringify(body) })
+    return
+  }
   // Evitar duplicados por unique(user_id): usar update basado en filtro
   const { error } = await supabase
     .from('profiles')
@@ -49,6 +91,10 @@ export async function createEvento(evento: Record<string, any>) {
 
 // Marcar perfil como público/privado
 export async function setProfilePublic(userId: string, isPublic: boolean) {
+  if (isLocalBackend()) {
+    await apiFetch('/profiles/me', { method: 'PUT', body: JSON.stringify({ is_public: isPublic }) })
+    return
+  }
   // Primero intentamos actualizar; si no hay filas afectadas, insertamos esqueleto
   const { data, error } = await supabase
     .from('profiles')
