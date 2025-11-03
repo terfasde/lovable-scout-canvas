@@ -44,40 +44,25 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      // TEMPORAL: Email verification disabled for testing
-      // TODO: Re-enable email verification before production
-      // To re-enable: uncomment emailRedirectTo line below
       const redirectUrl = `${window.location.origin}/`;
       
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          // emailRedirectTo: redirectUrl, // TEMPORAL: Commented for testing (no email verification)
           data: {
             nombre: nombreCompleto || null,
             telefono: telefono || null,
           },
-          // TEMPORAL: Disable email validation for testing
           emailRedirectTo: redirectUrl,
         },
       });
 
       if (error) {
-        // TEMPORAL: Show more detailed error for debugging
-        console.error("Signup error:", error);
-        
         if (error.message.includes("already registered")) {
           toast({
             title: "Usuario ya registrado",
             description: "Este correo ya está registrado. Intenta iniciar sesión.",
-            variant: "destructive",
-          });
-        } else if (error.message.includes("invalid") || error.message.includes("Invalid")) {
-          // TEMPORAL: For testing, show a helpful message about email validation
-          toast({
-            title: "Error de validación",
-            description: "⚠️ MODO TESTING: Supabase requiere configuración adicional. Usa un email real (ej: tunombre@gmail.com) o configura 'Disable email confirmation' en Supabase Dashboard → Authentication → Settings.",
             variant: "destructive",
           });
         } else {
@@ -88,27 +73,12 @@ const Auth = () => {
           });
         }
       } else {
-        // TEMPORAL: Auto-login after signup (email verification disabled)
-        // TODO: Uncomment below to show email confirmation message in production
-        /*
         toast({
           title: "Confirma tu correo electrónico",
           description: `Te enviamos un correo a ${email}. Abre ese email y haz clic en el enlace de confirmación (revisa también la carpeta de spam).`,
         });
-        */
         
-        // TEMPORAL: Success message for testing (no email verification needed)
-        toast({
-          title: "¡Registro exitoso!",
-          description: "Iniciando sesión automáticamente... (Modo testing - verificación de email desactivada)",
-        });
-
-        // Auto login after signup
-        if (data.session) {
-          navigate("/");
-        }
-
-        // Clear form fields after signup
+        // Limpia los campos después del registro
         setEmail("");
         setPassword("");
         setTelefono("");

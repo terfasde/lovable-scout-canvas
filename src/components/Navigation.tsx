@@ -193,6 +193,17 @@ const Navigation = () => {
               </Link>
 
               <Link
+                to="/mensajes"
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  isActive("/mensajes")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                Mensajes
+              </Link>
+
+              <Link
                 to="/galeria"
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
                   isActive("/galeria")
@@ -421,6 +432,19 @@ const Navigation = () => {
                     } ${isActive("/usuarios") ? "border-l-4 border-primary" : ""}`}
                   >
                     Comuni 7
+                  </Link>
+
+                  {/* Mensajes */}
+                  <Link
+                    to="/mensajes"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
+                      isActive("/mensajes")
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-muted"
+                    } ${isActive("/mensajes") ? "border-l-4 border-primary" : ""}`}
+                  >
+                    Mensajes
                   </Link>
 
                   {/* Galería */}
