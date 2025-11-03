@@ -20,6 +20,7 @@ import PerfilCompartir from "./pages/PerfilCompartir"
 import PerfilPublic from "./pages/PerfilPublic"
 import Usuarios from "./pages/Usuarios"
 import Mensajes from "./pages/Mensajes"
+import GrupoDetail from "./pages/GrupoDetail"
 import NotFound from "./pages/NotFound"
 import Manada from "./pages/ramas/manada"
 import Tropa from "./pages/ramas/tropa"
@@ -95,6 +96,7 @@ const App = () => (
             <Route path="/perfil-public/:id" element={<PerfilPublic />} />
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/mensajes" element={<Mensajes />} />
+            <Route path="/grupos/:id" element={<GrupoDetail />} />
 
             {/* Ramas */}
             <Route path="/ramas/manada" element={<Manada />} />

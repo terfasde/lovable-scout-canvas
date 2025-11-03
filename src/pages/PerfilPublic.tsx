@@ -6,12 +6,26 @@ import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { followUser, getFollowRelation, cancelRequest, unfollowUser } from "@/lib/follows";
+import { UserPlus, UserMinus, Clock, Check, Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const PerfilPublic = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [profile, setProfile] = useState<any | null>(null);
   const [relation, setRelation] = useState<any | null>(null);
+  const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -39,26 +53,53 @@ const PerfilPublic = () => {
   const status = useMemo(() => relation?.status as string | undefined, [relation]);
 
   const handleFollow = async () => {
-    if (!id) return;
-    const { error } = await followUser(id);
-    if (error) return toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    toast({ title: 'Solicitud enviada', description: 'Te avisaremos cuando sea aceptada (si es privado).' });
-    const rel = await getFollowRelation(id);
-    if (!rel.error) setRelation(rel.data);
+    if (!id || actionLoading) return;
+    
+    setActionLoading(true);
+    try {
+      const { error } = await followUser(id);
+      if (error) {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        return;
+      }
+      
+      toast({ 
+        title: 'Solicitud enviada', 
+        description: 'Te avisaremos cuando sea aceptada (si es privado).' 
+      });
+      
+      const rel = await getFollowRelation(id);
+      if (!rel.error) setRelation(rel.data);
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   const handleCancelOrUnfollow = async () => {
-    if (!id) return;
-    if (status === 'pending') {
-      const { error } = await cancelRequest(id);
-      if (error) return toast({ title: 'Error', description: error.message, variant: 'destructive' });
-      setRelation(null);
-      toast({ title: 'Solicitud cancelada' });
-    } else if (status === 'accepted') {
-      const { error } = await unfollowUser(id);
-      if (error) return toast({ title: 'Error', description: error.message, variant: 'destructive' });
-      setRelation(null);
-      toast({ title: 'Dejaste de seguir' });
+    if (!id || actionLoading) return;
+    
+    setActionLoading(true);
+    try {
+      if (status === 'pending') {
+        const { error } = await cancelRequest(id);
+        if (error) {
+          toast({ title: 'Error', description: error.message, variant: 'destructive' });
+          return;
+        }
+        setRelation(null);
+        toast({ title: 'Solicitud cancelada' });
+      } else if (status === 'accepted') {
+        const { error } = await unfollowUser(id);
+        if (error) {
+          toast({ title: 'Error', description: error.message, variant: 'destructive' });
+          return;
+        }
+        setRelation(null);
+        toast({ title: 'Dejaste de seguir' });
+        setShowUnfollowDialog(false);
+      }
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -100,13 +141,58 @@ const PerfilPublic = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mb-4">
+          <div className="mb-4 flex gap-2">
             {status === 'accepted' ? (
-              <Button variant="outline" size="sm" onClick={handleCancelOrUnfollow}>Dejar de seguir</Button>
+              <AlertDialog open={showUnfollowDialog} onOpenChange={setShowUnfollowDialog}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" disabled={actionLoading} className="gap-2">
+                    {actionLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Siguiendo
+                      </>
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>¿Dejar de seguir?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Ya no verás las publicaciones de {profile?.nombre_completo || 'este usuario'} en tu feed.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleCancelOrUnfollow}>
+                      Dejar de seguir
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             ) : status === 'pending' ? (
-              <Button variant="outline" size="sm" onClick={handleCancelOrUnfollow}>Cancelar solicitud</Button>
+              <Button variant="outline" size="sm" onClick={handleCancelOrUnfollow} disabled={actionLoading} className="gap-2">
+                {actionLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Clock className="h-4 w-4" />
+                    Solicitud pendiente
+                  </>
+                )}
+              </Button>
             ) : (
-              <Button size="sm" onClick={handleFollow}>Seguir</Button>
+              <Button size="sm" onClick={handleFollow} disabled={actionLoading} className="gap-2">
+                {actionLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <UserPlus className="h-4 w-4" />
+                    Seguir
+                  </>
+                )}
+              </Button>
             )}
           </div>
           <div className="space-y-3">

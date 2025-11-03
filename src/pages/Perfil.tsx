@@ -57,6 +57,7 @@ const Perfil = () => {
     username: "",
     username_updated_at: null
   });
+  const [originalData, setOriginalData] = useState<typeof formData | null>(null);
   const [ramaActual, setRamaActual] = useState("");
 
   const navigate = useNavigate();
@@ -120,7 +121,7 @@ const Perfil = () => {
 
       if (profile) {
         setProfile(profile as Profile);
-        setFormData({
+        const profileData = {
           ...formData,
           nombre_completo: userNombre,
           telefono: userTelefono,
@@ -135,7 +136,9 @@ const Perfil = () => {
           avatar_url: profile.avatar_url || null,
           username: (profile as any).username || "",
           username_updated_at: (profile as any).username_updated_at || null
-        });
+        };
+        setFormData(profileData);
+        setOriginalData(profileData); // Guardar datos originales
       } else {
         // Crear perfil inicial
         const { error: insertError } = await supabase
@@ -161,13 +164,66 @@ const Perfil = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    
+    // Validación específica por campo
+    if (name === "telefono") {
+      // Solo números y guiones/espacios
+      const cleaned = value.replace(/[^\d\s\-+()]/g, '');
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+      return;
+    }
+    
+    if (name === "edad") {
+      const edad = parseInt(value) || 0;
+      if (edad < 0 || edad > 120) {
+        toast({
+          title: "Edad inválida",
+          description: "La edad debe estar entre 0 y 120 años",
+          variant: "destructive"
+        });
+        return;
+      }
+      setFormData(prev => ({ ...prev, [name]: edad }));
+      return;
+    }
+    
+    if (name === "nombre_completo" && value.length > 100) {
+      toast({
+        title: "Nombre muy largo",
+        description: "El nombre no puede exceder 100 caracteres",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [name]: name === "edad" ? parseInt(value) || 0 : value
+      [name]: value
     }));
   };
 
   const [userEmail, setUserEmail] = useState("");
+
+  // Detectar si hay cambios pendientes
+  const hasChanges = () => {
+    if (!originalData) return false;
+    if (avatarFile) return true; // Hay nuevo avatar
+    if (formData.password) return true; // Hay nueva contraseña
+    
+    // Comparar campos editables
+    return (
+      formData.nombre_completo !== originalData.nombre_completo ||
+      formData.telefono !== originalData.telefono ||
+      formData.edad !== originalData.edad ||
+      formData.fecha_nacimiento !== originalData.fecha_nacimiento ||
+      formData.seisena !== originalData.seisena ||
+      formData.patrulla !== originalData.patrulla ||
+      formData.equipo_pioneros !== originalData.equipo_pioneros ||
+      formData.comunidad_rovers !== originalData.comunidad_rovers ||
+      formData.rol_adulto !== originalData.rol_adulto ||
+      formData.username !== originalData.username
+    );
+  };
 
   useEffect(() => {
     // Obtener el email del usuario cuando se carga el componente
@@ -183,20 +239,22 @@ const Perfil = () => {
     if (!file) return;
 
     // Validar tipo de archivo
-    if (!file.type.startsWith('image/')) {
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
       toast({
-        title: "Archivo inválido",
-        description: "Por favor selecciona una imagen",
+        title: "Tipo de archivo inválido",
+        description: "Solo se permiten imágenes (JPG, PNG, GIF, WEBP)",
         variant: "destructive"
       });
       return;
     }
 
-    // Validar tamaño (máx 4MB)
-    if (file.size > 4 * 1024 * 1024) {
+    // Validar tamaño (máx 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
       toast({
         title: "Archivo muy grande",
-        description: "La imagen no debe superar 4MB",
+        description: "La imagen no debe superar 5MB",
         variant: "destructive"
       });
       return;
@@ -278,6 +336,62 @@ const Perfil = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validaciones antes de guardar
+    if (!formData.nombre_completo.trim()) {
+      toast({
+        title: "Campo requerido",
+        description: "El nombre completo es obligatorio",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (formData.nombre_completo.length < 3) {
+      toast({
+        title: "Nombre muy corto",
+        description: "El nombre debe tener al menos 3 caracteres",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (formData.telefono && formData.telefono.replace(/\D/g, '').length < 8) {
+      toast({
+        title: "Teléfono inválido",
+        description: "El teléfono debe tener al menos 8 dígitos",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (formData.edad < 7 || formData.edad > 120) {
+      toast({
+        title: "Edad inválida",
+        description: "La edad debe estar entre 7 y 120 años",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (formData.password && formData.password.length < 6) {
+      toast({
+        title: "Contraseña débil",
+        description: "La contraseña debe tener al menos 6 caracteres",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (formData.username && formData.username.length < 3) {
+      toast({
+        title: "Username muy corto",
+        description: "El username debe tener al menos 3 caracteres",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setSaving(true);
 
     try {
@@ -353,8 +467,14 @@ const Perfil = () => {
         description: "Tus cambios han sido guardados."
       });
 
-      // Limpiar contraseña y avatar temporal después de actualizar
-      setFormData(prev => ({ ...prev, password: "", avatar_url: avatarUrl }));
+      // Actualizar datos originales y limpiar estados temporales
+      const updatedData = {
+        ...formData,
+        password: "",
+        avatar_url: avatarUrl
+      };
+      setFormData(updatedData);
+      setOriginalData(updatedData);
       setAvatarFile(null);
       setAvatarPreview(null);
     } catch (error: any) {
@@ -476,15 +596,26 @@ const Perfil = () => {
             
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="nombre_completo">Nombre completo</Label>
+                <Label htmlFor="nombre_completo">Nombre completo *</Label>
                 <Input
                   id="nombre_completo"
                   name="nombre_completo"
                   value={formData.nombre_completo}
                   onChange={handleChange}
                   required
-                  className="bg-background"
+                  maxLength={100}
+                  className={`bg-background ${
+                    formData.nombre_completo.length > 0 && formData.nombre_completo.length < 3
+                      ? 'border-destructive focus-visible:ring-destructive'
+                      : ''
+                  }`}
                 />
+                {formData.nombre_completo.length > 0 && formData.nombre_completo.length < 3 && (
+                  <p className="text-xs text-destructive">Mínimo 3 caracteres</p>
+                )}
+                {formData.nombre_completo.length > 90 && (
+                  <p className="text-xs text-muted-foreground">{100 - formData.nombre_completo.length} caracteres restantes</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -528,6 +659,9 @@ const Perfil = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   3-30 caracteres. Solo letras, números, puntos, guiones.
+                  {formData.username.length > 0 && formData.username.length < 3 && (
+                    <span className="block text-destructive mt-1">Mínimo 3 caracteres</span>
+                  )}
                   {!formData.username && " Solo se puede cambiar cada 7 días."}
                 </p>
               </div>
@@ -693,7 +827,11 @@ const Perfil = () => {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1 gap-2" disabled={saving}>
+            <Button 
+              type="submit" 
+              className="flex-1 gap-2" 
+              disabled={saving || !hasChanges()}
+            >
               {saving ? (
                 <>
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
@@ -702,14 +840,34 @@ const Perfil = () => {
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Guardar cambios
+                  {hasChanges() ? 'Guardar cambios' : 'Sin cambios'}
                 </>
               )}
             </Button>
-            <Button type="button" variant="outline" onClick={() => navigate('/perfil')}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => {
+                if (hasChanges()) {
+                  if (confirm('¿Descartar los cambios sin guardar?')) {
+                    navigate('/perfil');
+                  }
+                } else {
+                  navigate('/perfil');
+                }
+              }}
+            >
               Cancelar
             </Button>
           </div>
+          
+          {hasChanges() && (
+            <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-md">
+              <p className="text-sm text-primary font-medium">
+                ⚠️ Tienes cambios sin guardar
+              </p>
+            </div>
+          )}
         </form>
       </div>
 

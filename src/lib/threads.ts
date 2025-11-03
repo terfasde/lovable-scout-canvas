@@ -8,6 +8,12 @@ export type Thread = {
   created_at: string;
 };
 
+export type ThreadWithAuthor = Thread & {
+  author_name?: string | null;
+  author_username?: string | null;
+  author_avatar?: string | null;
+};
+
 export type ThreadComment = {
   id: string;
   thread_id: string;
@@ -31,8 +37,28 @@ export async function createThread(content: string, file?: File | null): Promise
   const userId = userData.user?.id;
   if (!userId) throw new Error('No autenticado');
 
+  // Validación de contenido
+  if (!content.trim() && !file) {
+    throw new Error('El contenido no puede estar vacío');
+  }
+  
+  if (content.length > 500) {
+    throw new Error('El contenido no puede exceder 500 caracteres');
+  }
+
   let imageUrl: string | null = null;
   if (file) {
+    // Validar tipo y tamaño de imagen
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      throw new Error('Solo se permiten imágenes (JPG, PNG, GIF, WEBP)');
+    }
+    
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new Error('La imagen no puede superar 5MB');
+    }
+    
     const ext = file.name.split('.').pop();
     const path = `${userId}/${crypto.randomUUID()}.${ext || 'jpg'}`;
     const { error: upErr } = await supabase.storage.from('thread-images').upload(path, file, {
@@ -75,4 +101,18 @@ export async function addComment(threadId: string, content: string): Promise<Thr
     .single();
   if (error) throw error;
   return data as ThreadComment;
+}
+
+export async function deleteThread(threadId: string): Promise<void> {
+  const { error } = await supabase
+    .from('threads')
+    .delete()
+    .eq('id', threadId);
+  if (error) throw error;
+}
+
+export function isAdmin(userEmail: string | undefined): boolean {
+  if (!userEmail) return false;
+  const adminEmails = import.meta.env.VITE_GALLERY_ADMIN_EMAILS?.split(',') || [];
+  return adminEmails.includes(userEmail);
 }

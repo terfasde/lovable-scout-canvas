@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Navigation from "@/components/Navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,7 @@ export default function Mensajes() {
   const [messages, setMessages] = useState<MessageWithSender[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUserId, setCurrentUserId] = useState<string>("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -164,20 +165,70 @@ export default function Mensajes() {
     });
     
     setMessages(messagesWithSender);
+    
+    // Scroll automático al último mensaje
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
+  
+  // Real-time subscription para mensajes nuevos
+  useEffect(() => {
+    if (!conversationId) return;
+    
+    const channel = supabase
+      .channel(`messages:${conversationId}`)
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`
+        }, 
+        (payload) => {
+          const newMsg = payload.new as Message;
+          const sender = directory.find(u => u.user_id === newMsg.sender_id);
+          const enriched: MessageWithSender = {
+            ...newMsg,
+            sender_username: sender?.username,
+            sender_name: sender?.nombre_completo,
+          };
+          
+          setMessages(prev => {
+            // Evitar duplicados
+            if (prev.some(m => m.id === enriched.id)) return prev;
+            return [...prev, enriched];
+          });
+          
+          // Scroll automático
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId, directory]);
 
   const send = async () => {
     if (!conversationId || !newMessage.trim()) return;
+    
     const { data: userData } = await supabase.auth.getUser();
     const sender_id = userData.user?.id;
+    
+    const tempMessage = newMessage.trim();
+    setNewMessage(""); // Limpiar inmediatamente para mejor UX
+    
     try {
       const { error } = await supabase
         .from('messages')
-        .insert({ conversation_id: conversationId, sender_id, content: newMessage.trim() });
+        .insert({ conversation_id: conversationId, sender_id, content: tempMessage });
       if (error) throw error;
-      setNewMessage("");
-      await loadMessages(conversationId);
     } catch (e: any) {
+      setNewMessage(tempMessage); // Restaurar mensaje si falla
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }
   };
@@ -195,7 +246,6 @@ export default function Mensajes() {
         .from('messages')
         .insert({ conversation_id: conversationId, sender_id, content: sticker });
       if (error) throw error;
-      await loadMessages(conversationId);
     } catch (e: any) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }
@@ -253,24 +303,27 @@ export default function Mensajes() {
                   {messages.length === 0 ? (
                     <div className="text-muted-foreground text-sm text-center py-8">Sin mensajes aún</div>
                   ) : (
-                    messages.map(m => {
-                      const isMine = m.sender_id === currentUserId;
-                      return (
-                        <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[75%] rounded-lg px-3 py-2 ${isMine ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                            {!isMine && (
-                              <div className="text-xs opacity-70 mb-1">
-                                {m.sender_username ? `@${m.sender_username}` : m.sender_name || 'Scout'}
+                    <>
+                      {messages.map(m => {
+                        const isMine = m.sender_id === currentUserId;
+                        return (
+                          <div key={m.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-[75%] rounded-lg px-3 py-2 ${isMine ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                              {!isMine && (
+                                <div className="text-xs opacity-70 mb-1">
+                                  {m.sender_username ? `@${m.sender_username}` : m.sender_name || 'Scout'}
+                                </div>
+                              )}
+                              <div className="text-sm">{m.content}</div>
+                              <div className={`text-xs mt-1 ${isMine ? 'opacity-70' : 'opacity-50'}`}>
+                                {new Date(m.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                               </div>
-                            )}
-                            <div className="text-sm">{m.content}</div>
-                            <div className={`text-xs mt-1 ${isMine ? 'opacity-70' : 'opacity-50'}`}>
-                              {new Date(m.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                             </div>
                           </div>
-                        </div>
-                      );
-                    })
+                        );
+                      })}
+                      <div ref={messagesEndRef} />
+                    </>
                   )}
                 </div>
                 <div className="flex gap-2">
