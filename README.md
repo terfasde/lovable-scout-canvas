@@ -1,4 +1,4 @@
-# 🏕️ Lovable Scout Canvas
+# 🏕️ Pagina oficial del Grupo Scout Septimo
 
 Aplicación web para gestión de grupos scout con perfil de usuarios, galería, eventos y más.
 
