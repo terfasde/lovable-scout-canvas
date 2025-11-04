@@ -43,6 +43,47 @@ chmod +x scripts/start.sh
 
 ---
 
+### `deploy.ps1`
+
+Empaqueta un build listo para subir a hosting estático, generando una carpeta versionada en `artifacts/<env>/` y un `MANIFEST.txt` con tamaños.
+
+Opciones:
+
+- Entornos: `staging` | `prod` (default `prod`)
+- `-Zip` para crear un `.zip` además de la carpeta
+- `-Destination <ruta>` para copiar el artefacto a un destino (p. ej., pendrive)
+
+Uso rápido (PowerShell en Windows):
+
+```powershell
+# Staging
+.\scriptsuild.ps1 staging
+.\scripts\deploy.ps1 staging -Zip
+
+# Producción
+.\scripts\deploy.ps1 prod -Zip
+
+# Copiar a un destino (ej. E:\deploy)
+.\scripts\deploy.ps1 prod -Zip -Destination "E:\deploy"
+
+# Vía npm scripts
+npm run deploy:staging
+npm run deploy:staging:zip
+npm run deploy:prod
+npm run deploy:prod:zip
+
+# Pasar parámetros extra a PowerShell a través de npm
+npm run deploy:prod -- --Destination "E:\deploy"
+```
+
+Resultado:
+
+- `artifacts/staging/dist-YYYYMMDD-HHMM/` o `artifacts/prod/dist-YYYYMMDD-HHMM/`
+- `MANIFEST.txt` con listado de archivos y tamaños
+- ZIP opcional si usas `-Zip`
+
+---
+
 ### `export-to-pendrive.ps1`
 
 **Exportar proyecto a un pendrive o disco externo**

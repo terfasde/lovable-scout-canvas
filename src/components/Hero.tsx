@@ -35,13 +35,13 @@ const Hero = () => {
         <div className="max-w-4xl">
           <div className="animate-fade-in space-y-8">
             {/* Main Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight">
               <span className="text-primary block mb-2">Grupo Scout Séptimo</span>
               <span className="block text-white drop-shadow-lg">de Montevideo</span>
             </h1>
             
             {/* Description */}
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100 leading-relaxed max-w-2xl">
+            <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100 leading-relaxed max-w-2xl">
               Una comunidad de aventura, valores y formación integral para jóvenes. 
               Construimos un futuro mejor a través del escultismo.
             </p>

@@ -16,7 +16,7 @@ function setStoredToken(token: string) {
 }
 
 function clearStoredToken() {
-  try { localStorage.removeItem("local_api_token") } catch {}
+  try { localStorage.removeItem("local_api_token") } catch { /* noop */ }
 }
 
 async function login(email: string, password: string) {

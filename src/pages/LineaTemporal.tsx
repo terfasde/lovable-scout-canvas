@@ -1,5 +1,3 @@
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import emblemImage from "@/assets/scout-emblem.jpg";
@@ -45,7 +43,6 @@ const Historia = () => {
 
   return (
     <div className="min-h-screen">
-      <Navigation />
       
       {/* Hero Section */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
@@ -135,7 +132,7 @@ const Historia = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* Footer global en App.tsx */}
     </div>
   );
 };

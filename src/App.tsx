@@ -1,4 +1,6 @@
 import { useEffect, useState, createContext, useContext, Suspense, lazy } from "react"
+import NavigationNew from "@/components/NavigationNew"
+import FooterNew from "@/components/FooterNew"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -6,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { ThemeProvider } from "next-themes"
 import ScrollToTop from "@/components/ScrollToTop"
+import RouteTransition from "@/components/RouteTransition"
 import Index from "./pages/Index"
 const LineaTemporal = lazy(() => import("./pages/LineaTemporal"))
 const Historia = lazy(() => import("./pages/Historia"))
@@ -92,8 +95,10 @@ const App = () => (
         <BrowserRouter>
           <SupabaseUserProvider>
             <BackgroundFX />
+            <NavigationNew />
             <ScrollToTop />
             <Suspense fallback={<div className="p-8 text-center text-sm text-muted-foreground">Cargando…</div>}>
+            <RouteTransition>
             <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/linea-temporal" element={<LineaTemporal />} />
@@ -122,7 +127,9 @@ const App = () => (
             {/* Ruta por defecto */}
             <Route path="*" element={<NotFound />} />
             </Routes>
+            </RouteTransition>
             </Suspense>
+            <FooterNew />
           </SupabaseUserProvider>
         </BrowserRouter>
       </TooltipProvider>

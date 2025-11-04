@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
-import Navigation from "@/components/Navigation";
 import UserAvatar from "@/components/UserAvatar";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -449,7 +448,7 @@ const Usuarios = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+        {/* Navigation global en App.tsx */}
         <div className="h-20"></div>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -460,7 +459,7 @@ const Usuarios = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      {/* Navigation global en App.tsx */}
       <div className="h-16 sm:h-20"></div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">

@@ -9,7 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { getProfile, setProfilePublic } from "@/lib/api";
 import { getAuthUser } from "@/lib/backend";
 import { ArrowLeft, Copy, Globe, Lock, Share2, User } from "lucide-react";
-import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
 
 type Tables = Database['public']['Tables'];
@@ -81,7 +80,7 @@ const PerfilCompartir = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+        {/* Navigation global en App.tsx */}
         <div className="h-20"></div>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -92,7 +91,7 @@ const PerfilCompartir = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      {/* Navigation global en App.tsx */}
       <div className="h-20"></div>
       
       <div className="max-w-2xl mx-auto px-4 py-8">

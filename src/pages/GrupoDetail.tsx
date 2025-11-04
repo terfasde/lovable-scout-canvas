@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import Navigation from "@/components/Navigation";
+// Navigation es global en App.tsx
 import UserAvatar from "@/components/UserAvatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -371,7 +371,7 @@ export default function GrupoDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+        {/* Navigation global en App.tsx */}
         <div className="h-20"></div>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -386,7 +386,7 @@ export default function GrupoDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      {/* Navigation global en App.tsx */}
       <div className="h-16 sm:h-20"></div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">

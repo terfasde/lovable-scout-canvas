@@ -10,7 +10,6 @@ import { Settings, Share2, Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
 import { getPendingRequestsForMe, acceptFollow, rejectFollow, getFollowersCount, getFollowingCount, getFollowersWithProfiles, getFollowingWithProfiles } from "@/lib/follows";
 
@@ -138,7 +137,7 @@ const PerfilView = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+  {/* Navigation global en App.tsx */}
         <div className="h-20"></div>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -150,7 +149,7 @@ const PerfilView = () => {
   if (!profile) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+  {/* Navigation global en App.tsx */}
         <div className="h-20"></div>
         <div className="flex flex-col items-center justify-center py-20">
           <p className="text-muted-foreground mb-4">No se encontró perfil.</p>
@@ -162,7 +161,7 @@ const PerfilView = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+  {/* Navigation global en App.tsx */}
       <div className="h-16 sm:h-20"></div>
       
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
@@ -233,8 +232,8 @@ const PerfilView = () => {
                             setDeleting(true)
                             await deleteMyAccount()
                             // Cerrar sesión local y de Supabase por si estaba activa
-                            try { localStorage.removeItem('local_api_token') } catch {}
-                            try { await supabase.auth.signOut() } catch {}
+                            try { localStorage.removeItem('local_api_token') } catch { /* noop */ }
+                            try { await supabase.auth.signOut() } catch { /* noop */ }
                             toast({ title: 'Cuenta eliminada' })
                             navigate('/auth')
                           } catch (err: any) {

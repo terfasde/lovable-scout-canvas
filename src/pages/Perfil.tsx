@@ -8,7 +8,6 @@ import UserAvatar from "@/components/UserAvatar";
 import AvatarCropDialog from "@/components/AvatarCropDialog";
 import { ArrowLeft, Eye, EyeOff, Save, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
 import { isLocalBackend, uploadImage, getAuthUser } from "@/lib/backend";
 import { getProfile as getLocalProfile, updateProfile as updateLocalProfile } from "@/lib/api";
@@ -500,7 +499,7 @@ const Perfil = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
+  {/* Navigation global en App.tsx */}
         <div className="h-20"></div>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -511,7 +510,7 @@ const Perfil = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+  {/* Navigation global en App.tsx */}
       <div className="h-20"></div>
       
       <div className="max-w-3xl mx-auto px-4 py-8">

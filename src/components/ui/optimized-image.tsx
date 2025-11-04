@@ -112,7 +112,7 @@ export function OptimizedImage({
       )}
 
       {/* Main image */}
-      {imageState !== 'error' || (imageState === 'error' && fallback) && (
+      {(imageState !== 'error' || (imageState === 'error' && !!fallback)) && (
         <img
           src={currentSrc}
           alt={alt}

@@ -273,8 +273,8 @@ const Navigation = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onSelect={async () => { 
-                    try { await supabase.auth.signOut(); } catch {}
-                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch {}
+                    try { await supabase.auth.signOut(); } catch { /* noop */ }
+                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch { /* noop */ }
                     navigate('/auth'); 
                     toast({
                       title: "Sesión cerrada",
@@ -329,8 +329,8 @@ const Navigation = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onSelect={async () => { 
-                    try { await supabase.auth.signOut(); } catch {}
-                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch {}
+                    try { await supabase.auth.signOut(); } catch { /* noop */ }
+                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch { /* noop */ }
                     navigate('/auth'); 
                     toast({
                       title: "Sesión cerrada",

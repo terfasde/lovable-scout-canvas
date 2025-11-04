@@ -23,7 +23,18 @@ function MapComponent() {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
   const [mapError, setMapError] = useState<string | null>(null);
 
-  // Si no hay API key, mostramos un placeholder amable en lugar de romper
+  // Hooks deben llamarse de forma incondicional (regla de hooks)
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: "google-map-script",
+    // Si no hay API key, pasamos un placeholder; mostraremos un placeholder amigable más abajo
+    googleMapsApiKey: apiKey || "NO_API_KEY",
+    version: "weekly",
+    // libraries: ["places"] // Descomenta si necesitas Places u otras libs
+  });
+
+  const center = useMemo(() => DEFAULT_CENTER, []);
+
+  // Si no hay API key, mostramos un placeholder amable en lugar de intentar cargar el mapa
   if (!apiKey) {
     return (
       <div className="w-full h-full flex flex-col gap-2 items-center justify-center bg-muted/30 text-muted-foreground text-sm p-4">
@@ -32,15 +43,6 @@ function MapComponent() {
       </div>
     );
   }
-
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: apiKey,
-    version: "weekly",
-    // libraries: ["places"] // Descomenta si necesitas Places u otras libs
-  });
-
-  const center = useMemo(() => DEFAULT_CENTER, []);
 
   // Manejamos errores de carga del script
   if (loadError) {

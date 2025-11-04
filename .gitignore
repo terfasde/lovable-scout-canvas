@@ -15,6 +15,11 @@ dist
 dist-ssr
 *.local
 
+# Environment files (IMPORTANTE: nunca commitear con valores reales)
+.env.development.local
+.env.staging.local
+.env.production.local
+
 # TypeScript
 *.tsbuildinfo
 

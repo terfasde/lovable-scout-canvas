@@ -1,5 +1,4 @@
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+// Navigation y Footer son globales en App.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Flag, Target, Users, Calendar, Award, Flame } from "lucide-react";
@@ -30,7 +29,6 @@ const Bauen = () => {
 
   return (
     <div className="min-h-screen">
-      <Navigation />
       
       {/* Hero Section */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
@@ -184,7 +182,7 @@ const Bauen = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* Footer global en App.tsx */}
     </div>
   );
 };

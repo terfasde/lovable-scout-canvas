@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -68,7 +66,6 @@ const Contacto = () => {
 
   return (
     <div className="min-h-screen">
-      <Navigation />
 
       {/* Hero Section */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
@@ -215,7 +212,7 @@ const Contacto = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* Footer global en App.tsx */}
     </div>
   );
 };

@@ -8,6 +8,8 @@
  * - Mejor control sobre qué se registra y cómo
  */
 
+import { isLoggingEnabled, isDebugEnabled, isDevelopment } from './env';
+
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
 interface LogEntry {
@@ -19,17 +21,26 @@ interface LogEntry {
 }
 
 class Logger {
-  private isDevelopment: boolean;
   private enabledLevels: Set<LogLevel>;
   private logHistory: LogEntry[] = [];
   private maxHistorySize: number = 100;
 
   constructor() {
-    this.isDevelopment = import.meta.env.DEV;
-    // En producción, solo loguear warnings y errores
-    this.enabledLevels = this.isDevelopment
-      ? new Set(['info', 'warn', 'error', 'debug'])
-      : new Set(['warn', 'error']);
+    // En producción, solo loguear warnings y errores (a menos que se habilite explícitamente)
+    const loggingEnabled = isLoggingEnabled();
+    const debugEnabled = isDebugEnabled();
+    const devMode = isDevelopment();
+    
+    if (!loggingEnabled && !devMode) {
+      // Producción sin logging habilitado: solo errores
+      this.enabledLevels = new Set(['error']);
+    } else if (debugEnabled || devMode) {
+      // Debug o desarrollo: todos los niveles
+      this.enabledLevels = new Set(['info', 'warn', 'error', 'debug']);
+    } else {
+      // Logging habilitado pero no debug: info, warn, error
+      this.enabledLevels = new Set(['info', 'warn', 'error']);
+    }
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -85,7 +96,7 @@ class Logger {
     const entry = this.createLogEntry('info', message, context);
     this.addToHistory(entry);
     
-    if (this.isDevelopment) {
+    if (isDevelopment()) {
       console.log(this.formatMessage(entry), context || '');
     }
   }
@@ -128,7 +139,7 @@ class Logger {
     const entry = this.createLogEntry('debug', message, context);
     this.addToHistory(entry);
     
-    if (this.isDevelopment) {
+    if (isDevelopment()) {
       console.debug(this.formatMessage(entry), context || '');
     }
   }

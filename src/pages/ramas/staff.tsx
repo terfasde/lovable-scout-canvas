@@ -1,5 +1,3 @@
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -8,7 +6,6 @@ import communityImage from "@/assets/community-scouts.jpg";
 const Staff = () => {
   return (
     <div className="min-h-screen">
-      <Navigation />
       <section className="section-padding">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-6">Staff</h1>
@@ -37,7 +34,7 @@ const Staff = () => {
           </div>
         </div>
       </section>
-      <Footer />
+      {/* Footer global en App.tsx */}
     </div>
   );
 };

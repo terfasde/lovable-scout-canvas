@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Camera, FolderPlus, ImagePlus, Images, Trash2, FolderX } from "lucide-react";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { getAuthUser } from "@/lib/backend";
 import { createAlbum, listAlbums, listImages, uploadImage, deleteImage, deleteAlbum } from "@/lib/gallery";
 import { useToast } from "@/hooks/use-toast";
@@ -208,7 +207,6 @@ const Galeria = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
 
       {/* Hero */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-4 sm:pb-6">
@@ -262,10 +260,14 @@ const Galeria = () => {
               {albums.map((a) => (
                 <button
                   key={a.name}
+                  type="button"
                   onClick={() => setSelected(a.name)}
                   disabled={loadingImages}
-                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                    selected === a.name ? "bg-primary text-primary-foreground" : "hover:bg-accent-hover"
+                  aria-pressed={selected === a.name}
+                  className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background ${
+                    selected === a.name
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "hover:bg-accent/60 border-border"
                   }`}
                 >
                   {a.name}
@@ -288,7 +290,14 @@ const Galeria = () => {
               {images.map((img, idx) => (
                 <Card key={idx} className="rounded-none overflow-hidden group relative">
                   <div className="relative aspect-square">
-                    <img src={img.url} alt={`foto-${idx}`} className="w-full h-full object-cover" loading="lazy" />
+                    <OptimizedImage
+                      src={img.url}
+                      alt={`foto-${idx}`}
+                      aspectRatio="square"
+                      loading="lazy"
+                      showPlaceholder
+                      className="transition-transform duration-300 group-hover:scale-105"
+                    />
                     {isAdmin && (
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <Button
@@ -351,7 +360,7 @@ const Galeria = () => {
         </DialogContent>
       </Dialog>
 
-      <Footer />
+      {/* Footer global en App.tsx */}
     </div>
   );
 };

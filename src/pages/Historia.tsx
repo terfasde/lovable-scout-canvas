@@ -1,7 +1,7 @@
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+// Navigation y Footer son globales en App.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Calendar, Users, Flame } from "lucide-react";
+import { Reveal } from "@/components/Reveal";
 
 const Historia = () => {
   const locales = [
@@ -75,12 +75,11 @@ const Historia = () => {
 
   return (
     <div className="min-h-screen">
-      <Navigation />
       
       {/* Hero Section */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
+          <Reveal className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm">Desde 1964</span>
@@ -91,7 +90,7 @@ const Historia = () => {
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Más de 60 años formando jóvenes con valores scout, desde nuestros inicios en el Colegio Alemán hasta nuestros locales actuales.
             </p>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -99,24 +98,26 @@ const Historia = () => {
       <section className="py-8 sm:py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <Card className="card-hover border-primary/20">
-              <CardContent className="p-5 sm:p-6 md:p-8">
-                <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <Reveal>
+              <Card className="card-hover border-primary/20">
+                <CardContent className="p-5 sm:p-6 md:p-8">
+                  <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Nacimiento del Grupo</h2>
+                      <p className="text-sm sm:text-base text-muted-foreground mb-2 sm:mb-3">
+                        Nuestro grupo nació en el <strong>Colegio Alemán en 1964</strong>, cuando un pequeño grupo de jóvenes y guías se reunió con la intención de formar un espacio de encuentro y formación scout.
+                      </p>
+                      <p className="text-sm sm:text-base text-muted-foreground">
+                        Desde esos primeros pasos hemos crecido manteniendo los valores fundacionales y adaptándonos a nuevas generaciones, siempre fieles al espíritu scout.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">Nacimiento del Grupo</h2>
-                    <p className="text-sm sm:text-base text-muted-foreground mb-2 sm:mb-3">
-                      Nuestro grupo nació en el <strong>Colegio Alemán en 1964</strong>, cuando un pequeño grupo de jóvenes y guías se reunió con la intención de formar un espacio de encuentro y formación scout.
-                    </p>
-                    <p className="text-sm sm:text-base text-muted-foreground">
-                      Desde esos primeros pasos hemos crecido manteniendo los valores fundacionales y adaptándonos a nuevas generaciones, siempre fieles al espíritu scout.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -138,28 +139,30 @@ const Historia = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {locales.map((local, index) => (
-                <Card key={index} className="card-hover h-full">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <Reveal key={index}>
+                  <Card className="card-hover h-full">
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-base sm:text-lg mb-1">{local.nombre}</h3>
+                          <p className="text-xs text-muted-foreground truncate">{local.direccion}</p>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-base sm:text-lg mb-1">{local.nombre}</h3>
-                        <p className="text-xs text-muted-foreground truncate">{local.direccion}</p>
-                      </div>
-                    </div>
-                    <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">{local.resumen}</p>
-                    <details className="text-xs sm:text-sm text-muted-foreground">
-                      <summary className="cursor-pointer text-primary hover:text-primary/80 font-medium">
-                        Ver detalles
-                      </summary>
-                      <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t whitespace-pre-line text-xs leading-relaxed">
-                        {local.detalle}
-                      </div>
-                    </details>
-                  </CardContent>
-                </Card>
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">{local.resumen}</p>
+                      <details className="text-xs sm:text-sm text-muted-foreground">
+                        <summary className="cursor-pointer text-primary hover:text-primary/80 font-medium">
+                          Ver detalles
+                        </summary>
+                        <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t whitespace-pre-line text-xs leading-relaxed">
+                          {local.detalle}
+                        </div>
+                      </details>
+                    </CardContent>
+                  </Card>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -171,53 +174,57 @@ const Historia = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* Acontecimientos importantes */}
-            <Card className="card-hover">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <Reveal>
+              <Card className="card-hover">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    </div>
+                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Acontecimientos Clave</h2>
                   </div>
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Acontecimientos Clave</h2>
-                </div>
-                <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground">
-                  <li className="flex gap-2 sm:gap-3">
-                    <span className="text-primary font-bold flex-shrink-0">2004</span>
-                    <span>Creación de BAUEN, la competencia nacional organizada por nuestro grupo.</span>
-                  </li>
-                  <li className="flex gap-2 sm:gap-3">
-                    <span className="text-primary font-bold flex-shrink-0">2019</span>
-                    <span>Ganadores de la competencia BAUEN.</span>
-                  </li>
-                  <li className="flex gap-2 sm:gap-3">
-                    <span className="text-primary font-bold flex-shrink-0">2025</span>
-                    <span>Participación en JOTA-JOTI y colaboración con Grupo de Coleccionistas Scouts.</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+                  <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground">
+                    <li className="flex gap-2 sm:gap-3">
+                      <span className="text-primary font-bold flex-shrink-0">2004</span>
+                      <span>Creación de BAUEN, la competencia nacional organizada por nuestro grupo.</span>
+                    </li>
+                    <li className="flex gap-2 sm:gap-3">
+                      <span className="text-primary font-bold flex-shrink-0">2019</span>
+                      <span>Ganadores de la competencia BAUEN.</span>
+                    </li>
+                    <li className="flex gap-2 sm:gap-3">
+                      <span className="text-primary font-bold flex-shrink-0">2025</span>
+                      <span>Participación en JOTA-JOTI y colaboración con Grupo de Coleccionistas Scouts.</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Reveal>
 
             {/* Am Lagerfeuers */}
-            <Card className="card-hover">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <Reveal>
+              <Card className="card-hover">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    </div>
+                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Am Lagerfeuer</h2>
                   </div>
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Am Lagerfeuer</h2>
-                </div>
-                <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
-                  Nuestra tradición de reuniones nocturnas alrededor del fuego: cantos, historias y reflexión. "Am Lagerfeuer" resume la esencia del compañerismo scout.
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Eventos periódicos en el campo de campamento donde compartimos experiencias y fortalecemos lazos.
-                </p>
-              </CardContent>
-            </Card>
+                  <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
+                    Nuestra tradición de reuniones nocturnas alrededor del fuego: cantos, historias y reflexión. "Am Lagerfeuer" resume la esencia del compañerismo scout.
+                  </p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Eventos periódicos en el campo de campamento donde compartimos experiencias y fortalecemos lazos.
+                  </p>
+                </CardContent>
+              </Card>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      <Footer />
+      {/* Footer global en App.tsx */}
     </div>
   );
 };

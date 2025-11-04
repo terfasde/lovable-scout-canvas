@@ -6,6 +6,7 @@
 
 param(
     [Parameter(Position=0)]
+    [ValidateSet('dev','full','stop','help')]
     [string]$Modo = "full"
 )
 
@@ -26,6 +27,18 @@ function Show-Menu {
 function Start-DevMode {
     Write-Host "Iniciando modo DESARROLLO (SQLite)..." -ForegroundColor Green
     Write-Host ""
+    if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+        Write-Host "[ERROR] Docker no está instalado o no está en PATH." -ForegroundColor Red
+        Write-Host "Instala Docker Desktop e intenta nuevamente: https://www.docker.com/products/docker-desktop/" -ForegroundColor Yellow
+        return
+    }
+
+    if (-not (Test-Path -Path "docker-compose.dev.yml")) {
+        Write-Host "[ERROR] No se encontró docker-compose.dev.yml en el directorio actual." -ForegroundColor Red
+        Write-Host "Ubicación actual: $(Get-Location)" -ForegroundColor Yellow
+        return
+    }
+
     docker compose -f docker-compose.dev.yml up -d
     
     if ($LASTEXITCODE -eq 0) {
@@ -45,6 +58,18 @@ function Start-DevMode {
 function Start-FullMode {
     Write-Host "Iniciando arquitectura COMPLETA (PostgreSQL + Monitoreo)..." -ForegroundColor Green
     Write-Host ""
+    if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+        Write-Host "[ERROR] Docker no está instalado o no está en PATH." -ForegroundColor Red
+        Write-Host "Instala Docker Desktop e intenta nuevamente: https://www.docker.com/products/docker-desktop/" -ForegroundColor Yellow
+        return
+    }
+
+    if (-not (Test-Path -Path "docker-compose.full.yml")) {
+        Write-Host "[ERROR] No se encontró docker-compose.full.yml en el directorio actual." -ForegroundColor Red
+        Write-Host "Ubicación actual: $(Get-Location)" -ForegroundColor Yellow
+        return
+    }
+
     docker compose -f docker-compose.full.yml up -d
     
     if ($LASTEXITCODE -eq 0) {
@@ -71,10 +96,10 @@ function Stop-Services {
     Write-Host ""
     
     Write-Host "Deteniendo modo dev..." -ForegroundColor Gray
-    docker compose -f docker-compose.dev.yml down 2>$null
-    
-    Write-Host "Deteniendo modo full..." -ForegroundColor Gray
-    docker compose -f docker-compose.full.yml down 2>$null
+    if (Get-Command docker -ErrorAction SilentlyContinue) {
+        docker compose -f docker-compose.dev.yml down 2>$null
+        docker compose -f docker-compose.full.yml down 2>$null
+    }
     
     Write-Host ""
     Write-Host "[OK] Servicios detenidos" -ForegroundColor Green

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import Navigation from "@/components/Navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -264,7 +263,7 @@ export default function Mensajes() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      {/* Navigation global en App.tsx */}
       <div className="h-16 sm:h-20"></div>
 
       <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
