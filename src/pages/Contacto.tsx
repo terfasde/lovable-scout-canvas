@@ -7,7 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import MapComponent from "../components/MapComponent";
+// Usa MapComponentEmbed si tienes problemas con billing de Google Cloud
+// import MapComponent from "../components/MapComponentEmbed";
+import MapComponent from "../components/MapComponentEmbed";
 
 const Contacto = () => {
   const { toast } = useToast();

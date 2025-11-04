@@ -1,38 +1,66 @@
+import { useEffect, useState } from "react";
 import { Calendar, MapPin, Flag, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { getEventos } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const Events = () => {
-  const events = [
-    {
-      title: "Campamento de Verano 2026",
-      date: "22-26 Enero, 2026",
-      location: "Próximamente Revelado",
-      participants: "+100 scouts",
-      type: "Campamento",
-      status: "Confirmado para más adelante",
-      color: "primary",
-    },
-    {
-      title: "BAUEN - Competencia Nacional",
-      date: "Próximamente Anunciado",
-      location: "Parque Barofio, Montevideo",
-      participants: "+200 scouts",
-      type: "Competencia, Construcción, Hermandad",
-      status: "Próximamente",
-      color: "primary",
-    },
-    {
-      title: "Lentejeada Solidaria, Servicio Comunitario",
-      date: "Próximamente",
-      location: "Club de Pesca Ramirez",
-      participants: "+30 scouts, Fundación Álvarez Carldeyro Barcia",
-      type: "Servicio",
-      status: "Confirmado",
-      color: "primary",
-    },
-  ];
+  const { toast } = useToast();
+  const [events, setEvents] = useState<Array<any>>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const rows = await getEventos().catch(() => []);
+        if (rows && rows.length) {
+          setEvents(rows.map((r: any) => ({
+            title: r.title || r.nombre || 'Evento',
+            date: r.fecha_inicio || r.date || '',
+            location: r.location || '',
+            participants: r.participants || '',
+            type: r.type || '',
+            status: r.status || '',
+            color: r.color || 'primary',
+          })));
+        } else {
+          // Fallback a contenido estático si no hay datos en DB
+          setEvents([
+            {
+              title: "Campamento de Verano 2026",
+              date: "22-26 Enero, 2026",
+              location: "Próximamente Revelado",
+              participants: "+100 scouts",
+              type: "Campamento",
+              status: "Confirmado para más adelante",
+              color: "primary",
+            },
+            {
+              title: "BAUEN - Competencia Nacional",
+              date: "Próximamente Anunciado",
+              location: "Parque Barofio, Montevideo",
+              participants: "+200 scouts",
+              type: "Competencia, Construcción, Hermandad",
+              status: "Próximamente",
+              color: "primary",
+            },
+            {
+              title: "Lentejeada Solidaria, Servicio Comunitario",
+              date: "Próximamente",
+              location: "Club de Pesca Ramirez",
+              participants: "+30 scouts, Fundación Álvarez Carldeyro Barcia",
+              type: "Servicio",
+              status: "Confirmado",
+              color: "primary",
+            },
+          ]);
+        }
+      } catch (e: any) {
+        toast({ title: 'Error', description: e?.message || 'No se pudieron cargar los eventos', variant: 'destructive' });
+      }
+    })();
+  }, []);
 
   return (
     <section className="section-padding bg-gradient-to-b from-muted/30 to-background">

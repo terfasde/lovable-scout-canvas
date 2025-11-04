@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { isLocalBackend, apiFetch } from "@/lib/backend";
+import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
 import Navigation from "@/components/Navigation";
 import UserAvatar from "@/components/UserAvatar";
 import { Input } from "@/components/ui/input";
@@ -68,14 +68,10 @@ const Usuarios = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          // Requiere login
-          navigate('/auth');
-          return;
-        }
-        setCurrentUserId(user.id);
-        setUserEmail(user.email || "");
+        const auth = await getAuthUser();
+        if (!auth) { navigate('/auth'); return; }
+        setCurrentUserId(auth.id);
+        setUserEmail(auth.email || "");
 
         let rows: Profile[] = [];
         if (isLocalBackend()) {

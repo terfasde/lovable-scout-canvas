@@ -246,13 +246,17 @@ export default function Mensajes() {
 
   const sendSticker = async (sticker: string) => {
     if (!conversationId) return;
-    const { data: userData } = await supabase.auth.getUser();
-    const sender_id = userData.user?.id;
     try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({ conversation_id: conversationId, sender_id, content: sticker });
-      if (error) throw error;
+      if (isLocalBackend()) {
+        await sendDM(conversationId, sticker);
+      } else {
+        const { data: userData } = await supabase.auth.getUser();
+        const sender_id = userData.user?.id;
+        const { error } = await supabase
+          .from('messages')
+          .insert({ conversation_id: conversationId, sender_id, content: sticker });
+        if (error) throw error;
+      }
     } catch (e: any) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }

@@ -71,6 +71,10 @@ export async function updateProfile(profile: Partial<Profile> & { user_id: strin
 
 // Obtener eventos
 export async function getEventos() {
+  if (isLocalBackend()) {
+    const rows = await apiFetch('/events')
+    return rows as Array<any>
+  }
   const { data, error } = await supabase
     .from('eventos')
     .select()
@@ -82,6 +86,10 @@ export async function getEventos() {
 
 // Crear un evento
 export async function createEvento(evento: Record<string, any>) {
+  if (isLocalBackend()) {
+    await apiFetch('/events', { method: 'POST', body: JSON.stringify(evento) })
+    return
+  }
   const { error } = await supabase
     .from('eventos')
     .insert(evento)
@@ -140,4 +148,15 @@ export async function setProfilePublic(userId: string, isPublic: boolean) {
 
     if (insertError) throw insertError
   }
+}
+
+// Eliminar la cuenta del usuario autenticado
+export async function deleteMyAccount(): Promise<void> {
+  if (isLocalBackend()) {
+    await apiFetch('/users/me', { method: 'DELETE' })
+    return
+  }
+  // En modo Supabase puro, borrar cuenta no está implementado aquí para evitar inconsistencias
+  // Se podría implementar un RPC o flujo admin específico si fuera necesario.
+  throw new Error('Eliminar cuenta no disponible en este modo')
 }

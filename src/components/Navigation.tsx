@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { isLocalBackend, apiFetch } from "@/lib/backend";
 import logoImage from "@/assets/grupo-scout-logo.png";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -68,18 +69,24 @@ const Navigation = () => {
     // Load profile for current user (if logged in)
     (async () => {
       try {
+        if (isLocalBackend()) {
+          const me: any = await apiFetch('/profiles/me').catch(() => null)
+          if (me) {
+            setUserName(me.nombre_completo || null)
+            setAvatarUrl(me.avatar_url || null)
+          }
+          return
+        }
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        
         const { data: profile } = await supabase
           .from("profiles")
           .select("nombre_completo, avatar_url")
           .eq("user_id", user.id)
           .single();
-        
         if (profile) {
-          setUserName(profile.nombre_completo || null);
-          setAvatarUrl(profile.avatar_url || null);
+          setUserName((profile as any).nombre_completo || null);
+          setAvatarUrl((profile as any).avatar_url || null);
         }
       } catch (err) {
         // ignore silently
@@ -266,7 +273,8 @@ const Navigation = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onSelect={async () => { 
-                    await supabase.auth.signOut(); 
+                    try { await supabase.auth.signOut(); } catch {}
+                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch {}
                     navigate('/auth'); 
                     toast({
                       title: "Sesión cerrada",
@@ -321,7 +329,8 @@ const Navigation = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onSelect={async () => { 
-                    await supabase.auth.signOut(); 
+                    try { await supabase.auth.signOut(); } catch {}
+                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch {}
                     navigate('/auth'); 
                     toast({
                       title: "Sesión cerrada",

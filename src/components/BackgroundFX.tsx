@@ -1,8 +1,8 @@
-import React from "react";
+import { memo } from "react";
 
-const BackgroundFX: React.FC = () => {
+const BackgroundFX = memo(() => {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+  <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
       {/* Animated subtle gradient */}
   <div className="absolute inset-0 animate-gradient-slow bg-[radial-gradient(120%_80%_at_10%_10%,rgba(254,178,26,0.06),transparent_60%),radial-gradient(100%_70%_at_90%_20%,rgba(19,70,134,0.05),transparent_60%),radial-gradient(100%_70%_at_50%_100%,rgba(52,79,31,0.05),transparent_60%)]" />
 
@@ -21,6 +21,8 @@ const BackgroundFX: React.FC = () => {
       />
     </div>
   );
-};
+});
+
+BackgroundFX.displayName = "BackgroundFX";
 
 export default BackgroundFX;

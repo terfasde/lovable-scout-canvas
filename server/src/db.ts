@@ -90,6 +90,40 @@ db.exec(`
   );
 
   CREATE INDEX IF NOT EXISTS idx_dm_messages_conv ON dm_messages(conversation_id, created_at);
+
+  -- Events (para reemplazar 'eventos' de Supabase)
+  CREATE TABLE IF NOT EXISTS events (
+    id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    fecha_inicio TEXT NOT NULL,
+    location TEXT,
+    participants TEXT,
+    type TEXT,
+    status TEXT,
+    color TEXT,
+    created_by TEXT REFERENCES users(id) ON DELETE SET NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  -- Threads (muro simple)
+  CREATE TABLE IF NOT EXISTS threads (
+    id TEXT PRIMARY KEY,
+    author_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    image_url TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS thread_comments (
+    id TEXT PRIMARY KEY,
+    thread_id TEXT NOT NULL REFERENCES threads(id) ON DELETE CASCADE,
+    author_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_threads_created ON threads(created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_thread_comments_thread ON thread_comments(thread_id, created_at);
 `)
 
 export type UserRow = {
@@ -99,3 +133,28 @@ export type UserRow = {
   username?: string | null
   created_at: string
 }
+
+// --- Lightweight migration to ensure new columns exist in existing DBs ---
+function ensureProfileColumns() {
+  try {
+    const cols = db.prepare(`PRAGMA table_info(profiles)`).all() as Array<{ name: string }>
+    const names = new Set(cols.map(c => c.name))
+    const missing: Array<{ sql: string }> = []
+    if (!names.has('fecha_nacimiento')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN fecha_nacimiento TEXT` })
+    if (!names.has('rol_adulto')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN rol_adulto TEXT` })
+    if (!names.has('seisena')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN seisena TEXT` })
+    if (!names.has('patrulla')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN patrulla TEXT` })
+    if (!names.has('equipo_pioneros')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN equipo_pioneros TEXT` })
+    if (!names.has('comunidad_rovers')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN comunidad_rovers TEXT` })
+    if (missing.length) {
+      const tx = db.transaction((stmts: Array<{ sql: string }>) => {
+        for (const s of stmts) db.exec(s.sql)
+      })
+      tx(missing)
+    }
+  } catch (e) {
+    // ignore; best-effort migration
+  }
+}
+
+ensureProfileColumns()

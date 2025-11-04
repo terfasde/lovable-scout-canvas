@@ -10,6 +10,8 @@ import { ArrowLeft, Eye, EyeOff, Save, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
+import { isLocalBackend, uploadImage, getAuthUser } from "@/lib/backend";
+import { getProfile as getLocalProfile, updateProfile as updateLocalProfile } from "@/lib/api";
 
 type Tables = Database['public']['Tables'];
 type Profile = Tables['profiles']['Row']
@@ -94,62 +96,77 @@ const Perfil = () => {
 
   const getProfile = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const auth = await getAuthUser();
+      if (!auth) {
         navigate("/auth");
         return;
       }
+      setUserEmail(auth.email || "");
 
-      // Obtener perfil existente o crear uno nuevo
+      // Modo local: obtener desde backend propio
+      if (isLocalBackend()) {
+        const p: any = await getLocalProfile(auth.id).catch(() => null);
+        const profileData = {
+          ...formData,
+          nombre_completo: p?.nombre_completo || "",
+          telefono: p?.telefono || "",
+          edad: p?.edad || 0,
+          fecha_nacimiento: p?.fecha_nacimiento || "",
+          seisena: p?.seisena || "",
+          patrulla: p?.patrulla || "",
+          equipo_pioneros: p?.equipo_pioneros || "",
+          comunidad_rovers: p?.comunidad_rovers || "",
+          rol_adulto: p?.rol_adulto || "",
+          password: "",
+          avatar_url: p?.avatar_url || null,
+          username: (p as any)?.username || "",
+          username_updated_at: (p as any)?.username_updated_at || null
+        };
+        setFormData(profileData);
+        setOriginalData(profileData);
+        return;
+      }
+
+      // Supabase (fallback)
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("user_id", auth.id)
         .single();
-
       if (error && error.code !== "PGRST116") {
         throw error;
       }
-
-      console.log('User data:', user);
-      console.log('Profile data:', profile);
-
-      // Obtener los datos del usuario
-      const userMetadata = user.user_metadata || {};
-      const userNombre = userMetadata.nombre || profile?.nombre_completo || "";
-      const userTelefono = userMetadata.telefono || profile?.telefono || "";
-
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      const userMetadata = user?.user_metadata || {};
+      const userNombre = (userMetadata as any).nombre || profile?.nombre_completo || "";
+      const userTelefono = (userMetadata as any).telefono || profile?.telefono || "";
       if (profile) {
         setProfile(profile as Profile);
         const profileData = {
           ...formData,
           nombre_completo: userNombre,
           telefono: userTelefono,
-          edad: profile.edad || 0,
-          fecha_nacimiento: profile.fecha_nacimiento || "",
-          seisena: profile.seisena || "",
-          patrulla: profile.patrulla || "",
-          equipo_pioneros: profile.equipo_pioneros || "",
-          comunidad_rovers: profile.comunidad_rovers || "",
-          rol_adulto: profile.rol_adulto || "",
+          edad: (profile as any).edad || 0,
+          fecha_nacimiento: (profile as any).fecha_nacimiento || "",
+          seisena: (profile as any).seisena || "",
+          patrulla: (profile as any).patrulla || "",
+          equipo_pioneros: (profile as any).equipo_pioneros || "",
+          comunidad_rovers: (profile as any).comunidad_rovers || "",
+          rol_adulto: (profile as any).rol_adulto || "",
           password: "",
-          avatar_url: profile.avatar_url || null,
+          avatar_url: (profile as any).avatar_url || null,
           username: (profile as any).username || "",
           username_updated_at: (profile as any).username_updated_at || null
         };
         setFormData(profileData);
-        setOriginalData(profileData); // Guardar datos originales
+        setOriginalData(profileData);
       } else {
-        // Crear perfil inicial
         const { error: insertError } = await supabase
           .from("profiles")
-          .insert({
-            user_id: user.id,
-            nombre_completo: userNombre,
-            telefono: userTelefono
-          });
+          .insert({ user_id: auth.id, nombre_completo: userNombre, telefono: userTelefono });
         if (insertError) throw insertError;
-        await getProfile(); // Recargar después de crear
+        await getProfile();
       }
     } catch (error: any) {
       toast({
@@ -187,10 +204,10 @@ const Perfil = () => {
       return;
     }
     
-    if (name === "nombre_completo" && value.length > 100) {
+    if (name === "nombre_completo" && value.length > 50) {
       toast({
         title: "Nombre muy largo",
-        description: "El nombre no puede exceder 100 caracteres",
+        description: "El nombre no puede exceder 50 caracteres",
         variant: "destructive"
       });
       return;
@@ -227,11 +244,10 @@ const Perfil = () => {
 
   useEffect(() => {
     // Obtener el email del usuario cuando se carga el componente
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email) {
-        setUserEmail(user.email);
-      }
-    });
+    (async () => {
+      const auth = await getAuthUser();
+      if (auth?.email) setUserEmail(auth.email);
+    })();
   }, []);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -290,31 +306,23 @@ const Perfil = () => {
 
     try {
       setUploadingAvatar(true);
-
-      // Eliminar avatar anterior si existe
-      if (formData.avatar_url) {
-        const oldPath = formData.avatar_url.split('/').pop();
-        if (oldPath) {
-          await supabase.storage.from('avatars').remove([`${userId}/${oldPath}`]);
-        }
+      if (isLocalBackend()) {
+        // Subir al backend local
+        const url = await uploadImage(avatarFile);
+        return url;
       }
 
-      // Subir nuevo avatar
+      // Supabase storage
       const fileExt = avatarFile.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${userId}/${fileName}`;
-
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, avatarFile, { upsert: true });
-
       if (uploadError) throw uploadError;
-
-      // Obtener URL pública
       const { data } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
-
       return data.publicUrl;
     } catch (error: any) {
       toast({
@@ -395,29 +403,27 @@ const Perfil = () => {
     setSaving(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No hay sesión activa");
+  const auth = await getAuthUser();
+  if (!auth) throw new Error("No hay sesión activa");
 
       // Subir avatar si hay uno nuevo
       let avatarUrl = formData.avatar_url;
       if (avatarFile) {
-        const uploadedUrl = await uploadAvatar(user.id);
+        const uploadedUrl = await uploadAvatar(auth.id);
         if (uploadedUrl) {
           avatarUrl = uploadedUrl;
         }
       }
 
-      // Actualizar contraseña si se proporcionó una nueva
-      if (formData.password) {
-        const { error: passwordError } = await supabase.auth.updateUser({ 
-          password: formData.password 
-        });
+      // Actualizar contraseña: solo soportado en Supabase
+      if (!isLocalBackend() && formData.password) {
+        const { error: passwordError } = await supabase.auth.updateUser({ password: formData.password });
         if (passwordError) throw passwordError;
       }
 
-      // Actualizar perfil
+      // Preparar datos de perfil
       const profileData: any = {
-        user_id: user.id,
+        user_id: auth.id,
         nombre_completo: formData.nombre_completo,
         telefono: formData.telefono,
         edad: formData.edad,
@@ -455,12 +461,15 @@ const Perfil = () => {
         profileData.rol_adulto = formData.rol_adulto;
       }
 
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update(profileData)
-        .eq('user_id', user.id);
-
-      if (profileError) throw profileError;
+      if (isLocalBackend()) {
+        await updateLocalProfile(profileData);
+      } else {
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .update(profileData)
+          .eq('user_id', auth.id);
+        if (profileError) throw profileError;
+      }
 
       toast({
         title: "¡Perfil actualizado!",
@@ -559,15 +568,20 @@ const Perfil = () => {
                   size="sm"
                   onClick={async () => {
                     try {
-                      const { data: { user } } = await supabase.auth.getUser();
-                      if (!user) return;
-                      
-                      await supabase
-                        .from("profiles")
-                        .update({ avatar_url: null })
-                        .eq("user_id", user.id);
-                      
+                      const auth = await getAuthUser();
+                      if (!auth) return;
+
+                      if (isLocalBackend()) {
+                        await updateLocalProfile({ user_id: auth.id, avatar_url: null } as any);
+                      } else {
+                        await supabase
+                          .from("profiles")
+                          .update({ avatar_url: null })
+                          .eq("user_id", auth.id);
+                      }
+
                       setFormData(prev => ({ ...prev, avatar_url: null }));
+                      setOriginalData(prev => prev ? ({ ...prev, avatar_url: null }) : prev);
                       toast({
                         title: "Foto eliminada",
                         description: "Tu foto de perfil ha sido eliminada"
@@ -710,6 +724,8 @@ const Perfil = () => {
                 <Input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  autoComplete="email"
                   value={userEmail}
                   disabled
                   className="bg-muted"

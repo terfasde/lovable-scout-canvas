@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { getAuthUser } from "@/lib/backend";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
-import { getProfile } from "@/lib/api";
+import { getProfile, deleteMyAccount } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Share2, Check, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
@@ -27,20 +29,21 @@ const PerfilView = () => {
   const [followingOpen, setFollowingOpen] = useState(false);
   const [followersList, setFollowersList] = useState<Array<{ follower_id: string; created_at: string; follower?: { id: string; nombre_completo: string | null; avatar_url: string | null; username?: string | null } }>>([]);
   const [followingList, setFollowingList] = useState<Array<{ followed_id: string; created_at: string; followed?: { id: string; nombre_completo: string | null; avatar_url: string | null; username?: string | null } }>>([]);
+  const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     (async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
+        const auth = await getAuthUser();
+        if (!auth) {
           navigate('/auth');
           return;
         }
-        setUserId(user.id);
-        setUserEmail(user.email || "");
-        const p = await getProfile(user.id).catch(() => null);
+        setUserId(auth.id);
+        setUserEmail(auth.email || "");
+        const p = await getProfile(auth.id).catch(() => null);
         // Load pending follow requests for me
         const { data: pend } = await getPendingRequestsForMe();
         setPending(pend ? pend.map((x: any) => ({
@@ -55,8 +58,8 @@ const PerfilView = () => {
         })) : []);
         // Load counts
         const [{ count: fCount }, { count: gCount }] = await Promise.all([
-          getFollowersCount(user.id),
-          getFollowingCount(user.id)
+          getFollowersCount(auth.id),
+          getFollowingCount(auth.id)
         ]);
         setFollowersCount(fCount || 0);
         setFollowingCount(gCount || 0);
@@ -204,6 +207,48 @@ const PerfilView = () => {
                   <span className="hidden xs:inline">Compartir</span>
                   <span className="xs:hidden">Compartir</span>
                 </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
+                      disabled={deleting}
+                    >
+                      Eliminar cuenta
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>¿Eliminar tu cuenta?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Esta acción eliminará tu usuario y todos los datos asociados (perfil, follows, grupos, DMs, hilos) en el backend local. No podrás deshacerlo.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={async () => {
+                          try {
+                            setDeleting(true)
+                            await deleteMyAccount()
+                            // Cerrar sesión local y de Supabase por si estaba activa
+                            try { localStorage.removeItem('local_api_token') } catch {}
+                            try { await supabase.auth.signOut() } catch {}
+                            toast({ title: 'Cuenta eliminada' })
+                            navigate('/auth')
+                          } catch (err: any) {
+                            toast({ title: 'Error', description: err?.message || 'No se pudo eliminar la cuenta', variant: 'destructive' })
+                          } finally {
+                            setDeleting(false)
+                          }
+                        }}
+                      >
+                        Sí, eliminar
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
 
@@ -244,28 +289,28 @@ const PerfilView = () => {
           <div className="space-y-3 sm:space-y-4">
             <h2 className="text-base sm:text-lg font-semibold">Información Scout</h2>
             
-            {profile.edad && profile.edad >= 7 && profile.edad <= 20 && (
+            {(profile.seisena || (profile.edad && profile.edad >= 7 && profile.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Manada</h3>
                 <p className="text-sm sm:text-base">{profile.seisena || 'No especificada'}</p>
               </div>
             )}
 
-            {profile.edad && profile.edad >= 11 && profile.edad <= 20 && (
+            {(profile.patrulla || (profile.edad && profile.edad >= 11 && profile.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Tropa</h3>
                 <p className="text-sm sm:text-base">{profile.patrulla || 'No especificada'}</p>
               </div>
             )}
 
-            {profile.edad && profile.edad >= 15 && profile.edad <= 20 && (
+            {(profile.equipo_pioneros || (profile.edad && profile.edad >= 15 && profile.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Pioneros</h3>
                 <p className="text-sm sm:text-base">{profile.equipo_pioneros || 'No especificado'}</p>
               </div>
             )}
 
-            {profile.edad && profile.edad >= 18 && profile.edad <= 20 && (
+            {(profile.comunidad_rovers || (profile.edad && profile.edad >= 18 && profile.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Rovers</h3>
                 <p className="text-sm sm:text-base">{profile.comunidad_rovers || 'No especificada'}</p>

@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { getProfile, setProfilePublic } from "@/lib/api";
+import { getAuthUser } from "@/lib/backend";
 import { ArrowLeft, Copy, Globe, Lock, Share2, User } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import type { Database } from "@/integrations/supabase/types";
@@ -25,9 +26,9 @@ const PerfilCompartir = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) { navigate('/auth'); return; }
-        const p = await getProfile(user.id).catch(() => null);
+        const auth = await getAuthUser();
+        if (!auth) { navigate('/auth'); return; }
+        const p = await getProfile(auth.id).catch(() => null);
         setProfile(p ?? null);
         if ((p as any)?.is_public !== undefined) setIsPublic(Boolean((p as any).is_public));
       } catch (err: any) {

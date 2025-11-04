@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useContext } from "react"
+import { useEffect, useState, createContext, useContext, Suspense, lazy } from "react"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -7,31 +7,42 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { ThemeProvider } from "next-themes"
 import ScrollToTop from "@/components/ScrollToTop"
 import Index from "./pages/Index"
-import LineaTemporal from "./pages/LineaTemporal"
-import Historia from "./pages/Historia"
-import Bauen from "./pages/Bauen"
-import Galeria from "./pages/Galeria"
-import Contacto from "./pages/Contacto"
-import Eventos from "./pages/Eventos"
-import Auth from "./pages/Auth"
-import Perfil from "./pages/Perfil"
-import PerfilView from "./pages/PerfilView"
-import PerfilCompartir from "./pages/PerfilCompartir"
-import PerfilPublic from "./pages/PerfilPublic"
-import Usuarios from "./pages/Usuarios"
-import Mensajes from "./pages/Mensajes"
-import GrupoDetail from "@/pages/GrupoDetail"
-import NotFound from "./pages/NotFound"
-import Manada from "./pages/ramas/manada"
-import Tropa from "./pages/ramas/tropa"
-import Pioneros from "./pages/ramas/pioneros"
-import Rovers from "./pages/ramas/rovers"
-import Staff from "./pages/ramas/staff"
-import Comite from "./pages/ramas/comite"
+const LineaTemporal = lazy(() => import("./pages/LineaTemporal"))
+const Historia = lazy(() => import("./pages/Historia"))
+const Bauen = lazy(() => import("./pages/Bauen"))
+const Galeria = lazy(() => import("./pages/Galeria"))
+const Contacto = lazy(() => import("./pages/Contacto"))
+const Eventos = lazy(() => import("./pages/Eventos"))
+const Auth = lazy(() => import("./pages/Auth"))
+const Perfil = lazy(() => import("./pages/Perfil"))
+const PerfilView = lazy(() => import("./pages/PerfilView"))
+const PerfilCompartir = lazy(() => import("./pages/PerfilCompartir"))
+const PerfilPublic = lazy(() => import("./pages/PerfilPublic"))
+const Usuarios = lazy(() => import("./pages/Usuarios"))
+const Mensajes = lazy(() => import("./pages/Mensajes"))
+const GrupoDetail = lazy(() => import("@/pages/GrupoDetail"))
+const NotFound = lazy(() => import("./pages/NotFound"))
+const Manada = lazy(() => import("./pages/ramas/manada"))
+const Tropa = lazy(() => import("./pages/ramas/tropa"))
+const Pioneros = lazy(() => import("./pages/ramas/pioneros"))
+const Rovers = lazy(() => import("./pages/ramas/rovers"))
+const Staff = lazy(() => import("./pages/ramas/staff"))
+const Comite = lazy(() => import("./pages/ramas/comite"))
 import { supabase } from "../supabase/client"
 import BackgroundFX from "@/components/BackgroundFX"
+import ErrorBoundary from "@/components/ErrorBoundary"
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutos
+      gcTime: 1000 * 60 * 10, // 10 minutos (antes cacheTime)
+      retry: 1,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    },
+  },
+})
 
 // 🧠 Contexto global de usuario Supabase
 interface SupabaseUserContextType {
@@ -72,6 +83,7 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const App = () => (
+  <ErrorBoundary>
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <TooltipProvider>
@@ -81,6 +93,7 @@ const App = () => (
           <SupabaseUserProvider>
             <BackgroundFX />
             <ScrollToTop />
+            <Suspense fallback={<div className="p-8 text-center text-sm text-muted-foreground">Cargando…</div>}>
             <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/linea-temporal" element={<LineaTemporal />} />
@@ -109,11 +122,13 @@ const App = () => (
             {/* Ruta por defecto */}
             <Route path="*" element={<NotFound />} />
             </Routes>
+            </Suspense>
           </SupabaseUserProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
 )
 
 export default App

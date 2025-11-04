@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { isLocalBackend, apiFetch, ensureLocalToken } from "@/lib/backend";
 
 export type GalleryAlbum = { name: string; coverUrl?: string };
 
@@ -6,6 +7,10 @@ const BUCKET = "gallery"; // Asegúrate de crear este bucket en Supabase Storage
 
 export async function listAlbums(): Promise<GalleryAlbum[]> {
   try {
+    if (isLocalBackend()) {
+      const rows = await apiFetch('/gallery/albums') as Array<{ name: string }>
+      return rows.map(r => ({ name: r.name }))
+    }
     // En Supabase Storage, necesitamos listar archivos para detectar carpetas
     // Usamos list() sin path para obtener el contenido de la raíz
     const { data, error } = await supabase.storage.from(BUCKET).list();
@@ -42,6 +47,10 @@ export async function listAlbums(): Promise<GalleryAlbum[]> {
 }
 
 export async function listImages(album: string): Promise<{ url: string; path: string }[]> {
+  if (isLocalBackend()) {
+    const rows = await apiFetch(`/gallery/albums/${encodeURIComponent(album)}/images`) as Array<{ url: string; path: string }>
+    return rows
+  }
   const { data, error } = await supabase.storage.from(BUCKET).list(album, { limit: 1000 });
   if (error) throw error;
   
@@ -63,6 +72,10 @@ export async function listImages(album: string): Promise<{ url: string; path: st
 }
 
 export async function createAlbum(name: string): Promise<void> {
+  if (isLocalBackend()) {
+    await apiFetch('/gallery/albums', { method: 'POST', body: JSON.stringify({ name }) })
+    return
+  }
   // Crear carpeta simulada subiendo un archivo "oculto"
   const path = `${name}/.keep`;
   const { error } = await supabase.storage.from(BUCKET).upload(path, new Blob([""]), {
@@ -73,6 +86,20 @@ export async function createAlbum(name: string): Promise<void> {
 }
 
 export async function uploadImage(album: string, file: File): Promise<void> {
+  if (isLocalBackend()) {
+    const tokenizedForm = new FormData()
+    tokenizedForm.append('files', file)
+    // Usamos fetch manualmente para enviar FormData con auth
+    // Reutilizamos apiFetch para token, pero apiFetch fuerza content-type json; mejor hacemos una pequeña función inline
+    const token = await ensureLocalToken()
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+    await fetch(`${API_BASE}/gallery/albums/${encodeURIComponent(album)}/images`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: tokenizedForm,
+    }).then(r => { if (!r.ok) throw new Error('Error al subir imagen') })
+    return
+  }
   const ext = file.name.split(".").pop();
   const name = `${crypto.randomUUID()}.${ext}`;
   const path = `${album}/${name}`;
@@ -84,12 +111,20 @@ export async function uploadImage(album: string, file: File): Promise<void> {
 }
 
 export async function deleteImage(imagePath: string): Promise<void> {
+  if (isLocalBackend()) {
+    await apiFetch(`/gallery/images?path=${encodeURIComponent(imagePath)}`, { method: 'DELETE' })
+    return
+  }
   // imagePath debe ser relativo al bucket, ej: "Campamentos/abc123.jpg"
   const { error } = await supabase.storage.from(BUCKET).remove([imagePath]);
   if (error) throw error;
 }
 
 export async function deleteAlbum(albumName: string): Promise<void> {
+  if (isLocalBackend()) {
+    await apiFetch(`/gallery/albums/${encodeURIComponent(albumName)}`, { method: 'DELETE' })
+    return
+  }
   // Listar todos los archivos del álbum
   const { data, error } = await supabase.storage.from(BUCKET).list(albumName, { limit: 1000 });
   if (error) throw error;

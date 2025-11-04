@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { isLocalBackend, apiFetch } from "@/lib/backend";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
@@ -32,13 +33,18 @@ const PerfilPublic = () => {
     (async () => {
       try {
         if (!id) return;
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('user_id', id)
-          .single();
-        if (error) throw error;
-        setProfile(data);
+        if (isLocalBackend()) {
+          const data = await apiFetch(`/profiles/${encodeURIComponent(id)}`);
+          setProfile(data);
+        } else {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', id)
+            .single();
+          if (error) throw error;
+          setProfile(data);
+        }
         // try to fetch relation status (if authenticated)
         const rel = await getFollowRelation(id);
         if (!rel.error) setRelation(rel.data);

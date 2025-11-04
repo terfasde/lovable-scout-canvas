@@ -10,11 +10,17 @@ import { profilesRouter } from './routes/profiles'
 import { groupsRouter } from './routes/groups'
 import { uploadsRouter } from './routes/uploads'
 import { followsRouter } from './routes/follows'
+import { galleryRouter } from './routes/gallery'
+import { eventsRouter } from './routes/events'
 import { dmsRouter } from './routes/dms'
+import { threadsRouter } from './routes/threads'
+import { adminRouter } from './routes/admin'
+import { usersRouter } from './routes/users'
 import './db' // ensure DB initialized
 import { createSocket } from './socket'
 
 const app = express()
+app.set('etag', false)
 app.use(cors({ origin: process.env.ORIGIN || true }))
 app.use(express.json({ limit: '5mb' }))
 app.use(morgan('dev'))
@@ -30,6 +36,11 @@ app.use('/groups', groupsRouter)
 app.use('/upload', uploadsRouter)
 app.use('/follows', followsRouter)
 app.use('/dms', dmsRouter)
+app.use('/gallery', galleryRouter)
+app.use('/events', eventsRouter)
+app.use('/threads', threadsRouter)
+app.use('/admin', adminRouter)
+app.use('/users', usersRouter)
 
 // Health
 app.get('/health', (_req: any, res: any) => res.json({ ok: true }))

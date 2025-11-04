@@ -8,6 +8,7 @@ services:
     environment:
       - VITE_BACKEND=local
       - VITE_API_BASE=http://localhost:8080
+      - VITE_GALLERY_ADMIN_EMAILS=franciscolorenzo2406@gmail.com
       - CHOKIDAR_USEPOLLING=true
       # Si usas Supabase en partes no migradas, pasa tus claves aquí o en un .env
       # - VITE_SUPABASE_URL=
@@ -25,6 +26,8 @@ services:
     environment:
       - PORT=8080
       - ORIGIN=http://localhost:5173
+      - ADMIN_EMAILS=franciscolorenzo2406@gmail.com
+      - ADMIN_SECRET=local-dev-admin
       - CHOKIDAR_USEPOLLING=true
     ports:
       - "8080:8080"

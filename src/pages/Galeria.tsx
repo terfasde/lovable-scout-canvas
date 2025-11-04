@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Camera, FolderPlus, ImagePlus, Images, Trash2, FolderX } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { getAuthUser } from "@/lib/backend";
 import { createAlbum, listAlbums, listImages, uploadImage, deleteImage, deleteAlbum } from "@/lib/gallery";
 import { useToast } from "@/hooks/use-toast";
 
@@ -48,13 +48,13 @@ const Galeria = () => {
   useEffect(() => {
     (async () => {
       try {
-        // Verificar admin por email
-        const { data: { user } } = await supabase.auth.getUser();
-        const email = user?.email || "";
+        // Verificar admin por email (soporta backend local y Supabase)
+        const auth = await getAuthUser();
+        const email = auth?.email || "";
         setIsAdmin(ADMIN_EMAILS.includes(email.toLowerCase()));
 
         // Cargar álbumes desde Storage
-        console.log("Cargando álbumes...");
+  console.log("Cargando álbumes...");
         const storageAlbums = await listAlbums().catch((err) => {
           console.error("Error cargando álbumes:", err);
           return [];

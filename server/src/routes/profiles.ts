@@ -23,33 +23,47 @@ function calculateAge(fechaNacimiento: string | null): number | null {
 
 profilesRouter.get('/me', authMiddleware, (req: any, res: any) => {
   const userId = (req as any).user.id as string
-  const profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(userId) as any
   const user = db.prepare('SELECT id, email, username, created_at FROM users WHERE id = ?').get(userId) as any
+  if (!user) {
+    return res.status(401).json({ error: 'Usuario inválido. Vuelve a iniciar sesión.' })
+  }
+  let profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(userId) as any
+  // Si no existe perfil, crearlo con valores por defecto (sin borrar nada)
+  if (!profile) {
+    db.prepare(`INSERT INTO profiles (user_id, nombre_completo, is_public) VALUES (?, ?, 0)`) 
+      .run(userId, user?.username || null)
+    profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(userId) as any
+  }
   const result = { ...profile, ...user }
-  // Calcular edad si hay fecha de nacimiento
   if (result.fecha_nacimiento) {
     result.edad = calculateAge(result.fecha_nacimiento)
   }
-  // No cachear
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
   res.json(result)
 })
 
+// Aceptar avatar_url como URL absoluta o ruta relativa de uploads
+const avatarUrlSchema = z.string().url().or(z.string().startsWith('/uploads/'))
+
 const updateSchema = z.object({
-  nombre_completo: z.string().optional(),
-  telefono: z.string().optional(),
+  nombre_completo: z.string().nullable().optional(),
+  telefono: z.string().nullable().optional(),
   is_public: z.boolean().optional(),
-  avatar_url: z.string().url().optional(),
-  fecha_nacimiento: z.string().optional(),
-  rol_adulto: z.string().optional(),
-  seisena: z.string().optional(),
-  patrulla: z.string().optional(),
-  equipo_pioneros: z.string().optional(),
-  comunidad_rovers: z.string().optional()
+  avatar_url: avatarUrlSchema.nullable().optional(),
+  fecha_nacimiento: z.string().nullable().optional(),
+  rol_adulto: z.string().nullable().optional(),
+  seisena: z.string().nullable().optional(),
+  patrulla: z.string().nullable().optional(),
+  equipo_pioneros: z.string().nullable().optional(),
+  comunidad_rovers: z.string().nullable().optional()
 })
 
 profilesRouter.put('/me', authMiddleware, (req: any, res: any) => {
   const userId = (req as any).user.id as string
+  const existsUser = db.prepare('SELECT 1 FROM users WHERE id = ?').get(userId)
+  if (!existsUser) {
+    return res.status(401).json({ error: 'Usuario inválido. Vuelve a iniciar sesión.' })
+  }
   const parse = updateSchema.safeParse(req.body)
   if (!parse.success) return res.status(400).json({ error: parse.error.flatten() })
   const { nombre_completo, telefono, is_public, avatar_url, fecha_nacimiento, rol_adulto, seisena, patrulla, equipo_pioneros, comunidad_rovers } = parse.data
@@ -61,21 +75,25 @@ profilesRouter.put('/me', authMiddleware, (req: any, res: any) => {
            fecha_nacimiento ?? null, rol_adulto ?? null, seisena ?? null, patrulla ?? null, 
            equipo_pioneros ?? null, comunidad_rovers ?? null)
   } else {
-    db.prepare(`UPDATE profiles SET 
-      nombre_completo = COALESCE(?, nombre_completo), 
-      telefono = COALESCE(?, telefono), 
-      is_public = COALESCE(?, is_public), 
-      avatar_url = COALESCE(?, avatar_url),
-      fecha_nacimiento = COALESCE(?, fecha_nacimiento),
-      rol_adulto = COALESCE(?, rol_adulto),
-      seisena = COALESCE(?, seisena),
-      patrulla = COALESCE(?, patrulla),
-      equipo_pioneros = COALESCE(?, equipo_pioneros),
-      comunidad_rovers = COALESCE(?, comunidad_rovers)
-      WHERE user_id = ?`)
-      .run(nombre_completo ?? null, telefono ?? null, typeof is_public === 'boolean' ? (is_public ? 1 : 0) : null, 
-           avatar_url ?? null, fecha_nacimiento ?? null, rol_adulto ?? null, 
-           seisena ?? null, patrulla ?? null, equipo_pioneros ?? null, comunidad_rovers ?? null, userId)
+    // Construir UPDATE dinámico para distinguir "campo ausente" vs "campo presente con null"
+    const sets: string[] = []
+    const values: any[] = []
+
+    if (nombre_completo !== undefined) { sets.push('nombre_completo = ?'); values.push(nombre_completo ?? null) }
+    if (telefono !== undefined) { sets.push('telefono = ?'); values.push(telefono ?? null) }
+    if (is_public !== undefined) { sets.push('is_public = ?'); values.push(is_public ? 1 : 0) }
+    if (Object.prototype.hasOwnProperty.call(req.body, 'avatar_url')) { sets.push('avatar_url = ?'); values.push(avatar_url ?? null) }
+    if (fecha_nacimiento !== undefined) { sets.push('fecha_nacimiento = ?'); values.push(fecha_nacimiento ?? null) }
+    if (rol_adulto !== undefined) { sets.push('rol_adulto = ?'); values.push(rol_adulto ?? null) }
+    if (seisena !== undefined) { sets.push('seisena = ?'); values.push(seisena ?? null) }
+    if (patrulla !== undefined) { sets.push('patrulla = ?'); values.push(patrulla ?? null) }
+    if (equipo_pioneros !== undefined) { sets.push('equipo_pioneros = ?'); values.push(equipo_pioneros ?? null) }
+    if (comunidad_rovers !== undefined) { sets.push('comunidad_rovers = ?'); values.push(comunidad_rovers ?? null) }
+
+    if (sets.length > 0) {
+      const sql = `UPDATE profiles SET ${sets.join(', ')} WHERE user_id = ?`
+      db.prepare(sql).run(...values, userId)
+    }
   }
   const profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(userId) as any
   const user = db.prepare('SELECT id, email, username, created_at FROM users WHERE id = ?').get(userId) as any

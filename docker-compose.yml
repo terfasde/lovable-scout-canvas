@@ -6,6 +6,7 @@ services:
         # Provide these via an .env file or your shell env
         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
         VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+        VITE_GALLERY_ADMIN_EMAILS: ${VITE_GALLERY_ADMIN_EMAILS}
     ports:
       - "8081:80"
     environment:
@@ -21,6 +22,7 @@ services:
       PORT: 8080
       ORIGIN: http://localhost:8081
       JWT_SECRET: ${JWT_SECRET:-dev-change-me}
+      ADMIN_EMAILS: ${ADMIN_EMAILS}
       NODE_ENV: production
     ports:
       - "8080:8080"

@@ -37,7 +37,7 @@ import {
   inviteMembers,
   type GroupMessageWithSender
 } from "@/lib/groups";
-import { isLocalBackend } from "@/lib/backend";
+import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
 
 export default function GrupoDetail() {
   const { id } = useParams();
@@ -127,51 +127,73 @@ export default function GrupoDetail() {
     if (!id) return;
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate('/auth');
-        return;
+      if (isLocalBackend()) {
+        const auth = await getAuthUser();
+        if (!auth) { navigate('/auth'); return; }
+        setCurrentUserId(auth.id);
+
+        const g: any = await apiFetch(`/groups/${id}`);
+        setGroup({ ...g, cover_image: g.cover_url ?? null });
+
+        const membersData = await listGroupMembers(id);
+        setMembers(membersData);
+        const mine = membersData.find((m: any) => String(m.user_id) === String(auth.id));
+        if (!mine) {
+          toast({ title: 'Acceso denegado', description: 'No eres miembro de este grupo', variant: 'destructive' });
+          navigate('/usuarios');
+          return;
+        }
+        setUserRole(mine.role);
+
+        const messagesData = await listGroupMessages(id);
+        setMessages(messagesData);
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          navigate('/auth');
+          return;
+        }
+        setCurrentUserId(user.id);
+
+        // Cargar grupo
+        const { data: groupData, error: groupError } = await supabase
+          .from('groups')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (groupError) throw groupError;
+        setGroup(groupData);
+
+        // Verificar membresía y rol
+        const { data: membership } = await supabase
+          .from('group_members')
+          .select('role')
+          .eq('group_id', id)
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (!membership) {
+          toast({
+            title: 'Acceso denegado',
+            description: 'No eres miembro de este grupo',
+            variant: 'destructive'
+          });
+          navigate('/usuarios');
+          return;
+        }
+
+        setUserRole(membership.role);
+
+        // Cargar miembros y mensajes
+        const [membersData, messagesData] = await Promise.all([
+          listGroupMembers(id),
+          listGroupMessages(id)
+        ]);
+
+        setMembers(membersData);
+        setMessages(messagesData);
       }
-      setCurrentUserId(user.id);
-
-      // Cargar grupo
-      const { data: groupData, error: groupError } = await supabase
-        .from('groups')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (groupError) throw groupError;
-      setGroup(groupData);
-
-      // Verificar membresía y rol
-      const { data: membership } = await supabase
-        .from('group_members')
-        .select('role')
-        .eq('group_id', id)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (!membership) {
-        toast({
-          title: 'Acceso denegado',
-          description: 'No eres miembro de este grupo',
-          variant: 'destructive'
-        });
-        navigate('/usuarios');
-        return;
-      }
-
-      setUserRole(membership.role);
-
-      // Cargar miembros y mensajes
-      const [membersData, messagesData] = await Promise.all([
-        listGroupMembers(id),
-        listGroupMessages(id)
-      ]);
-
-      setMembers(membersData);
-      setMessages(messagesData);
 
       // Scroll al final
       setTimeout(() => {
