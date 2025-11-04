@@ -18,25 +18,45 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1200,
     sourcemap: false, // Desactiva source maps en producción para menor tamaño
     minify: 'esbuild', // esbuild es más rápido que terser
+    target: 'esnext', // Permite optimizaciones modernas
     rollupOptions: {
       output: {
+        // Chunks más granulares para mejor cache
         manualChunks(id) {
           if (id.includes("node_modules")) {
+            // React core (más usado, en chunk separado)
+            if (id.includes("react-dom") || id.includes("react/")) return "vendor-react"
+            // Router (usado en toda la app)
             if (id.includes("react-router-dom")) return "vendor-router"
-            if (id.includes("react-dom") || id.includes("react")) return "vendor-react"
+            // Tanstack Query (usado en toda la app)
             if (id.includes("@tanstack")) return "vendor-query"
+            // Supabase (backend alternativo)
             if (id.includes("@supabase")) return "vendor-supabase"
+            // Radix UI (componentes grandes)
             if (id.includes("@radix-ui")) return "vendor-radix"
-            if (id.includes("recharts")) return "vendor-charts"
-            if (id.includes("@react-google-maps")) return "vendor-maps"
+            // Charts (opcional, solo en algunas páginas)
+            if (id.includes("recharts") || id.includes("d3-")) return "vendor-charts"
+            // Maps (opcional, solo en página de contacto)
+            if (id.includes("@react-google-maps") || id.includes("@googlemaps")) return "vendor-maps"
+            // Date utilities
             if (id.includes("date-fns") || id.includes("react-day-picker")) return "vendor-date"
+            // Icons (muy usado)
             if (id.includes("lucide-react")) return "vendor-icons"
-            if (id.includes("clsx") || id.includes("class-variance-authority")) return "vendor-style"
+            // Style utilities (muy pequeño, puede ir junto)
+            if (id.includes("clsx") || id.includes("class-variance-authority") || id.includes("tailwind")) return "vendor-style"
+            // Resto de vendor
             return "vendor"
           }
         },
+        // Nombres de archivos con hash para mejor cache
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
+    // Optimizaciones adicionales
+    cssCodeSplit: true, // Separar CSS por chunk
+    reportCompressedSize: false, // Más rápido en build
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

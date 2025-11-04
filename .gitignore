@@ -7,10 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build outputs
 dist
 dist-ssr
 *.local
+
+# TypeScript
+*.tsbuildinfo
 
 # Editor directories and files
 .vscode/*
@@ -47,6 +53,15 @@ backup-*.tar.gz
 .env.production
 !.env.example
 !.env.local.example
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+
+# Package manager locks (solo npm)
+bun.lockb
+yarn.lock
+pnpm-lock.yaml
 
 # Server data and uploads
 server/data/*.db

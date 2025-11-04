@@ -43,6 +43,37 @@ chmod +x scripts/start.sh
 
 ---
 
+### `export-to-pendrive.ps1`
+
+**Exportar proyecto a un pendrive o disco externo**
+
+Copia el proyecto completo excluyendo archivos innecesarios (node_modules, dist, .git, etc.)
+
+**Uso**:
+```powershell
+# Modo interactivo (te pregunta la ruta de destino)
+.\scripts\export-to-pendrive.ps1
+
+# Especificar ruta directamente
+.\scripts\export-to-pendrive.ps1 E:\lovable-scout-canvas
+```
+
+**¿Qué excluye?**:
+- `node_modules/` (se regenera con npm install)
+- `dist/` (archivos compilados)
+- `.git/` (historial de Git)
+- `server/node_modules/`
+- `server/dist/`
+- Archivos temporales y cache
+
+**Después de copiar a la nueva computadora**:
+1. Ver instrucciones en `INSTALACION.md`
+2. Ejecutar `npm install` en raíz y en `server/`
+3. Configurar archivo `.env`
+4. Ejecutar `npm run dev`
+
+---
+
 ### `add-docker-to-path.ps1`
 
 **Agregar Docker al PATH de Windows**
