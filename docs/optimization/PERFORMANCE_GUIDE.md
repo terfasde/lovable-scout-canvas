@@ -349,7 +349,9 @@ npm run clean            # Limpiar dist/
 ## 📞 Soporte
 
 Para preguntas sobre optimizaciones:
-1. Revisa `OPTIMIZATIONS.md` para detalles técnicos
+### Ver también
+
+1. Revisa `OPTIMIZATIONS.md` para detalles técnicos de las optimizaciones ya implementadas
 2. Consulta la documentación de herramientas
 3. Usa Lighthouse para auditorías periódicas
 

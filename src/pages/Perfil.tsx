@@ -69,7 +69,9 @@ const Perfil = () => {
   useEffect(() => {
     if (formData.fecha_nacimiento) {
       const hoy = new Date();
-      const nacimiento = new Date(formData.fecha_nacimiento);
+      // Parsear fecha sin conversión UTC para evitar desfase de días
+      const [year, month, day] = formData.fecha_nacimiento.split('-').map(Number);
+      const nacimiento = new Date(year, month - 1, day);
       let años = hoy.getFullYear() - nacimiento.getFullYear();
       const m = hoy.getMonth() - nacimiento.getMonth();
       if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
@@ -94,8 +96,10 @@ const Perfil = () => {
     getProfile();
   }, []);
 
-  const getProfile = async () => {
+  const getProfile = async (showLoading = true) => {
     try {
+      if (showLoading) setLoading(true);
+      
       const auth = await getAuthUser();
       if (!auth) {
         navigate("/auth");
@@ -111,7 +115,7 @@ const Perfil = () => {
           nombre_completo: p?.nombre_completo || "",
           telefono: p?.telefono || "",
           edad: p?.edad || 0,
-          fecha_nacimiento: p?.fecha_nacimiento || "",
+          fecha_nacimiento: p?.fecha_nacimiento ? p.fecha_nacimiento.split('T')[0] : "",
           seisena: p?.seisena || "",
           patrulla: p?.patrulla || "",
           equipo_pioneros: p?.equipo_pioneros || "",
@@ -148,7 +152,7 @@ const Perfil = () => {
           nombre_completo: userNombre,
           telefono: userTelefono,
           edad: (profile as any).edad || 0,
-          fecha_nacimiento: (profile as any).fecha_nacimiento || "",
+          fecha_nacimiento: (profile as any).fecha_nacimiento ? (profile as any).fecha_nacimiento.split('T')[0] : "",
           seisena: (profile as any).seisena || "",
           patrulla: (profile as any).patrulla || "",
           equipo_pioneros: (profile as any).equipo_pioneros || "",
@@ -175,7 +179,7 @@ const Perfil = () => {
         variant: "destructive"
       });
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -476,14 +480,10 @@ const Perfil = () => {
         description: "Tus cambios han sido guardados."
       });
 
-      // Actualizar datos originales y limpiar estados temporales
-      const updatedData = {
-        ...formData,
-        password: "",
-        avatar_url: avatarUrl
-      };
-      setFormData(updatedData);
-      setOriginalData(updatedData);
+      // Recargar perfil desde servidor para reflejar cambios (sin mostrar loading)
+      await getProfile(false);
+
+      // Limpiar estados temporales
       setAvatarFile(null);
       setAvatarPreview(null);
     } catch (error: any) {
