@@ -1,3 +1,6 @@
+// @ts-nocheck
+// Este archivo es parte del servidor backend opcional
+// Requiere instalación de dependencias: npm install (en carpeta server)
 import pg from 'pg'
 import Database from 'better-sqlite3'
 import path from 'path'

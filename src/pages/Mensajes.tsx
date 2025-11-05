@@ -112,7 +112,9 @@ export default function Mensajes() {
         const iFollowSet = new Set((iFollow || []).map(f => f.followed_id));
         const followsMeSet = new Set((followsMe || []).map(f => f.follower_id));
         const mutuals = new Set<string>();
-        iFollowSet.forEach(id => { if (followsMeSet.has(id)) mutuals.add(id); });
+        iFollowSet.forEach((id: unknown) => { 
+          if (typeof id === 'string' && followsMeSet.has(id)) mutuals.add(id); 
+        });
         setMutualFollows(mutuals);
       }
       const { data, error } = await supabase.rpc('list_profiles_directory');

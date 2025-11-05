@@ -2,21 +2,30 @@
 
 Aplicación web para gestión de grupos scout con perfil de usuarios, galería, eventos y más.
 
+> **⚠️ IMPORTANTE:** Este proyecto funciona **SIN Supabase**. Toda la autenticación y datos se manejan localmente con `localStorage` y mocks. Ver [Arquitectura Local](docs/LOCAL_ARCHITECTURE.md) para detalles.
+
 ---
 
 ## 🚀 Inicio Rápido
 
-### Opción 1: Docker (Recomendado)
+### Opción 1: Docker (Recomendado - Solo Frontend)
 
-```powershell
-# Arquitectura completa (PostgreSQL + Monitoreo)
-.\scripts\start.ps1 full
+```bash
+# Iniciar frontend con mocks locales
+docker compose up -d
 
-# Desarrollo simple (SQLite)
-.\scripts\start.ps1 dev
+# Ver logs
+docker compose logs -f web
+
+# Detener
+docker compose down
 ```
 
-Ver [Guía de Docker](docs/docker/QUICK_START.md) para más detalles.
+Accede a http://localhost:5173
+
+**Usuario por defecto:**
+- Email: `admin@scout.com`
+- Password: cualquiera (validación simplificada)
 
 ### Opción 2: Desarrollo Local
 
@@ -30,22 +39,36 @@ npm run dev
 
 Accede a http://localhost:5173
 
+### ⚠️ Docker Legacy (Requiere Configuración)
+
+```powershell
+# ⚠️ DESACTUALIZADO: Arquitectura completa (PostgreSQL + Backend)
+# Requiere resolver dependencias del servidor primero
+docker compose -f docker-compose.full.yml up -d
+
+# Desarrollo con backend local (requiere Python instalado)
+docker compose -f docker-compose.dev.yml up -d
+```
+
 ---
 
 ## 📚 Documentación
 
+### 🏗️ Arquitectura
+- **[Arquitectura Local](docs/LOCAL_ARCHITECTURE.md)** - ⭐ Sistema sin Supabase (ACTUAL)
+- **[Arquitectura Docker](docs/docker/ARCHITECTURE.md)** - Legacy: PostgreSQL y monitoreo
+
 ### 🐳 Docker
-- **[Inicio Rápido](docs/docker/QUICK_START.md)** - Guía rápida para usar Docker
-- **[Arquitectura](docs/docker/ARCHITECTURE.md)** - Arquitectura completa con PostgreSQL y monitoreo
-- **[Desarrollo](docs/docker/DEV.md)** - Configuración para desarrollo
-- **[Changelog](docs/docker/CHANGELOG.md)** - Historial de cambios de Docker
+- **[Inicio Rápido](docs/docker/QUICK_START.md)** - ⚠️ Desactualizado
+- **[Desarrollo](docs/docker/DEV.md)** - ⚠️ Requiere backend opcional
+- **[Changelog](docs/docker/CHANGELOG.md)** - Historial de cambios
 
 ### ⚙️ Configuración Inicial
 - **[Google Maps](docs/setup/GOOGLE_MAPS.md)** - Configurar Google Maps API
 - **[Google Maps Billing Fix](docs/setup/GOOGLE_MAPS_BILLING_FIX.md)** - Solución sin facturación
-- **[Email Verification](docs/setup/EMAIL_VERIFICATION.md)** - Verificación de emails
-- **[Avatar](docs/setup/AVATAR.md)** - Configuración de avatares
-- **[Supabase Fix](docs/setup/SUPABASE_FIX.md)** - Soluciones de Supabase
+- **[Email Verification](docs/setup/EMAIL_VERIFICATION.md)** - ⚠️ No disponible sin backend
+- **[Avatar](docs/setup/AVATAR.md)** - Configuración de avatares (mockeado)
+- **[Supabase Fix](docs/setup/SUPABASE_FIX.md)** - ⚠️ Obsoleto: Supabase removido
 
 ### 🚀 Optimización
 - **[Optimizaciones](docs/optimization/OPTIMIZATIONS.md)** - Mejoras de rendimiento aplicadas
@@ -70,14 +93,25 @@ Accede a http://localhost:5173
 - **shadcn/ui** - Componentes UI
 - **React Query** - Gestión de estado y cache
 - **React Router** - Enrutamiento
+- **localStorage** - Persistencia de datos local
 
-### Backend
+### Backend (OPCIONAL - No instalado)
 - **Node.js 20** con TypeScript
 - **Express** - API REST
 - **PostgreSQL** o **SQLite** - Base de datos
 - **JWT** - Autenticación
 - **Multer** - Upload de archivos
 - **Socket.io** - WebSockets
+
+> ⚠️ **Nota:** El backend no está configurado actualmente. El proyecto funciona con mocks locales.
+
+### ~~Supabase~~ (REMOVIDO)
+- ~~Autenticación~~
+- ~~Base de datos~~
+- ~~Storage~~
+- ~~Real-time~~
+
+Reemplazado por sistema de autenticación local en `src/lib/auth-mock.ts`.
 
 ### DevOps
 - **Docker** - Contenedores

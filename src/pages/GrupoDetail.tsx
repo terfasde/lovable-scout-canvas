@@ -310,7 +310,9 @@ export default function GrupoDetail() {
 
       // Intersección: mutuos
       const mutualIds: string[] = [];
-      iFollowSet.forEach(uid => { if (followsMeSet.has(uid)) mutualIds.push(uid); });
+      iFollowSet.forEach((uid: unknown) => { 
+        if (typeof uid === 'string' && followsMeSet.has(uid)) mutualIds.push(uid); 
+      });
 
       // Excluir ya miembros
       const memberIds = new Set(members.map(m => m.user_id));

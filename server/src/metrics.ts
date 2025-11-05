@@ -1,3 +1,6 @@
+// @ts-nocheck
+// Este archivo es parte del servidor backend opcional
+// Requiere instalación de dependencias: npm install (en carpeta server)
 import { Router } from 'express'
 import client from 'prom-client'
 

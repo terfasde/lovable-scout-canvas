@@ -31,7 +31,7 @@ const Pioneros = lazy(() => import("./pages/ramas/pioneros"))
 const Rovers = lazy(() => import("./pages/ramas/rovers"))
 const Staff = lazy(() => import("./pages/ramas/staff"))
 const Comite = lazy(() => import("./pages/ramas/comite"))
-import { supabase } from "../supabase/client"
+import { supabase } from "@/integrations/supabase/client"
 import BackgroundFX from "@/components/BackgroundFX"
 import ErrorBoundary from "@/components/ErrorBoundary"
 

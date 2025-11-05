@@ -1,3 +1,23 @@
+# ============================================
+# ⚠️ ARCHIVO LEGACY - REQUIERE ACTUALIZACIÓN ⚠️
+# ============================================
+# 
+# Este archivo fue diseñado para la arquitectura anterior con:
+# - PostgreSQL como base de datos
+# - Backend Express con Node.js
+# - Supabase (ahora REMOVIDO)
+#
+# ⚠️ ESTADO ACTUAL DEL PROYECTO:
+# - El proyecto ahora funciona SIN Supabase
+# - El backend es OPCIONAL y tiene dependencias no instaladas
+# - Se recomienda usar docker-compose.yml (solo frontend)
+#
+# Para usar esta configuración completa, necesitas:
+# 1. Resolver dependencias del servidor (requiere Python)
+# 2. Configurar PostgreSQL manualmente
+# 3. Actualizar variables de entorno
+#
+# ============================================
 # Docker Compose - Arquitectura completa con DB separada y monitoreo
 # Incluye: PostgreSQL, PgAdmin, Prometheus, Grafana, Backend y Frontend
 #
@@ -104,6 +124,8 @@ services:
 
   # ============================================
   # FRONTEND - Vite + React
+  # ⚠️ DESACTUALIZADO: Configurado para backend local
+  # Cambiar VITE_BACKEND=disabled para usar mocks
   # ============================================
   web:
     image: node:20-alpine
@@ -114,6 +136,7 @@ services:
     ports:
       - "5173:5173"
     environment:
+      # ⚠️ CAMBIAR A: VITE_BACKEND=disabled
       - VITE_BACKEND=local
       - VITE_API_BASE=http://localhost:8080
       - VITE_GALLERY_ADMIN_EMAILS=franciscolorenzo2406@gmail.com

@@ -103,6 +103,12 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out",
       },
+      transitionDelay: {
+        '150': '150ms',
+        '300': '300ms',
+        '500': '500ms',
+        '700': '700ms',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

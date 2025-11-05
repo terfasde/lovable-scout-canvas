@@ -10,6 +10,7 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+import { Reveal } from "@/components/Reveal";
 import communityImage from "@/assets/community-scouts.jpg";
 
 const About = () => {
@@ -92,29 +93,30 @@ const About = () => {
       <div className="container mx-auto px-4">
         {/* Branches Grid */}
         <div className="mb-20">
-          <div className="text-center mb-8">
+          <Reveal className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">Nuestras Ramas</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Cada etapa del escultismo está diseñada para acompañar el crecimiento y desarrollo de nuestros jóvenes
             </p>
-          </div>
+          </Reveal>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 overflow-visible py-4">
             {branches.map((branch, index) => (
-              <Dialog key={index}>
-                <DialogTrigger asChild>
-                  <Card className={`card-hover border-none shadow-sm min-w-[140px] aspect-square cursor-pointer transition-all duration-300 group ${branch.hoverClass}`}>
-                    <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center gap-2">
-                      <div className="w-14 h-14 bg-primary/10 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-all duration-300">
-                        <branch.icon className={`w-7 h-7 text-current transition-colors duration-300 ${branch.hoverIconClass}`} />
-                      </div>
-                      <h3 className="text-base font-bold transition-colors duration-300">{branch.title}</h3>
-                      <p className="text-xs text-muted-foreground group-hover:text-white line-clamp-2 transition-colors duration-300">
-                        {branch.description}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </DialogTrigger>
+              <Reveal key={index}>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Card className={`card-hover border-none shadow-sm min-w-[140px] aspect-square cursor-pointer transition-all duration-300 group ${branch.hoverClass}`}>
+                      <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center gap-2">
+                        <div className="w-14 h-14 bg-primary/10 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-all duration-300">
+                          <branch.icon className={`w-7 h-7 text-current transition-colors duration-300 ${branch.hoverIconClass}`} />
+                        </div>
+                        <h3 className="text-base font-bold transition-colors duration-300">{branch.title}</h3>
+                        <p className="text-xs text-muted-foreground group-hover:text-white line-clamp-2 transition-colors duration-300">
+                          {branch.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </DialogTrigger>
 
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                   <div className="grid md:grid-cols-2 gap-6 items-start">
@@ -151,67 +153,74 @@ const About = () => {
                   </div>
                 </DialogContent>
               </Dialog>
+              </Reveal>
             ))}
           </div>
         </div>
 
         {/* Main Introduction */}
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-          <div className="space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Quiénes Somos
-            </h2>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
-            </p>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-            <div className="pt-4">
-              <Button asChild size="lg">
-                <Link to="/historia">Conoce nuestra historia</Link>
-              </Button>
+          <Reveal>
+            <div className="space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Quiénes Somos
+              </h2>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </p>
+              <div className="pt-4">
+                <Button asChild size="lg">
+                  <Link to="/historia">Conoce nuestra historia</Link>
+                </Button>
+              </div>
             </div>
-          </div>
+          </Reveal>
           
-          <div className="relative">
-            <div className="relative z-10">
-              <img 
-                src={communityImage} 
-                alt="Comunidad Scout Séptimo" 
-                className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]" 
-              />
+          <Reveal>
+            <div className="relative">
+              <div className="relative z-10">
+                <img 
+                  src={communityImage} 
+                  alt="Comunidad Scout Séptimo" 
+                  className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]" 
+                />
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
+              <div className="absolute -top-6 -right-6 w-32 h-32 bg-accent rounded-full opacity-20 blur-3xl -z-0"></div>
             </div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
-            <div className="absolute -top-6 -right-6 w-32 h-32 bg-accent rounded-full opacity-20 blur-3xl -z-0"></div>
-          </div>
+          </Reveal>
         </div>
 
         {/* Values Grid */}
-        <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl p-8 md:p-12">
-          <div className="text-center mb-10">
-            <h3 className="text-3xl md:text-4xl font-bold mb-3">Los Pilares del Escultismo</h3>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Cuatro fundamentos que nos guían en la formación integral de nuestros jóvenes
-            </p>
+        <Reveal>
+          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl p-8 md:p-12">
+            <div className="text-center mb-10">
+              <h3 className="text-3xl md:text-4xl font-bold mb-3">Los Pilares del Escultismo</h3>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Cuatro fundamentos que nos guían en la formación integral de nuestros jóvenes
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {values.map((value, index) => (
+                <Card key={index} className="card-hover border-none shadow-md bg-card/50 backdrop-blur-sm group">
+                  <CardContent className="p-6 space-y-4">
+                    <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                      <value.icon className="w-7 h-7 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold mb-2">{value.title}</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{value.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <Card key={index} className="card-hover border-none shadow-md bg-card/50 backdrop-blur-sm">
-                <CardContent className="p-6 space-y-4">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
-                    <value.icon className="w-7 h-7 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-bold mb-2">{value.title}</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{value.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
