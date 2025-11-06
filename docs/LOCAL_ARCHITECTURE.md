@@ -18,6 +18,7 @@ Se implementó un servicio de autenticación completo que simula todas las funci
 - ✅ **Gestión de usuarios por defecto**
 
 **Usuario predeterminado:**
+
 - Email: `admin@scout.com`
 - Contraseña: cualquiera (validación simplificada en modo local)
 
@@ -27,15 +28,18 @@ Reemplazado completamente para proporcionar compatibilidad con el código existe
 
 ```typescript
 // Antes (Supabase real)
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 export const supabase = createClient(url, key);
 
 // Ahora (Mock local)
-import { authMock } from '@/lib/auth-mock';
-export const supabase = { /* implementación mock */ };
+import { authMock } from "@/lib/auth-mock";
+export const supabase = {
+  /* implementación mock */
+};
 ```
 
 **Funcionalidades mockeadas:**
+
 - `auth.*` → Usa `auth-mock.ts`
 - `from(table).select()...` → Retorna arrays vacíos
 - `storage.from(bucket).*` → Mock de almacenamiento
@@ -45,6 +49,7 @@ export const supabase = { /* implementación mock */ };
 ### 3. Dependencias Removidas
 
 **Eliminados de `package.json`:**
+
 - `@supabase/supabase-js`
 - `@supabase/auth-ui-react`
 - `supabase` (CLI)
@@ -54,6 +59,7 @@ export const supabase = { /* implementación mock */ };
 ### 4. Configuración de Entorno
 
 **`.env.development` actualizado:**
+
 ```env
 VITE_BACKEND=disabled
 # VITE_BACKEND_URL=http://localhost:8080  # Comentado
@@ -66,6 +72,7 @@ VITE_BACKEND=disabled
 ### 5. Exclusiones de Verificación
 
 **TypeScript (`tsconfig.json`):**
+
 ```json
 {
   "exclude": ["server", "node_modules", "dist"]
@@ -73,13 +80,15 @@ VITE_BACKEND=disabled
 ```
 
 **ESLint (`eslint.config.js`):**
+
 ```javascript
 {
-  ignores: ["dist", "src/integrations/supabase/types.ts", "server/**"]
+  ignores: ["dist", "src/integrations/supabase/types.ts", "server/**"];
 }
 ```
 
 **VS Code (`.vscode/settings.json`):**
+
 ```json
 {
   "search.exclude": {
@@ -117,51 +126,59 @@ docker compose down
 ```
 
 **Acceso:**
+
 - Frontend: http://localhost:5173
 - Usuario: `admin@scout.com` / password: cualquiera
 
 ### Autenticación
 
 **Registrar nuevo usuario:**
+
 ```typescript
 const { data, error } = await supabase.auth.signUp({
-  email: 'nuevo@example.com',
-  password: 'cualquier-password',
+  email: "nuevo@example.com",
+  password: "cualquier-password",
   options: {
     data: {
-      nombre: 'Juan',
-      apellido: 'Pérez'
-    }
-  }
+      nombre: "Juan",
+      apellido: "Pérez",
+    },
+  },
 });
 ```
 
 **Iniciar sesión:**
+
 ```typescript
 const { data, error } = await supabase.auth.signInWithPassword({
-  email: 'admin@scout.com',
-  password: 'cualquiera'
+  email: "admin@scout.com",
+  password: "cualquiera",
 });
 ```
 
 **Obtener sesión actual:**
+
 ```typescript
-const { data: { session } } = await supabase.auth.getSession();
+const {
+  data: { session },
+} = await supabase.auth.getSession();
 if (session) {
-  console.log('Usuario autenticado:', session.user.email);
+  console.log("Usuario autenticado:", session.user.email);
 }
 ```
 
 ### Datos Persistentes
 
 Todos los datos se guardan en `localStorage`:
+
 - **Sesiones:** `scout_auth_session`
 - **Usuarios:** `scout_users`
 
 **Limpiar datos locales:**
+
 ```javascript
-localStorage.removeItem('scout_auth_session');
-localStorage.removeItem('scout_users');
+localStorage.removeItem("scout_auth_session");
+localStorage.removeItem("scout_users");
 ```
 
 ## ⚠️ Limitaciones
@@ -187,6 +204,7 @@ localStorage.removeItem('scout_users');
 ### Soluciones Alternativas
 
 **Para usar base de datos local (opcional):**
+
 1. Instalar Python (requerido para `better-sqlite3`)
 2. Instalar dependencias del servidor:
    ```bash
@@ -204,6 +222,7 @@ localStorage.removeItem('scout_users');
    ```
 
 **Para implementar persistencia custom:**
+
 - Usar IndexedDB en lugar de localStorage
 - Implementar API REST simple con Express
 - Conectar a backend propio
@@ -229,18 +248,21 @@ src/
 ## ✅ Verificación
 
 **Compilación TypeScript:**
+
 ```bash
 npm run type-check
 # ✓ Sin errores
 ```
 
 **ESLint:**
+
 ```bash
 npm run lint
 # ✓ Sin warnings ni errores
 ```
 
 **Servidor de desarrollo:**
+
 ```bash
 npm run dev
 # ✓ Inicia en http://localhost:5173/
@@ -249,13 +271,15 @@ npm run dev
 ## 🔄 Volver a Supabase (Si es necesario)
 
 1. Reinstalar dependencias:
+
    ```bash
    npm install @supabase/supabase-js @supabase/auth-ui-react
    ```
 
 2. Restaurar `src/integrations/supabase/client.ts`:
+
    ```typescript
-   import { createClient } from '@supabase/supabase-js';
+   import { createClient } from "@supabase/supabase-js";
    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
    export const supabase = createClient(supabaseUrl, supabaseKey);

@@ -6,7 +6,15 @@ import UserAvatar from "@/components/UserAvatar";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, Users as UsersIcon, SlidersHorizontal, UserPlus, Settings, Crown, Shield } from "lucide-react";
+import {
+  Search,
+  Users as UsersIcon,
+  SlidersHorizontal,
+  UserPlus,
+  Settings,
+  Crown,
+  Shield,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -17,9 +25,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { createThread, listThreads, listComments, addComment, deleteThread, isAdmin, type ThreadWithAuthor } from "@/lib/threads";
-import { listGroups, createGroup, joinGroup, leaveGroup, type GroupWithMemberCount } from "@/lib/groups";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  createThread,
+  listThreads,
+  listComments,
+  addComment,
+  deleteThread,
+  isAdmin,
+  type ThreadWithAuthor,
+} from "@/lib/threads";
+import {
+  listGroups,
+  createGroup,
+  joinGroup,
+  leaveGroup,
+  type GroupWithMemberCount,
+} from "@/lib/groups";
 import { Trash2, Image as ImageIcon, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -51,16 +79,18 @@ const Usuarios = () => {
   const [threadComments, setThreadComments] = useState<any[]>([]);
   const [newCommentText, setNewCommentText] = useState("");
   const [userEmail, setUserEmail] = useState<string>("");
-  
+
   // Estados para grupos
   const [groups, setGroups] = useState<GroupWithMemberCount[]>([]);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupDescription, setNewGroupDescription] = useState("");
   const [newGroupCover, setNewGroupCover] = useState<File | null>(null);
-  const [groupCoverPreview, setGroupCoverPreview] = useState<string | null>(null);
+  const [groupCoverPreview, setGroupCoverPreview] = useState<string | null>(
+    null,
+  );
   const [creatingGroup, setCreatingGroup] = useState(false);
-  
+
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -68,13 +98,18 @@ const Usuarios = () => {
     (async () => {
       try {
         const auth = await getAuthUser();
-        if (!auth) { navigate('/auth'); return; }
+        if (!auth) {
+          navigate("/auth");
+          return;
+        }
         setCurrentUserId(auth.id);
         setUserEmail(auth.email || "");
 
         let rows: Profile[] = [];
         if (isLocalBackend()) {
-          const data = await apiFetch('/profiles/directory?q=&limit=200&offset=0');
+          const data = await apiFetch(
+            "/profiles/directory?q=&limit=200&offset=0",
+          );
           rows = (data as any[]).map((r: any) => ({
             user_id: String(r.user_id),
             nombre_completo: r.nombre_completo ?? null,
@@ -85,14 +120,16 @@ const Usuarios = () => {
           }));
         } else {
           // Preferir RPC que lista el directorio completo (bypasa RLS de profiles con SECURITY DEFINER)
-          const { data: rpcData, error: rpcError } = await supabase.rpc('list_profiles_directory');
+          const { data: rpcData, error: rpcError } = await supabase.rpc(
+            "list_profiles_directory",
+          );
           let data: any[] | null = rpcData as any[] | null;
           if (rpcError) {
             // Fallback a lectura directa (respetando RLS)
             const { data: d2, error: e2 } = await supabase
-              .from('profiles')
-              .select('user_id, nombre_completo, avatar_url, edad, is_public')
-              .order('nombre_completo', { ascending: true });
+              .from("profiles")
+              .select("user_id, nombre_completo, avatar_url, edad, is_public")
+              .order("nombre_completo", { ascending: true });
             if (e2) throw e2;
             data = d2 as any[] | null;
           }
@@ -109,7 +146,7 @@ const Usuarios = () => {
         setProfiles(rows);
         setFilteredProfiles(rows);
       } catch (err) {
-        console.error('Error cargando usuarios:', err);
+        console.error("Error cargando usuarios:", err);
       } finally {
         setLoading(false);
       }
@@ -121,8 +158,8 @@ const Usuarios = () => {
       try {
         const data = await listThreads(50);
         // Enriquecer con datos del autor
-        const enriched: ThreadWithAuthor[] = data.map(thread => {
-          const author = profiles.find(p => p.user_id === thread.author_id);
+        const enriched: ThreadWithAuthor[] = data.map((thread) => {
+          const author = profiles.find((p) => p.user_id === thread.author_id);
           return {
             ...thread,
             author_name: author?.nombre_completo,
@@ -132,14 +169,14 @@ const Usuarios = () => {
         });
         setThreads(enriched);
       } catch (e) {
-        console.error('Error cargando hilos:', e);
+        console.error("Error cargando hilos:", e);
       }
     })();
   }, [profiles]);
 
   // Cargar grupos
   useEffect(() => {
-    if (activeTab === 'grupos') {
+    if (activeTab === "grupos") {
       loadGroups();
     }
   }, [activeTab]);
@@ -149,12 +186,16 @@ const Usuarios = () => {
       const data = await listGroups();
       setGroups(data);
     } catch (e) {
-      console.error('Error cargando grupos:', e);
+      console.error("Error cargando grupos:", e);
     }
   };
 
   useEffect(() => {
-    if (!searchTerm.trim() && ramaFilter === "all" && visibilityFilter === "all") {
+    if (
+      !searchTerm.trim() &&
+      ramaFilter === "all" &&
+      visibilityFilter === "all"
+    ) {
       // Apply only sorting
       applySorting(profiles);
       return;
@@ -165,21 +206,21 @@ const Usuarios = () => {
     // Filter by search term
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.nombre_completo?.toLowerCase().includes(term)
+      filtered = filtered.filter((p) =>
+        p.nombre_completo?.toLowerCase().includes(term),
       );
     }
 
     // Filter by rama
     if (ramaFilter !== "all") {
-      filtered = filtered.filter(p => getRamaActual(p.edad) === ramaFilter);
+      filtered = filtered.filter((p) => getRamaActual(p.edad) === ramaFilter);
     }
 
     // Filter by visibility
     if (visibilityFilter === "public") {
-      filtered = filtered.filter(p => p.is_public === true);
+      filtered = filtered.filter((p) => p.is_public === true);
     } else if (visibilityFilter === "private") {
-      filtered = filtered.filter(p => p.is_public !== true);
+      filtered = filtered.filter((p) => p.is_public !== true);
     }
 
     applySorting(filtered);
@@ -187,10 +228,10 @@ const Usuarios = () => {
 
   const applySorting = (data: Profile[]) => {
     const sorted = [...data];
-    
+
     if (sortBy === "name") {
-      sorted.sort((a, b) => 
-        (a.nombre_completo || "").localeCompare(b.nombre_completo || "")
+      sorted.sort((a, b) =>
+        (a.nombre_completo || "").localeCompare(b.nombre_completo || ""),
       );
     } else if (sortBy === "age-asc") {
       sorted.sort((a, b) => (a.edad || 0) - (b.edad || 0));
@@ -199,14 +240,17 @@ const Usuarios = () => {
     } else if (sortBy === "rama") {
       sorted.sort((a, b) => {
         const ramaOrder: { [key: string]: number } = {
-          "Manada": 1,
-          "Tropa": 2,
-          "Pionero": 3,
-          "Rover": 4,
-          "Adulto": 5,
-          "Scout": 6,
+          Manada: 1,
+          Tropa: 2,
+          Pionero: 3,
+          Rover: 4,
+          Adulto: 5,
+          Scout: 6,
         };
-        return (ramaOrder[getRamaActual(a.edad)] || 99) - (ramaOrder[getRamaActual(b.edad)] || 99);
+        return (
+          (ramaOrder[getRamaActual(a.edad)] || 99) -
+          (ramaOrder[getRamaActual(b.edad)] || 99)
+        );
       });
     }
 
@@ -215,44 +259,47 @@ const Usuarios = () => {
 
   const submitThread = async () => {
     if (!newThreadText.trim() && !newThreadFile) return;
-    
+
     // Validación de longitud
     if (newThreadText.length > 500) {
-      toast({ 
-        title: 'Contenido muy largo', 
-        description: 'El hilo no puede exceder 500 caracteres',
-        variant: 'destructive' 
+      toast({
+        title: "Contenido muy largo",
+        description: "El hilo no puede exceder 500 caracteres",
+        variant: "destructive",
       });
       return;
     }
-    
+
     try {
       setPosting(true);
-      const thread = await createThread(newThreadText.trim(), newThreadFile || undefined);
-      
+      const thread = await createThread(
+        newThreadText.trim(),
+        newThreadFile || undefined,
+      );
+
       // Enriquecer con datos del autor actual
-      const author = profiles.find(p => p.user_id === currentUserId);
+      const author = profiles.find((p) => p.user_id === currentUserId);
       const enriched: ThreadWithAuthor = {
         ...thread,
         author_name: author?.nombre_completo,
         author_username: author?.username,
         author_avatar: author?.avatar_url,
       };
-      
-      setThreads(prev => [enriched, ...prev]);
+
+      setThreads((prev) => [enriched, ...prev]);
       setNewThreadText("");
       setNewThreadFile(null);
       setImagePreview(null);
-      
-      toast({ 
-        title: 'Hilo publicado', 
-        description: 'Tu hilo se ha publicado correctamente' 
+
+      toast({
+        title: "Hilo publicado",
+        description: "Tu hilo se ha publicado correctamente",
       });
     } catch (e: any) {
-      toast({ 
-        title: 'Error', 
-        description: e.message || 'No se pudo publicar el hilo',
-        variant: 'destructive' 
+      toast({
+        title: "Error",
+        description: e.message || "No se pudo publicar el hilo",
+        variant: "destructive",
       });
     } finally {
       setPosting(false);
@@ -263,27 +310,33 @@ const Usuarios = () => {
     const file = e.target.files?.[0];
     if (file) {
       // Validación de tipo
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      const validTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
       if (!validTypes.includes(file.type)) {
         toast({
-          title: 'Tipo de archivo no válido',
-          description: 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP)',
-          variant: 'destructive'
+          title: "Tipo de archivo no válido",
+          description: "Solo se permiten imágenes (JPG, PNG, GIF, WEBP)",
+          variant: "destructive",
         });
         return;
       }
-      
+
       // Validación de tamaño
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         toast({
-          title: 'Archivo muy grande',
-          description: 'La imagen no puede superar 5MB',
-          variant: 'destructive'
+          title: "Archivo muy grande",
+          description: "La imagen no puede superar 5MB",
+          variant: "destructive",
         });
         return;
       }
-      
+
       setNewThreadFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -312,7 +365,7 @@ const Usuarios = () => {
     if (!openThreadId || !newCommentText.trim()) return;
     try {
       const c = await addComment(openThreadId, newCommentText.trim());
-      setThreadComments(prev => [...prev, c]);
+      setThreadComments((prev) => [...prev, c]);
       setNewCommentText("");
     } catch (e) {
       console.error(e);
@@ -320,13 +373,16 @@ const Usuarios = () => {
   };
 
   const handleDeleteThread = async (threadId: string) => {
-    if (!confirm('¿Estás seguro de eliminar este hilo?')) return;
+    if (!confirm("¿Estás seguro de eliminar este hilo?")) return;
     try {
       await deleteThread(threadId);
-      setThreads(prev => prev.filter(t => t.id !== threadId));
-      toast({ title: 'Hilo eliminado', description: 'El hilo se eliminó correctamente' });
+      setThreads((prev) => prev.filter((t) => t.id !== threadId));
+      toast({
+        title: "Hilo eliminado",
+        description: "El hilo se eliminó correctamente",
+      });
     } catch (e: any) {
-      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+      toast({ title: "Error", description: e.message, variant: "destructive" });
     }
   };
 
@@ -334,26 +390,32 @@ const Usuarios = () => {
   const handleGroupCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      const validTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
       if (!validTypes.includes(file.type)) {
         toast({
-          title: 'Tipo de archivo no válido',
-          description: 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP)',
-          variant: 'destructive'
+          title: "Tipo de archivo no válido",
+          description: "Solo se permiten imágenes (JPG, PNG, GIF, WEBP)",
+          variant: "destructive",
         });
         return;
       }
-      
+
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
         toast({
-          title: 'Archivo muy grande',
-          description: 'La imagen no puede superar 5MB',
-          variant: 'destructive'
+          title: "Archivo muy grande",
+          description: "La imagen no puede superar 5MB",
+          variant: "destructive",
         });
         return;
       }
-      
+
       setNewGroupCover(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -366,33 +428,37 @@ const Usuarios = () => {
   const handleCreateGroup = async () => {
     if (!newGroupName.trim()) {
       toast({
-        title: 'Campo requerido',
-        description: 'El nombre del grupo es obligatorio',
-        variant: 'destructive'
+        title: "Campo requerido",
+        description: "El nombre del grupo es obligatorio",
+        variant: "destructive",
       });
       return;
     }
 
     try {
       setCreatingGroup(true);
-      await createGroup(newGroupName.trim(), newGroupDescription.trim() || null, newGroupCover || undefined);
-      
+      await createGroup(
+        newGroupName.trim(),
+        newGroupDescription.trim() || null,
+        newGroupCover || undefined,
+      );
+
       toast({
-        title: 'Grupo creado',
-        description: 'El grupo se ha creado correctamente'
+        title: "Grupo creado",
+        description: "El grupo se ha creado correctamente",
       });
-      
-      setNewGroupName('');
-      setNewGroupDescription('');
+
+      setNewGroupName("");
+      setNewGroupDescription("");
       setNewGroupCover(null);
       setGroupCoverPreview(null);
       setShowCreateGroup(false);
       await loadGroups();
     } catch (e: any) {
       toast({
-        title: 'Error',
-        description: e.message || 'No se pudo crear el grupo',
-        variant: 'destructive'
+        title: "Error",
+        description: e.message || "No se pudo crear el grupo",
+        variant: "destructive",
       });
     } finally {
       setCreatingGroup(false);
@@ -403,34 +469,34 @@ const Usuarios = () => {
     try {
       await joinGroup(groupId);
       toast({
-        title: 'Te has unido al grupo',
-        description: 'Ahora eres miembro de este grupo'
+        title: "Te has unido al grupo",
+        description: "Ahora eres miembro de este grupo",
       });
       await loadGroups();
     } catch (e: any) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: e.message,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   };
 
   const handleLeaveGroup = async (groupId: string) => {
-    if (!confirm('¿Estás seguro de que quieres salir de este grupo?')) return;
-    
+    if (!confirm("¿Estás seguro de que quieres salir de este grupo?")) return;
+
     try {
       await leaveGroup(groupId);
       toast({
-        title: 'Has salido del grupo',
-        description: 'Ya no eres miembro de este grupo'
+        title: "Has salido del grupo",
+        description: "Ya no eres miembro de este grupo",
       });
       await loadGroups();
     } catch (e: any) {
       toast({
-        title: 'Error',
+        title: "Error",
         description: e.message,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   };
@@ -467,7 +533,9 @@ const Usuarios = () => {
           <UsersIcon className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Comuni 7</h1>
-            <p className="text-sm text-muted-foreground">Personas y hilos de la comunidad</p>
+            <p className="text-sm text-muted-foreground">
+              Personas y hilos de la comunidad
+            </p>
           </div>
         </div>
 
@@ -495,26 +563,41 @@ const Usuarios = () => {
             <div className="grid gap-3 sm:grid-cols-3 mb-6">
               {/* Filtro por rama */}
               <div>
-                <label className="text-sm font-medium mb-2 block text-muted-foreground">Rama</label>
+                <label className="text-sm font-medium mb-2 block text-muted-foreground">
+                  Rama
+                </label>
                 <Select value={ramaFilter} onValueChange={setRamaFilter}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Todas las ramas" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas las ramas</SelectItem>
-                    <SelectItem value="Manada">🐺 Manada (7-10 años)</SelectItem>
+                    <SelectItem value="Manada">
+                      🐺 Manada (7-10 años)
+                    </SelectItem>
                     <SelectItem value="Tropa">⛺ Tropa (11-14 años)</SelectItem>
-                    <SelectItem value="Pionero">🏕️ Pioneros (15-17 años)</SelectItem>
-                    <SelectItem value="Rover">🎒 Rovers (18-20 años)</SelectItem>
-                    <SelectItem value="Adulto">👤 Adultos (21+ años)</SelectItem>
+                    <SelectItem value="Pionero">
+                      🏕️ Pioneros (15-17 años)
+                    </SelectItem>
+                    <SelectItem value="Rover">
+                      🎒 Rovers (18-20 años)
+                    </SelectItem>
+                    <SelectItem value="Adulto">
+                      👤 Adultos (21+ años)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Filtro por visibilidad */}
               <div>
-                <label className="text-sm font-medium mb-2 block text-muted-foreground">Privacidad</label>
-                <Select value={visibilityFilter} onValueChange={setVisibilityFilter}>
+                <label className="text-sm font-medium mb-2 block text-muted-foreground">
+                  Privacidad
+                </label>
+                <Select
+                  value={visibilityFilter}
+                  onValueChange={setVisibilityFilter}
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Todos los perfiles" />
                   </SelectTrigger>
@@ -528,15 +611,21 @@ const Usuarios = () => {
 
               {/* Ordenamiento */}
               <div>
-                <label className="text-sm font-medium mb-2 block text-muted-foreground">Ordenar por</label>
+                <label className="text-sm font-medium mb-2 block text-muted-foreground">
+                  Ordenar por
+                </label>
                 <Select value={sortBy} onValueChange={setSortBy}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Nombre" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="name">Nombre (A-Z)</SelectItem>
-                    <SelectItem value="age-asc">Edad (menor a mayor)</SelectItem>
-                    <SelectItem value="age-desc">Edad (mayor a menor)</SelectItem>
+                    <SelectItem value="age-asc">
+                      Edad (menor a mayor)
+                    </SelectItem>
+                    <SelectItem value="age-desc">
+                      Edad (mayor a menor)
+                    </SelectItem>
                     <SelectItem value="rama">Rama (Manada → Adulto)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -544,7 +633,9 @@ const Usuarios = () => {
             </div>
 
             {/* Filtros activos (badges) */}
-            {(ramaFilter !== "all" || visibilityFilter !== "all" || searchTerm) && (
+            {(ramaFilter !== "all" ||
+              visibilityFilter !== "all" ||
+              searchTerm) && (
               <div className="flex flex-wrap gap-2 mb-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <SlidersHorizontal className="w-4 h-4" />
@@ -553,25 +644,44 @@ const Usuarios = () => {
                 {searchTerm && (
                   <Badge variant="secondary" className="gap-1">
                     Búsqueda: "{searchTerm}"
-                    <button onClick={() => setSearchTerm("")} className="ml-1 hover:text-destructive">×</button>
+                    <button
+                      onClick={() => setSearchTerm("")}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
                   </Badge>
                 )}
                 {ramaFilter !== "all" && (
                   <Badge variant="secondary" className="gap-1">
                     {ramaFilter}
-                    <button onClick={() => setRamaFilter("all")} className="ml-1 hover:text-destructive">×</button>
+                    <button
+                      onClick={() => setRamaFilter("all")}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
                   </Badge>
                 )}
                 {visibilityFilter !== "all" && (
                   <Badge variant="secondary" className="gap-1">
-                    {visibilityFilter === "public" ? "🌍 Públicos" : "🔒 Privados"}
-                    <button onClick={() => setVisibilityFilter("all")} className="ml-1 hover:text-destructive">×</button>
+                    {visibilityFilter === "public"
+                      ? "🌍 Públicos"
+                      : "🔒 Privados"}
+                    <button
+                      onClick={() => setVisibilityFilter("all")}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      ×
+                    </button>
                   </Badge>
                 )}
-                {(ramaFilter !== "all" || visibilityFilter !== "all" || searchTerm) && (
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
+                {(ramaFilter !== "all" ||
+                  visibilityFilter !== "all" ||
+                  searchTerm) && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
                     onClick={() => {
                       setSearchTerm("");
                       setRamaFilter("all");
@@ -588,23 +698,35 @@ const Usuarios = () => {
             {/* Stats */}
             <div className="mb-6 text-sm text-muted-foreground">
               {filteredProfiles.length === profiles.length ? (
-                <p>{profiles.length} {profiles.length === 1 ? 'scout' : 'scouts'} en total</p>
+                <p>
+                  {profiles.length} {profiles.length === 1 ? "scout" : "scouts"}{" "}
+                  en total
+                </p>
               ) : (
-                <p>{filteredProfiles.length} {filteredProfiles.length === 1 ? 'resultado' : 'resultados'} de {profiles.length}</p>
+                <p>
+                  {filteredProfiles.length}{" "}
+                  {filteredProfiles.length === 1 ? "resultado" : "resultados"}{" "}
+                  de {profiles.length}
+                </p>
               )}
             </div>
 
             {/* Grid de usuarios */}
             {filteredProfiles.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No se encontraron scouts.</p>
+                <p className="text-muted-foreground">
+                  No se encontraron scouts.
+                </p>
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredProfiles.map((profile) => {
                   const isCurrentUser = profile.user_id === currentUserId;
                   return (
-                    <Card key={profile.user_id} className="hover:shadow-lg transition-shadow">
+                    <Card
+                      key={profile.user_id}
+                      className="hover:shadow-lg transition-shadow"
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-start gap-4">
                           <UserAvatar
@@ -616,15 +738,19 @@ const Usuarios = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-semibold truncate">
-                                {profile.nombre_completo || 'Scout'}
+                                {profile.nombre_completo || "Scout"}
                               </h3>
                               {isCurrentUser && (
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">Tú</span>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
+                                  Tú
+                                </span>
                               )}
                             </div>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                               <span>{getRamaActual(profile.edad)}</span>
-                              {profile.edad && <span>• {profile.edad} años</span>}
+                              {profile.edad && (
+                                <span>• {profile.edad} años</span>
+                              )}
                             </div>
                             <div className="flex items-center gap-2 mb-3">
                               {profile.is_public ? (
@@ -642,7 +768,7 @@ const Usuarios = () => {
                                 size="sm"
                                 variant="outline"
                                 className="w-full"
-                                onClick={() => navigate('/perfil')}
+                                onClick={() => navigate("/perfil")}
                               >
                                 Ver mi perfil
                               </Button>
@@ -650,7 +776,9 @@ const Usuarios = () => {
                               <Button
                                 size="sm"
                                 className="w-full"
-                                onClick={() => navigate(`/perfil-public/${profile.user_id}`)}
+                                onClick={() =>
+                                  navigate(`/perfil-public/${profile.user_id}`)
+                                }
                               >
                                 Ver perfil
                               </Button>
@@ -670,31 +798,45 @@ const Usuarios = () => {
               <CardContent className="p-4">
                 <div className="flex gap-3">
                   <UserAvatar
-                    avatarUrl={profiles.find(p => p.user_id === currentUserId)?.avatar_url || null}
-                    userName={profiles.find(p => p.user_id === currentUserId)?.nombre_completo || null}
+                    avatarUrl={
+                      profiles.find((p) => p.user_id === currentUserId)
+                        ?.avatar_url || null
+                    }
+                    userName={
+                      profiles.find((p) => p.user_id === currentUserId)
+                        ?.nombre_completo || null
+                    }
                     size="md"
                     className="flex-shrink-0"
                   />
                   <div className="flex-1 space-y-3">
-                    <Textarea 
-                      placeholder="¿Qué está pasando?" 
-                      value={newThreadText} 
-                      onChange={(e)=>setNewThreadText(e.target.value)}
+                    <Textarea
+                      placeholder="¿Qué está pasando?"
+                      value={newThreadText}
+                      onChange={(e) => setNewThreadText(e.target.value)}
                       className="min-h-[100px] resize-none border-0 focus-visible:ring-0 p-0 text-base"
                       maxLength={500}
                     />
-                    
+
                     {newThreadText.length > 0 && (
-                      <div className={`text-xs text-right ${
-                        newThreadText.length > 450 ? 'text-destructive font-semibold' : 'text-muted-foreground'
-                      }`}>
+                      <div
+                        className={`text-xs text-right ${
+                          newThreadText.length > 450
+                            ? "text-destructive font-semibold"
+                            : "text-muted-foreground"
+                        }`}
+                      >
                         {newThreadText.length}/500
                       </div>
                     )}
-                    
+
                     {imagePreview && (
                       <div className="relative inline-block">
-                        <img src={imagePreview} alt="Preview" className="rounded-xl max-h-64 object-cover border" />
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="rounded-xl max-h-64 object-cover border"
+                        />
                         <Button
                           variant="destructive"
                           size="icon"
@@ -705,12 +847,12 @@ const Usuarios = () => {
                         </Button>
                       </div>
                     )}
-                    
+
                     <div className="flex items-center justify-between pt-2 border-t">
                       <label className="cursor-pointer">
-                        <input 
-                          type="file" 
-                          accept="image/*" 
+                        <input
+                          type="file"
+                          accept="image/*"
                           onChange={handleFileChange}
                           className="hidden"
                         />
@@ -719,13 +861,15 @@ const Usuarios = () => {
                           <span className="text-sm font-medium">Imagen</span>
                         </div>
                       </label>
-                      
-                      <Button 
-                        onClick={submitThread} 
-                        disabled={posting || (!newThreadText.trim() && !newThreadFile)}
+
+                      <Button
+                        onClick={submitThread}
+                        disabled={
+                          posting || (!newThreadText.trim() && !newThreadFile)
+                        }
                         className="rounded-full px-6"
                       >
-                        {posting ? 'Publicando...' : 'Publicar'}
+                        {posting ? "Publicando..." : "Publicar"}
                       </Button>
                     </div>
                   </div>
@@ -737,9 +881,12 @@ const Usuarios = () => {
               {threads.map((t) => {
                 const isThreadAuthor = t.author_id === currentUserId;
                 const canDelete = isThreadAuthor || isAdmin(userEmail);
-                
+
                 return (
-                  <Card key={t.id} className="hover:bg-muted/30 transition-colors">
+                  <Card
+                    key={t.id}
+                    className="hover:bg-muted/30 transition-colors"
+                  >
                     <CardContent className="p-4">
                       <div className="flex gap-3">
                         <UserAvatar
@@ -748,12 +895,12 @@ const Usuarios = () => {
                           size="md"
                           className="flex-shrink-0"
                         />
-                        
+
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-semibold hover:underline cursor-pointer">
-                                {t.author_name || 'Scout'}
+                                {t.author_name || "Scout"}
                               </span>
                               {t.author_username && (
                                 <span className="text-sm text-muted-foreground">
@@ -761,12 +908,16 @@ const Usuarios = () => {
                                 </span>
                               )}
                               <span className="text-sm text-muted-foreground">
-                                · {new Date(t.created_at).toLocaleDateString('es-ES', { 
-                                  month: 'short', 
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
+                                ·{" "}
+                                {new Date(t.created_at).toLocaleDateString(
+                                  "es-ES",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )}
                               </span>
                             </div>
                             {canDelete && (
@@ -780,20 +931,26 @@ const Usuarios = () => {
                               </Button>
                             )}
                           </div>
-                          
-                          <div className="text-base whitespace-pre-wrap mb-3">{t.content}</div>
-                          
+
+                          <div className="text-base whitespace-pre-wrap mb-3">
+                            {t.content}
+                          </div>
+
                           {t.image_url && (
                             <div className="rounded-xl border overflow-hidden mb-3">
-                              <img src={t.image_url} alt="imagen del hilo" className="w-full max-h-96 object-cover" />
+                              <img
+                                src={t.image_url}
+                                alt="imagen del hilo"
+                                className="w-full max-h-96 object-cover"
+                              />
                             </div>
                           )}
-                          
+
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
+                              <Button
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => openThread(t.id)}
                                 className="text-muted-foreground hover:text-primary"
                               >
@@ -806,22 +963,35 @@ const Usuarios = () => {
                               </DialogHeader>
                               <div className="space-y-3 max-h-[50vh] overflow-auto">
                                 {threadComments.length === 0 ? (
-                                  <div className="text-sm text-muted-foreground text-center py-8">Sé el primero en comentar</div>
+                                  <div className="text-sm text-muted-foreground text-center py-8">
+                                    Sé el primero en comentar
+                                  </div>
                                 ) : (
-                                  threadComments.map(c => {
-                                    const commentAuthor = profiles.find(p => p.user_id === c.author_id);
+                                  threadComments.map((c) => {
+                                    const commentAuthor = profiles.find(
+                                      (p) => p.user_id === c.author_id,
+                                    );
                                     return (
-                                      <div key={c.id} className="flex gap-3 border-b pb-3 last:border-0">
+                                      <div
+                                        key={c.id}
+                                        className="flex gap-3 border-b pb-3 last:border-0"
+                                      >
                                         <UserAvatar
-                                          avatarUrl={commentAuthor?.avatar_url || null}
-                                          userName={commentAuthor?.nombre_completo || null}
+                                          avatarUrl={
+                                            commentAuthor?.avatar_url || null
+                                          }
+                                          userName={
+                                            commentAuthor?.nombre_completo ||
+                                            null
+                                          }
                                           size="sm"
                                           className="flex-shrink-0"
                                         />
                                         <div className="flex-1 min-w-0">
                                           <div className="flex items-center gap-2 mb-1">
                                             <span className="font-medium text-sm">
-                                              {commentAuthor?.nombre_completo || 'Scout'}
+                                              {commentAuthor?.nombre_completo ||
+                                                "Scout"}
                                             </span>
                                             {commentAuthor?.username && (
                                               <span className="text-xs text-muted-foreground">
@@ -829,15 +999,20 @@ const Usuarios = () => {
                                               </span>
                                             )}
                                             <span className="text-xs text-muted-foreground">
-                                              · {new Date(c.created_at).toLocaleDateString('es-ES', { 
-                                                month: 'short', 
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
+                                              ·{" "}
+                                              {new Date(
+                                                c.created_at,
+                                              ).toLocaleDateString("es-ES", {
+                                                month: "short",
+                                                day: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
                                               })}
                                             </span>
                                           </div>
-                                          <div className="text-sm">{c.content}</div>
+                                          <div className="text-sm">
+                                            {c.content}
+                                          </div>
                                         </div>
                                       </div>
                                     );
@@ -845,11 +1020,18 @@ const Usuarios = () => {
                                 )}
                               </div>
                               <div className="flex gap-2 pt-2 border-t">
-                                <Input 
-                                  placeholder="Escribe un comentario" 
-                                  value={newCommentText} 
-                                  onChange={(e)=>setNewCommentText(e.target.value)} 
-                                  onKeyDown={(e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendComment(); } }} 
+                                <Input
+                                  placeholder="Escribe un comentario"
+                                  value={newCommentText}
+                                  onChange={(e) =>
+                                    setNewCommentText(e.target.value)
+                                  }
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      sendComment();
+                                    }
+                                  }}
                                 />
                                 <Button onClick={sendComment}>Enviar</Button>
                               </div>
@@ -880,7 +1062,9 @@ const Usuarios = () => {
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Nombre del grupo *</label>
+                      <label className="text-sm font-medium">
+                        Nombre del grupo *
+                      </label>
                       <Input
                         placeholder="Ej: Patrulla Águila"
                         value={newGroupName}
@@ -893,7 +1077,7 @@ const Usuarios = () => {
                         </p>
                       )}
                     </div>
-                    
+
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Descripción</label>
                       <Textarea
@@ -904,14 +1088,19 @@ const Usuarios = () => {
                         className="min-h-[100px]"
                       />
                       {newGroupDescription.length > 450 && (
-                        <p className={`text-xs ${newGroupDescription.length > 480 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                          {500 - newGroupDescription.length} caracteres restantes
+                        <p
+                          className={`text-xs ${newGroupDescription.length > 480 ? "text-destructive" : "text-muted-foreground"}`}
+                        >
+                          {500 - newGroupDescription.length} caracteres
+                          restantes
                         </p>
                       )}
                     </div>
-                    
+
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Imagen de portada</label>
+                      <label className="text-sm font-medium">
+                        Imagen de portada
+                      </label>
                       {groupCoverPreview ? (
                         <div className="relative">
                           <img
@@ -935,8 +1124,12 @@ const Usuarios = () => {
                         <label className="cursor-pointer">
                           <div className="border-2 border-dashed rounded-lg p-8 text-center hover:bg-muted/50 transition-colors">
                             <ImageIcon className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                            <p className="text-sm text-muted-foreground">Click para subir imagen</p>
-                            <p className="text-xs text-muted-foreground mt-1">JPG, PNG, GIF o WEBP (máx. 5MB)</p>
+                            <p className="text-sm text-muted-foreground">
+                              Click para subir imagen
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              JPG, PNG, GIF o WEBP (máx. 5MB)
+                            </p>
                           </div>
                           <input
                             type="file"
@@ -947,21 +1140,21 @@ const Usuarios = () => {
                         </label>
                       )}
                     </div>
-                    
+
                     <div className="flex gap-2 pt-4">
                       <Button
                         onClick={handleCreateGroup}
                         disabled={creatingGroup || !newGroupName.trim()}
                         className="flex-1"
                       >
-                        {creatingGroup ? 'Creando...' : 'Crear Grupo'}
+                        {creatingGroup ? "Creando..." : "Crear Grupo"}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => {
                           setShowCreateGroup(false);
-                          setNewGroupName('');
-                          setNewGroupDescription('');
+                          setNewGroupName("");
+                          setNewGroupDescription("");
                           setNewGroupCover(null);
                           setGroupCoverPreview(null);
                         }}
@@ -977,11 +1170,14 @@ const Usuarios = () => {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {groups.map((group) => {
                 const isMember = !!group.user_role;
-                const isOwner = group.user_role === 'owner';
-                const isAdmin = group.user_role === 'admin';
-                
+                const isOwner = group.user_role === "owner";
+                const isAdmin = group.user_role === "admin";
+
                 return (
-                  <Card key={group.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card
+                    key={group.id}
+                    className="overflow-hidden hover:shadow-lg transition-shadow"
+                  >
                     {group.cover_image && (
                       <div className="h-32 overflow-hidden">
                         <img
@@ -994,28 +1190,36 @@ const Usuarios = () => {
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-2">
                         <h3 className="font-semibold text-lg">{group.name}</h3>
-                        {isOwner && <Crown className="h-5 w-5 text-yellow-500 flex-shrink-0" />}
-                        {isAdmin && !isOwner && <Shield className="h-5 w-5 text-blue-500 flex-shrink-0" />}
+                        {isOwner && (
+                          <Crown className="h-5 w-5 text-yellow-500 flex-shrink-0" />
+                        )}
+                        {isAdmin && !isOwner && (
+                          <Shield className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                        )}
                       </div>
-                      
+
                       {group.description && (
                         <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                           {group.description}
                         </p>
                       )}
-                      
+
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-xs text-muted-foreground">
-                          {group.member_count} {group.member_count === 1 ? 'miembro' : 'miembros'}
+                          {group.member_count}{" "}
+                          {group.member_count === 1 ? "miembro" : "miembros"}
                         </span>
                         <span className="text-xs text-muted-foreground">
-                          {new Date(group.created_at).toLocaleDateString('es-ES', {
-                            month: 'short',
-                            year: 'numeric'
-                          })}
+                          {new Date(group.created_at).toLocaleDateString(
+                            "es-ES",
+                            {
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )}
                         </span>
                       </div>
-                      
+
                       <div className="flex gap-2">
                         {isMember ? (
                           <>
@@ -1051,11 +1255,16 @@ const Usuarios = () => {
                   </Card>
                 );
               })}
-              
+
               {groups.length === 0 && (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-muted-foreground mb-4">No hay grupos aún</p>
-                  <Button onClick={() => setShowCreateGroup(true)} className="gap-2">
+                  <p className="text-muted-foreground mb-4">
+                    No hay grupos aún
+                  </p>
+                  <Button
+                    onClick={() => setShowCreateGroup(true)}
+                    className="gap-2"
+                  >
                     <UserPlus className="h-4 w-4" />
                     Crear el primer grupo
                   </Button>

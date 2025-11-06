@@ -32,7 +32,7 @@ Este proyecto utiliza una arquitectura de microservicios con contenedores Docker
 ✅ **Escalabilidad**: Fácil escalar servicios individualmente  
 ✅ **Desarrollo**: Entorno idéntico a producción  
 ✅ **Monitoreo**: Observabilidad completa con métricas en tiempo real  
-✅ **Mantenibilidad**: Actualizaciones y backups simplificados  
+✅ **Mantenibilidad**: Actualizaciones y backups simplificados
 
 ---
 
@@ -88,12 +88,14 @@ Este proyecto utiliza una arquitectura de microservicios con contenedores Docker
 **Propósito**: Base de datos principal de la aplicación
 
 **Características**:
+
 - Alta disponibilidad con healthcheck
 - Volumen persistente para datos
 - Script de inicialización automática (`init.sql`)
 - Optimizado con Alpine Linux
 
 **Variables de entorno**:
+
 ```env
 POSTGRES_DB=scoutdb
 POSTGRES_USER=scoutuser
@@ -109,10 +111,12 @@ POSTGRES_PASSWORD=scout_secure_password_2024
 **Propósito**: Interfaz web para administrar PostgreSQL
 
 **Credenciales**:
+
 - Email: `admin@scout.local`
 - Password: `admin123`
 
 **Funcionalidades**:
+
 - Gestión visual de base de datos
 - Editor SQL
 - Visualización de tablas y relaciones
@@ -127,6 +131,7 @@ POSTGRES_PASSWORD=scout_secure_password_2024
 **Propósito**: API REST del servidor
 
 **Características**:
+
 - Autenticación JWT
 - Upload de imágenes
 - WebSockets para tiempo real
@@ -134,6 +139,7 @@ POSTGRES_PASSWORD=scout_secure_password_2024
 - Soporte para PostgreSQL y SQLite
 
 **Endpoints principales**:
+
 - `GET /health` - Health check
 - `GET /metrics` - Métricas Prometheus
 - `POST /auth/login` - Login
@@ -149,6 +155,7 @@ POSTGRES_PASSWORD=scout_secure_password_2024
 **Propósito**: Aplicación web del usuario
 
 **Características**:
+
 - React 18 con TypeScript
 - Hot Module Replacement (HMR)
 - Build optimizado con code splitting
@@ -163,6 +170,7 @@ POSTGRES_PASSWORD=scout_secure_password_2024
 **Propósito**: Recolección y almacenamiento de métricas
 
 **Métricas recolectadas**:
+
 - Peticiones HTTP (rate, duración, errores)
 - Uso de CPU y memoria
 - Conexiones a base de datos
@@ -177,10 +185,12 @@ POSTGRES_PASSWORD=scout_secure_password_2024
 **Propósito**: Dashboards de monitoreo
 
 **Credenciales**:
+
 - Usuario: `admin`
 - Password: `admin123`
 
 **Dashboards incluidos**:
+
 - Scout - Monitoreo General
   - Tasa de peticiones HTTP
   - Latencia p95
@@ -226,13 +236,13 @@ docker compose -f docker-compose.dev.yml up -d
 
 Una vez iniciados los contenedores:
 
-| Servicio | URL | Credenciales |
-|----------|-----|--------------|
-| **Frontend** | http://localhost:5173 | - |
-| **Backend API** | http://localhost:8080 | - |
-| **PgAdmin** | http://localhost:5050 | admin@scout.local / admin123 |
-| **Prometheus** | http://localhost:9090 | - |
-| **Grafana** | http://localhost:3000 | admin / admin123 |
+| Servicio        | URL                   | Credenciales                 |
+| --------------- | --------------------- | ---------------------------- |
+| **Frontend**    | http://localhost:5173 | -                            |
+| **Backend API** | http://localhost:8080 | -                            |
+| **PgAdmin**     | http://localhost:5050 | admin@scout.local / admin123 |
+| **Prometheus**  | http://localhost:9090 | -                            |
+| **Grafana**     | http://localhost:3000 | admin / admin123             |
 
 ---
 
@@ -245,13 +255,13 @@ Edita `docker-compose.full.yml` para cambiar:
 ```yaml
 environment:
   # Base de datos
-  - DB_TYPE=postgres          # o 'sqlite' para desarrollo
+  - DB_TYPE=postgres # o 'sqlite' para desarrollo
   - DB_HOST=postgres
   - DB_PORT=5432
   - DB_NAME=scoutdb
   - DB_USER=scoutuser
   - DB_PASSWORD=scout_secure_password_2024
-  
+
   # JWT y seguridad
   - JWT_SECRET=your-super-secret-jwt-key-change-in-production
   - ADMIN_EMAILS=tu-email@ejemplo.com
@@ -287,6 +297,7 @@ environment:
 ### Métricas disponibles
 
 **Backend API**:
+
 - `http_requests_total` - Total de peticiones HTTP
 - `http_request_duration_ms` - Duración de requests
 - `process_cpu_percent` - Uso de CPU
@@ -294,6 +305,7 @@ environment:
 - `active_connections` - Conexiones activas
 
 **PostgreSQL**:
+
 - `pg_stat_database_numbackends` - Conexiones activas
 - `pg_stat_database_xact_commit` - Transacciones
 - `pg_stat_database_tup_fetched` - Filas leídas
@@ -370,6 +382,7 @@ sqlite3 app.db .dump > sqlite_dump.sql
 ### 2. Convertir sintaxis SQLite → PostgreSQL
 
 Edita `sqlite_dump.sql` y reemplaza:
+
 - `INTEGER PRIMARY KEY AUTOINCREMENT` → `SERIAL PRIMARY KEY`
 - `TEXT` → `VARCHAR(255)` o `TEXT`
 - Elimina `BEGIN TRANSACTION` y `COMMIT`
@@ -399,6 +412,7 @@ docker run --rm -v ${PWD}:/data dimitri/pgloader:latest \
 **Síntoma**: Error `ECONNREFUSED` en logs del servidor
 
 **Solución**:
+
 ```powershell
 # Verificar que PostgreSQL esté healthy
 docker compose -f docker-compose.full.yml ps
@@ -416,6 +430,7 @@ docker compose -f docker-compose.full.yml up -d server
 **Síntoma**: "Unable to connect to server"
 
 **Solución**:
+
 - Usa `postgres` como hostname (no `localhost`)
 - Verifica credenciales en `docker-compose.full.yml`
 - Ambos contenedores deben estar en la misma red (`scout-network`)
@@ -425,6 +440,7 @@ docker compose -f docker-compose.full.yml up -d server
 **Síntoma**: Error `Bind for 0.0.0.0:5432 failed: port is already allocated`
 
 **Solución**:
+
 ```powershell
 # Ver qué proceso usa el puerto
 netstat -ano | findstr :5432
@@ -439,6 +455,7 @@ ports:
 **Síntoma**: PostgreSQL no inicia, logs con errores de datos
 
 **Solución**:
+
 ```powershell
 # CUIDADO: Esto borra todos los datos
 docker compose -f docker-compose.full.yml down -v
@@ -450,6 +467,7 @@ docker compose -f docker-compose.full.yml up -d
 **Síntoma**: Dashboards vacíos en Grafana
 
 **Solución**:
+
 1. Verifica Prometheus en http://localhost:9090
 2. En Grafana → Configuration → Data Sources
 3. Verifica que Prometheus apunte a `http://prometheus:9090`
@@ -481,6 +499,7 @@ docker compose -f docker-compose.full.yml up -d
    - PostgreSQL, Prometheus, Grafana solo accesibles internamente
 
 3. **Usar variables de entorno**:
+
    ```powershell
    # Crear archivo .env con secretos
    docker compose -f docker-compose.full.yml --env-file .env.prod up -d
@@ -495,6 +514,7 @@ docker compose -f docker-compose.full.yml up -d
 ## 📝 Changelog
 
 ### v2.0.0 (2024-11-04)
+
 - ✨ Arquitectura de microservicios con servicios separados
 - 🐘 PostgreSQL como base de datos principal
 - 📊 Sistema de monitoreo con Prometheus + Grafana
@@ -503,6 +523,7 @@ docker compose -f docker-compose.full.yml up -d
 - 📚 Documentación completa
 
 ### v1.0.0
+
 - SQLite con backend local
 - Docker Compose básico
 

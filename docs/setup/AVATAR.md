@@ -9,7 +9,7 @@ Esta guía explica cómo configurar el almacenamiento de fotos de perfil (avatar
 Ejecuta el siguiente SQL en **SQL Editor** de Supabase:
 
 ```sql
-ALTER TABLE profiles 
+ALTER TABLE profiles
 ADD COLUMN IF NOT EXISTS avatar_url TEXT;
 ```
 
@@ -122,6 +122,7 @@ USING (bucket_id = 'avatars');
 ## Estructura de storage
 
 Los avatares se guardan en:
+
 ```
 avatars/
   {user_id}/
@@ -129,6 +130,7 @@ avatars/
 ```
 
 Ejemplo:
+
 ```
 avatars/
   abc-123-def/
@@ -138,17 +140,20 @@ avatars/
 ## Troubleshooting
 
 ### La foto no se sube
+
 - Verifica que el bucket `avatars` existe y es público
 - Confirma que las políticas RLS están activas
 - Revisa que el tamaño no supere 4MB
 - Asegúrate de que el archivo es una imagen válida
 
 ### No se ve la foto
+
 - Verifica que la URL en `profiles.avatar_url` es correcta
 - Confirma que el bucket es público
 - Revisa la política "Anyone can view avatars"
 
 ### Error de permisos
+
 - Verifica que el usuario está autenticado
 - Confirma que las políticas usan `auth.uid()`
 - Revisa que el `user_id` en la carpeta coincide con el usuario actual

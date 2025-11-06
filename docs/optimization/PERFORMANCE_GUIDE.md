@@ -9,6 +9,7 @@ Este proyecto ha sido optimizado extensivamente para ofrecer el mejor rendimient
 ## 📦 **1. Code Splitting y Lazy Loading**
 
 ### Implementación
+
 Todas las rutas se cargan de forma diferida usando `React.lazy()` y `Suspense`:
 
 ```tsx
@@ -20,10 +21,11 @@ const Eventos = lazy(() => import("./pages/Eventos"));
   <Routes>
     <Route path="/galeria" element={<Galeria />} />
   </Routes>
-</Suspense>
+</Suspense>;
 ```
 
 ### Beneficios
+
 - ✅ Bundle inicial reducido de ~977 kB a ~53 kB
 - ✅ Carga bajo demanda de páginas (1-26 kB cada una)
 - ✅ Mejor Time to Interactive (TTI)
@@ -34,6 +36,7 @@ const Eventos = lazy(() => import("./pages/Eventos"));
 ## 🎯 **2. Chunk Splitting Manual**
 
 ### Configuración (vite.config.ts)
+
 ```tsx
 manualChunks(id) {
   if (id.includes("react-router-dom")) return "vendor-router";
@@ -46,35 +49,38 @@ manualChunks(id) {
 ```
 
 ### Resultado
-| Chunk | Tamaño | Cache |
-|-------|--------|-------|
-| vendor-react | ~474 kB | Permanente |
-| vendor-supabase | ~155 kB | Permanente |
-| vendor-query | ~23 kB | Permanente |
-| vendor-router | ~3 kB | Permanente |
-| index (app) | ~53 kB | Invalidado frecuentemente |
-| páginas | 1-26 kB | Por ruta |
+
+| Chunk           | Tamaño  | Cache                     |
+| --------------- | ------- | ------------------------- |
+| vendor-react    | ~474 kB | Permanente                |
+| vendor-supabase | ~155 kB | Permanente                |
+| vendor-query    | ~23 kB  | Permanente                |
+| vendor-router   | ~3 kB   | Permanente                |
+| index (app)     | ~53 kB  | Invalidado frecuentemente |
+| páginas         | 1-26 kB | Por ruta                  |
 
 ---
 
 ## ⚡ **3. React Query Optimizado**
 
 ### Configuración
+
 ```tsx
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,        // 5 minutos
-      gcTime: 1000 * 60 * 10,          // 10 minutos
-      retry: 1,                         // 1 reintento
-      refetchOnWindowFocus: false,      // No refetch al focus
-      refetchOnMount: false,            // No refetch al mount
+      staleTime: 1000 * 60 * 5, // 5 minutos
+      gcTime: 1000 * 60 * 10, // 10 minutos
+      retry: 1, // 1 reintento
+      refetchOnWindowFocus: false, // No refetch al focus
+      refetchOnMount: false, // No refetch al mount
     },
   },
 });
 ```
 
 ### Beneficios
+
 - ✅ Reducción de requests innecesarios ~70%
 - ✅ Datos en cache reutilizables
 - ✅ Mejor experiencia offline
@@ -85,19 +91,21 @@ const queryClient = new QueryClient({
 ## 🖼️ **4. Optimización de Imágenes**
 
 ### Componente OptimizedImage
+
 ```tsx
 import { OptimizedImage } from "@/components/OptimizedImage";
 
-<OptimizedImage 
-  src="/hero.jpg" 
+<OptimizedImage
+  src="/hero.jpg"
   alt="Hero image"
   aspectRatio="16/9"
-  priority={false}     // true para above-the-fold
-  blur={true}          // placeholder mientras carga
-/>
+  priority={false} // true para above-the-fold
+  blur={true} // placeholder mientras carga
+/>;
 ```
 
 ### Features
+
 - ✅ Lazy loading automático
 - ✅ Blur placeholder
 - ✅ Error handling
@@ -109,6 +117,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 ## 🎨 **5. Component Memoization**
 
 ### Ejemplos
+
 ```tsx
 // BackgroundFX ya usa memo
 const BackgroundFX = memo(() => { ... });
@@ -122,6 +131,7 @@ const HeavyComponent = memo(({ data }) => {
 ```
 
 ### Cuándo usar
+
 - Componentes que se renderizan frecuentemente
 - Cálculos costosos en componentes
 - Callbacks pasados a child components
@@ -131,6 +141,7 @@ const HeavyComponent = memo(({ data }) => {
 ## 🔧 **6. Build Optimization**
 
 ### vite.config.ts
+
 ```tsx
 build: {
   sourcemap: false,              // No source maps en prod
@@ -140,6 +151,7 @@ build: {
 ```
 
 ### Beneficios
+
 - ✅ Build 30% más rápido con esbuild
 - ✅ Bundle final 15% más pequeño
 - ✅ Sin source maps innecesarios en producción
@@ -149,6 +161,7 @@ build: {
 ## 🔍 **7. SEO Optimization**
 
 ### Meta Tags Completos
+
 ```html
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
@@ -173,6 +186,7 @@ build: {
 ## ♿ **8. Accessibility (a11y)**
 
 ### Mejoras Implementadas
+
 - ✅ `aria-hidden="true"` en elementos decorativos
 - ✅ `lang="es"` en HTML root
 - ✅ Alt text obligatorio en componente OptimizedImage
@@ -184,6 +198,7 @@ build: {
 ## 🛡️ **9. Error Handling**
 
 ### ErrorBoundary
+
 ```tsx
 <ErrorBoundary>
   <YourApp />
@@ -191,6 +206,7 @@ build: {
 ```
 
 ### Features
+
 - ✅ Captura errores de React
 - ✅ UI de fallback amigable
 - ✅ Stack trace en desarrollo
@@ -202,6 +218,7 @@ build: {
 ## 📊 **10. Performance Hooks**
 
 ### useDebounce
+
 ```tsx
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -215,6 +232,7 @@ useEffect(() => {
 ```
 
 ### Beneficios
+
 - ✅ Reducción de requests ~80% en búsquedas
 - ✅ Mejor UX (menos lag)
 - ✅ Menos carga en backend
@@ -225,27 +243,28 @@ useEffect(() => {
 
 ### Antes vs Después
 
-| Métrica | Antes | Después | Mejora |
-|---------|-------|---------|--------|
-| Bundle inicial | 977 kB | 53 kB | 94% ↓ |
-| First Contentful Paint | ~2.5s | ~1.5s | 40% ↓ |
-| Time to Interactive | ~4.2s | ~2.7s | 35% ↓ |
-| Requests iniciales | ~35 | ~15 | 57% ↓ |
-| Cache hit rate | ~30% | ~75% | 150% ↑ |
+| Métrica                | Antes  | Después | Mejora |
+| ---------------------- | ------ | ------- | ------ |
+| Bundle inicial         | 977 kB | 53 kB   | 94% ↓  |
+| First Contentful Paint | ~2.5s  | ~1.5s   | 40% ↓  |
+| Time to Interactive    | ~4.2s  | ~2.7s   | 35% ↓  |
+| Requests iniciales     | ~35    | ~15     | 57% ↓  |
+| Cache hit rate         | ~30%   | ~75%    | 150% ↑ |
 
 ### Core Web Vitals (Estimados)
 
-| Métrica | Target | Actual |
-|---------|--------|--------|
-| LCP (Largest Contentful Paint) | < 2.5s | ~2.1s ✅ |
-| FID (First Input Delay) | < 100ms | ~60ms ✅ |
-| CLS (Cumulative Layout Shift) | < 0.1 | ~0.05 ✅ |
+| Métrica                        | Target  | Actual   |
+| ------------------------------ | ------- | -------- |
+| LCP (Largest Contentful Paint) | < 2.5s  | ~2.1s ✅ |
+| FID (First Input Delay)        | < 100ms | ~60ms ✅ |
+| CLS (Cumulative Layout Shift)  | < 0.1   | ~0.05 ✅ |
 
 ---
 
 ## 🚀 Próximas Optimizaciones Recomendadas
 
 ### Alta Prioridad
+
 1. **Convertir imágenes a WebP**
    - Reducción adicional de ~40% en tamaño de imágenes
    - Mantener fallback a JPG/PNG
@@ -260,6 +279,7 @@ useEffect(() => {
    - Compresión Brotli/Gzip automática
 
 ### Media Prioridad
+
 4. **Font optimization**
    - `font-display: swap` para evitar FOIT
    - Preload de fuentes críticas
@@ -274,6 +294,7 @@ useEffect(() => {
    - Prefetch de rutas probables
 
 ### Baja Prioridad
+
 7. **Bundle Analyzer**
    - Visualizar tree map de chunks
    - Identificar duplicados
@@ -291,6 +312,7 @@ useEffect(() => {
 ## 🔧 Herramientas de Desarrollo
 
 ### Scripts Disponibles
+
 ```bash
 npm run dev              # Desarrollo con HMR
 npm run build            # Build de producción
@@ -302,6 +324,7 @@ npm run clean            # Limpiar dist/
 ```
 
 ### Herramientas Recomendadas
+
 - **Lighthouse**: Chrome DevTools → Auditoría completa
 - **WebPageTest**: https://webpagetest.org
 - **Bundle Analyzer**: Visualizar tamaño de chunks
@@ -312,24 +335,28 @@ npm run clean            # Limpiar dist/
 ## 📝 Best Practices Implementadas
 
 ### Code
+
 - ✅ TypeScript estricto
 - ✅ ESLint configurado
 - ✅ Imports organizados
 - ✅ Componentes pequeños y reutilizables
 
 ### Performance
+
 - ✅ Lazy loading de rutas
 - ✅ Code splitting manual
 - ✅ Memoization donde es necesario
 - ✅ Debouncing en búsquedas
 
 ### UX
+
 - ✅ Loading states en todas las operaciones async
 - ✅ Error boundaries con UI amigable
 - ✅ Feedback visual en acciones
 - ✅ Placeholders mientras se cargan datos
 
 ### Accessibility
+
 - ✅ Navegación por teclado
 - ✅ ARIA labels
 - ✅ Contraste adecuado
@@ -349,6 +376,7 @@ npm run clean            # Limpiar dist/
 ## 📞 Soporte
 
 Para preguntas sobre optimizaciones:
+
 ### Ver también
 
 1. Revisa `OPTIMIZATIONS.md` para detalles técnicos de las optimizaciones ya implementadas

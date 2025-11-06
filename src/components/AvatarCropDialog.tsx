@@ -1,6 +1,12 @@
 import { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { ZoomIn, ZoomOut } from "lucide-react";
@@ -50,22 +56,31 @@ async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<Blob> {
     0,
     0,
     pixelCrop.width,
-    pixelCrop.height
+    pixelCrop.height,
   );
 
   // Convertir a blob
   return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) {
-        resolve(blob);
-      } else {
-        reject(new Error("Error al crear el blob de la imagen"));
-      }
-    }, "image/jpeg", 0.95);
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error("Error al crear el blob de la imagen"));
+        }
+      },
+      "image/jpeg",
+      0.95,
+    );
   });
 }
 
-const AvatarCropDialog = ({ open, imageSrc, onClose, onCropComplete }: AvatarCropDialogProps) => {
+const AvatarCropDialog = ({
+  open,
+  imageSrc,
+  onClose,
+  onCropComplete,
+}: AvatarCropDialogProps) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
@@ -83,7 +98,7 @@ const AvatarCropDialog = ({ open, imageSrc, onClose, onCropComplete }: AvatarCro
     (_croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
-    []
+    [],
   );
 
   const handleSave = async () => {
@@ -105,7 +120,9 @@ const AvatarCropDialog = ({ open, imageSrc, onClose, onCropComplete }: AvatarCro
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base sm:text-lg">Ajustar foto de perfil</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">
+            Ajustar foto de perfil
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 sm:space-y-6">
@@ -146,15 +163,25 @@ const AvatarCropDialog = ({ open, imageSrc, onClose, onCropComplete }: AvatarCro
           </div>
 
           <p className="text-xs text-muted-foreground text-center">
-            Arrastra para mover la imagen y usa el control deslizante para hacer zoom
+            Arrastra para mover la imagen y usa el control deslizante para hacer
+            zoom
           </p>
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={onClose} disabled={loading} className="w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={loading}
+            className="w-full sm:w-auto"
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={loading} className="w-full sm:w-auto">
+          <Button
+            onClick={handleSave}
+            disabled={loading}
+            className="w-full sm:w-auto"
+          >
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>

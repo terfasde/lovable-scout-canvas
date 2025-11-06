@@ -24,6 +24,7 @@ La verificación de email está temporalmente desactivada para facilitar las pru
 ### 📝 Configuración Adicional (Importante):
 
 En **Authentication** → **Settings** → **Email Auth**:
+
 - **Mailer Autoconfirm**: ✅ **ON** (para testing - confirma automáticamente)
 - **Email Confirmations**: ❌ **OFF** (para testing - no requiere confirmación)
 
@@ -120,11 +121,13 @@ if (data.session) {
 ## 🧪 Testing de Verificación de Email
 
 ### En Desarrollo (Local):
+
 - Los emails de confirmación se enviarán a la dirección registrada
 - Puedes ver los emails en el **Email Log** de Supabase Dashboard
 - Para testing local, considera usar [Mailhog](https://github.com/mailhog/MailHog) o similar
 
 ### En Producción:
+
 - Configurar un servicio SMTP real en Supabase
 - Personalizar los templates de email con tu marca
 - Probar con emails reales antes de lanzar

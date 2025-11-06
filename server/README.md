@@ -3,6 +3,7 @@
 ## Descripción
 
 API REST del proyecto Scout con soporte para:
+
 - **Autenticación**: JWT, bcrypt
 - **Base de datos**: PostgreSQL o SQLite
 - **Upload**: Gestión de imágenes con Multer
@@ -131,6 +132,7 @@ El servidor se conecta automáticamente a PostgreSQL cuando `DB_TYPE=postgres`.
 El servidor expone métricas en `/metrics` para Prometheus:
 
 **Métricas disponibles**:
+
 - `http_requests_total` - Total de peticiones HTTP
 - `http_request_duration_ms` - Latencia de requests
 - `process_cpu_percent` - Uso de CPU
@@ -202,4 +204,3 @@ Este proyecto usa `better-sqlite3` (módulo nativo). Si falla la instalación:
 ---
 
 Desarrollado para **Grupo Scout** 🏕️
-

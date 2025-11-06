@@ -9,16 +9,19 @@ interface RouteTransitionProps {
 
 // Aplica una animación de entrada sutil al cambiar de ruta.
 // Respeta 'prefers-reduced-motion'.
-export default function RouteTransition({ children, className }: RouteTransitionProps) {
+export default function RouteTransition({
+  children,
+  className,
+}: RouteTransitionProps) {
   const location = useLocation();
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduceMotion(mq.matches);
     update();
-    mq.addEventListener?.('change', update);
-    return () => mq.removeEventListener?.('change', update);
+    mq.addEventListener?.("change", update);
+    return () => mq.removeEventListener?.("change", update);
   }, []);
 
   return (
@@ -27,9 +30,9 @@ export default function RouteTransition({ children, className }: RouteTransition
       className={cn(
         // Sutil fade/slide
         reduceMotion
-          ? 'opacity-100 translate-y-0'
-          : 'animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out',
-        className
+          ? "opacity-100 translate-y-0"
+          : "animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out",
+        className,
       )}
     >
       {children}

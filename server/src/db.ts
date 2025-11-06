@@ -1,12 +1,12 @@
-import Database from 'better-sqlite3'
-import path from 'node:path'
-import fs from 'node:fs'
+import Database from "better-sqlite3";
+import path from "node:path";
+import fs from "node:fs";
 
-const dataDir = path.join(process.cwd(), 'server', 'data')
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true })
+const dataDir = path.join(process.cwd(), "server", "data");
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
-export const db = new Database(path.join(dataDir, 'app.db'))
-db.pragma('journal_mode = WAL')
+export const db = new Database(path.join(dataDir, "app.db"));
+db.pragma("journal_mode = WAL");
 
 // Minimal schema to replace Supabase for local dev
 db.exec(`
@@ -124,37 +124,51 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_threads_created ON threads(created_at DESC);
   CREATE INDEX IF NOT EXISTS idx_thread_comments_thread ON thread_comments(thread_id, created_at);
-`)
+`);
 
 export type UserRow = {
-  id: string
-  email: string
-  password_hash: string
-  username?: string | null
-  created_at: string
-}
+  id: string;
+  email: string;
+  password_hash: string;
+  username?: string | null;
+  created_at: string;
+};
 
 // --- Lightweight migration to ensure new columns exist in existing DBs ---
 function ensureProfileColumns() {
   try {
-    const cols = db.prepare(`PRAGMA table_info(profiles)`).all() as Array<{ name: string }>
-    const names = new Set(cols.map(c => c.name))
-    const missing: Array<{ sql: string }> = []
-    if (!names.has('fecha_nacimiento')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN fecha_nacimiento TEXT` })
-    if (!names.has('rol_adulto')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN rol_adulto TEXT` })
-    if (!names.has('seisena')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN seisena TEXT` })
-    if (!names.has('patrulla')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN patrulla TEXT` })
-    if (!names.has('equipo_pioneros')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN equipo_pioneros TEXT` })
-    if (!names.has('comunidad_rovers')) missing.push({ sql: `ALTER TABLE profiles ADD COLUMN comunidad_rovers TEXT` })
+    const cols = db.prepare(`PRAGMA table_info(profiles)`).all() as Array<{
+      name: string;
+    }>;
+    const names = new Set(cols.map((c) => c.name));
+    const missing: Array<{ sql: string }> = [];
+    if (!names.has("fecha_nacimiento"))
+      missing.push({
+        sql: `ALTER TABLE profiles ADD COLUMN fecha_nacimiento TEXT`,
+      });
+    if (!names.has("rol_adulto"))
+      missing.push({ sql: `ALTER TABLE profiles ADD COLUMN rol_adulto TEXT` });
+    if (!names.has("seisena"))
+      missing.push({ sql: `ALTER TABLE profiles ADD COLUMN seisena TEXT` });
+    if (!names.has("patrulla"))
+      missing.push({ sql: `ALTER TABLE profiles ADD COLUMN patrulla TEXT` });
+    if (!names.has("equipo_pioneros"))
+      missing.push({
+        sql: `ALTER TABLE profiles ADD COLUMN equipo_pioneros TEXT`,
+      });
+    if (!names.has("comunidad_rovers"))
+      missing.push({
+        sql: `ALTER TABLE profiles ADD COLUMN comunidad_rovers TEXT`,
+      });
     if (missing.length) {
       const tx = db.transaction((stmts: Array<{ sql: string }>) => {
-        for (const s of stmts) db.exec(s.sql)
-      })
-      tx(missing)
+        for (const s of stmts) db.exec(s.sql);
+      });
+      tx(missing);
     }
   } catch (e) {
     // ignore; best-effort migration
   }
 }
 
-ensureProfileColumns()
+ensureProfileColumns();

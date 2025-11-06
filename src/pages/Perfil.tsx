@@ -10,12 +10,15 @@ import { ArrowLeft, Eye, EyeOff, Save, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 import { isLocalBackend, uploadImage, getAuthUser } from "@/lib/backend";
-import { getProfile as getLocalProfile, updateProfile as updateLocalProfile } from "@/lib/api";
+import {
+  getProfile as getLocalProfile,
+  updateProfile as updateLocalProfile,
+} from "@/lib/api";
 
-type Tables = Database['public']['Tables'];
-type Profile = Tables['profiles']['Row']
-type ProfileInsert = Tables['profiles']['Insert'];
-type ProfileUpdate = Tables['profiles']['Update'];
+type Tables = Database["public"]["Tables"];
+type Profile = Tables["profiles"]["Row"];
+type ProfileInsert = Tables["profiles"]["Insert"];
+type ProfileUpdate = Tables["profiles"]["Update"];
 
 const Perfil = () => {
   const [loading, setLoading] = useState(true);
@@ -28,7 +31,7 @@ const Perfil = () => {
   const [showCropDialog, setShowCropDialog] = useState(false);
   const [tempImageSrc, setTempImageSrc] = useState<string>("");
   const [croppedBlob, setCroppedBlob] = useState<Blob | null>(null);
-  
+
   const [formData, setFormData] = useState<{
     nombre_completo: string;
     telefono: string;
@@ -56,9 +59,11 @@ const Perfil = () => {
     password: "",
     avatar_url: null,
     username: "",
-    username_updated_at: null
+    username_updated_at: null,
   });
-  const [originalData, setOriginalData] = useState<typeof formData | null>(null);
+  const [originalData, setOriginalData] = useState<typeof formData | null>(
+    null,
+  );
   const [ramaActual, setRamaActual] = useState("");
 
   const navigate = useNavigate();
@@ -69,14 +74,16 @@ const Perfil = () => {
     if (formData.fecha_nacimiento) {
       const hoy = new Date();
       // Parsear fecha sin conversión UTC para evitar desfase de días
-      const [year, month, day] = formData.fecha_nacimiento.split('-').map(Number);
+      const [year, month, day] = formData.fecha_nacimiento
+        .split("-")
+        .map(Number);
       const nacimiento = new Date(year, month - 1, day);
       let años = hoy.getFullYear() - nacimiento.getFullYear();
       const m = hoy.getMonth() - nacimiento.getMonth();
       if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
         años--;
       }
-      setFormData(prev => ({ ...prev, edad: años }));
+      setFormData((prev) => ({ ...prev, edad: años }));
     }
   }, [formData.fecha_nacimiento]);
 
@@ -98,7 +105,7 @@ const Perfil = () => {
   const getProfile = async (showLoading = true) => {
     try {
       if (showLoading) setLoading(true);
-      
+
       const auth = await getAuthUser();
       if (!auth) {
         navigate("/auth");
@@ -114,7 +121,9 @@ const Perfil = () => {
           nombre_completo: p?.nombre_completo || "",
           telefono: p?.telefono || "",
           edad: p?.edad || 0,
-          fecha_nacimiento: p?.fecha_nacimiento ? p.fecha_nacimiento.split('T')[0] : "",
+          fecha_nacimiento: p?.fecha_nacimiento
+            ? p.fecha_nacimiento.split("T")[0]
+            : "",
           seisena: p?.seisena || "",
           patrulla: p?.patrulla || "",
           equipo_pioneros: p?.equipo_pioneros || "",
@@ -123,7 +132,7 @@ const Perfil = () => {
           password: "",
           avatar_url: p?.avatar_url || null,
           username: (p as any)?.username || "",
-          username_updated_at: (p as any)?.username_updated_at || null
+          username_updated_at: (p as any)?.username_updated_at || null,
         };
         setFormData(profileData);
         setOriginalData(profileData);
@@ -142,8 +151,10 @@ const Perfil = () => {
       const { data: userData } = await supabase.auth.getUser();
       const user = userData?.user;
       const userMetadata = user?.user_metadata || {};
-      const userNombre = (userMetadata as any).nombre || profile?.nombre_completo || "";
-      const userTelefono = (userMetadata as any).telefono || profile?.telefono || "";
+      const userNombre =
+        (userMetadata as any).nombre || profile?.nombre_completo || "";
+      const userTelefono =
+        (userMetadata as any).telefono || profile?.telefono || "";
       if (profile) {
         setProfile(profile as Profile);
         const profileData = {
@@ -151,7 +162,9 @@ const Perfil = () => {
           nombre_completo: userNombre,
           telefono: userTelefono,
           edad: (profile as any).edad || 0,
-          fecha_nacimiento: (profile as any).fecha_nacimiento ? (profile as any).fecha_nacimiento.split('T')[0] : "",
+          fecha_nacimiento: (profile as any).fecha_nacimiento
+            ? (profile as any).fecha_nacimiento.split("T")[0]
+            : "",
           seisena: (profile as any).seisena || "",
           patrulla: (profile as any).patrulla || "",
           equipo_pioneros: (profile as any).equipo_pioneros || "",
@@ -160,14 +173,16 @@ const Perfil = () => {
           password: "",
           avatar_url: (profile as any).avatar_url || null,
           username: (profile as any).username || "",
-          username_updated_at: (profile as any).username_updated_at || null
+          username_updated_at: (profile as any).username_updated_at || null,
         };
         setFormData(profileData);
         setOriginalData(profileData);
       } else {
-        const { error: insertError } = await supabase
-          .from("profiles")
-          .insert({ user_id: auth.id, nombre_completo: userNombre, telefono: userTelefono });
+        const { error: insertError } = await supabase.from("profiles").insert({
+          user_id: auth.id,
+          nombre_completo: userNombre,
+          telefono: userTelefono,
+        });
         if (insertError) throw insertError;
         await getProfile();
       }
@@ -175,50 +190,52 @@ const Perfil = () => {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       if (showLoading) setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
-    
+
     // Validación específica por campo
     if (name === "telefono") {
       // Solo números y guiones/espacios
-      const cleaned = value.replace(/[^\d\s\-+()]/g, '');
-      setFormData(prev => ({ ...prev, [name]: cleaned }));
+      const cleaned = value.replace(/[^\d\s\-+()]/g, "");
+      setFormData((prev) => ({ ...prev, [name]: cleaned }));
       return;
     }
-    
+
     if (name === "edad") {
       const edad = parseInt(value) || 0;
       if (edad < 0 || edad > 120) {
         toast({
           title: "Edad inválida",
           description: "La edad debe estar entre 0 y 120 años",
-          variant: "destructive"
+          variant: "destructive",
         });
         return;
       }
-      setFormData(prev => ({ ...prev, [name]: edad }));
+      setFormData((prev) => ({ ...prev, [name]: edad }));
       return;
     }
-    
+
     if (name === "nombre_completo" && value.length > 50) {
       toast({
         title: "Nombre muy largo",
         description: "El nombre no puede exceder 50 caracteres",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -229,7 +246,7 @@ const Perfil = () => {
     if (!originalData) return false;
     if (avatarFile) return true; // Hay nuevo avatar
     if (formData.password) return true; // Hay nueva contraseña
-    
+
     // Comparar campos editables
     return (
       formData.nombre_completo !== originalData.nombre_completo ||
@@ -258,12 +275,18 @@ const Perfil = () => {
     if (!file) return;
 
     // Validar tipo de archivo
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
     if (!validTypes.includes(file.type)) {
       toast({
         title: "Tipo de archivo inválido",
         description: "Solo se permiten imágenes (JPG, PNG, GIF, WEBP)",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -274,7 +297,7 @@ const Perfil = () => {
       toast({
         title: "Archivo muy grande",
         description: "La imagen no debe superar 5MB",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -286,7 +309,7 @@ const Perfil = () => {
       setShowCropDialog(true);
     };
     reader.readAsDataURL(file);
-    
+
     // Resetear el input para permitir seleccionar el mismo archivo
     e.target.value = "";
   };
@@ -294,11 +317,13 @@ const Perfil = () => {
   const handleCropComplete = (croppedImage: Blob) => {
     // Convertir blob a file
     const fileName = `avatar-${Date.now()}.jpg`;
-    const croppedFile = new File([croppedImage], fileName, { type: "image/jpeg" });
-    
+    const croppedFile = new File([croppedImage], fileName, {
+      type: "image/jpeg",
+    });
+
     setAvatarFile(croppedFile);
     setCroppedBlob(croppedImage);
-    
+
     // Crear preview del crop
     const previewUrl = URL.createObjectURL(croppedImage);
     setAvatarPreview(previewUrl);
@@ -316,22 +341,20 @@ const Perfil = () => {
       }
 
       // Supabase storage
-      const fileExt = avatarFile.name.split('.').pop();
+      const fileExt = avatarFile.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${userId}/${fileName}`;
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from("avatars")
         .upload(filePath, avatarFile, { upsert: true });
       if (uploadError) throw uploadError;
-      const { data } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
+      const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
       return data.publicUrl;
     } catch (error: any) {
       toast({
         title: "Error al subir imagen",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
       return null;
     } finally {
@@ -347,67 +370,67 @@ const Perfil = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validaciones antes de guardar
     if (!formData.nombre_completo.trim()) {
       toast({
         title: "Campo requerido",
         description: "El nombre completo es obligatorio",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     if (formData.nombre_completo.length < 3) {
       toast({
         title: "Nombre muy corto",
         description: "El nombre debe tener al menos 3 caracteres",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
-    if (formData.telefono && formData.telefono.replace(/\D/g, '').length < 8) {
+
+    if (formData.telefono && formData.telefono.replace(/\D/g, "").length < 8) {
       toast({
         title: "Teléfono inválido",
         description: "El teléfono debe tener al menos 8 dígitos",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     if (formData.edad < 7 || formData.edad > 120) {
       toast({
         title: "Edad inválida",
         description: "La edad debe estar entre 7 y 120 años",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     if (formData.password && formData.password.length < 6) {
       toast({
         title: "Contraseña débil",
         description: "La contraseña debe tener al menos 6 caracteres",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     if (formData.username && formData.username.length < 3) {
       toast({
         title: "Username muy corto",
         description: "El username debe tener al menos 3 caracteres",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     setSaving(true);
 
     try {
-  const auth = await getAuthUser();
-  if (!auth) throw new Error("No hay sesión activa");
+      const auth = await getAuthUser();
+      if (!auth) throw new Error("No hay sesión activa");
 
       // Subir avatar si hay uno nuevo
       let avatarUrl = formData.avatar_url;
@@ -420,7 +443,9 @@ const Perfil = () => {
 
       // Actualizar contraseña: solo soportado en Supabase
       if (!isLocalBackend() && formData.password) {
-        const { error: passwordError } = await supabase.auth.updateUser({ password: formData.password });
+        const { error: passwordError } = await supabase.auth.updateUser({
+          password: formData.password,
+        });
         if (passwordError) throw passwordError;
       }
 
@@ -431,7 +456,7 @@ const Perfil = () => {
         telefono: formData.telefono,
         edad: formData.edad,
         avatar_url: avatarUrl,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // Agregar username si se proporcionó
@@ -470,13 +495,13 @@ const Perfil = () => {
         const { error: profileError } = await supabase
           .from("profiles")
           .update(profileData)
-          .eq('user_id', auth.id);
+          .eq("user_id", auth.id);
         if (profileError) throw profileError;
       }
 
       toast({
         title: "¡Perfil actualizado!",
-        description: "Tus cambios han sido guardados."
+        description: "Tus cambios han sido guardados.",
       });
 
       // Recargar perfil desde servidor para reflejar cambios (sin mostrar loading)
@@ -489,7 +514,7 @@ const Perfil = () => {
       toast({
         title: "Error al actualizar",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setSaving(false);
@@ -499,7 +524,7 @@ const Perfil = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-  {/* Navigation global en App.tsx */}
+        {/* Navigation global en App.tsx */}
         <div className="h-20"></div>
         <div className="flex items-center justify-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -510,18 +535,24 @@ const Perfil = () => {
 
   return (
     <div className="min-h-screen bg-background">
-  {/* Navigation global en App.tsx */}
+      {/* Navigation global en App.tsx */}
       <div className="h-20"></div>
-      
+
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/perfil')}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/perfil")}
+          >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
             <h1 className="text-2xl font-semibold">Editar perfil</h1>
-            <p className="text-sm text-muted-foreground">Actualiza tu información personal y scout</p>
+            <p className="text-sm text-muted-foreground">
+              Actualiza tu información personal y scout
+            </p>
           </div>
         </div>
 
@@ -544,13 +575,15 @@ const Perfil = () => {
             )}
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl font-medium mb-1">{formData.nombre_completo || 'Usuario Scout'}</h2>
+            <h2 className="text-xl font-medium mb-1">
+              {formData.nombre_completo || "Usuario Scout"}
+            </h2>
             <p className="text-sm text-muted-foreground mb-3">{userEmail}</p>
             <div className="flex gap-2 justify-center sm:justify-start">
               <Label htmlFor="avatar-upload" className="cursor-pointer">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium">
                   <Upload className="w-4 h-4" />
-                  {formData.avatar_url ? 'Cambiar foto' : 'Subir foto'}
+                  {formData.avatar_url ? "Cambiar foto" : "Subir foto"}
                 </div>
               </Label>
               <Input
@@ -571,7 +604,10 @@ const Perfil = () => {
                       if (!auth) return;
 
                       if (isLocalBackend()) {
-                        await updateLocalProfile({ user_id: auth.id, avatar_url: null } as any);
+                        await updateLocalProfile({
+                          user_id: auth.id,
+                          avatar_url: null,
+                        } as any);
                       } else {
                         await supabase
                           .from("profiles")
@@ -579,17 +615,19 @@ const Perfil = () => {
                           .eq("user_id", auth.id);
                       }
 
-                      setFormData(prev => ({ ...prev, avatar_url: null }));
-                      setOriginalData(prev => prev ? ({ ...prev, avatar_url: null }) : prev);
+                      setFormData((prev) => ({ ...prev, avatar_url: null }));
+                      setOriginalData((prev) =>
+                        prev ? { ...prev, avatar_url: null } : prev,
+                      );
                       toast({
                         title: "Foto eliminada",
-                        description: "Tu foto de perfil ha sido eliminada"
+                        description: "Tu foto de perfil ha sido eliminada",
                       });
                     } catch (error: any) {
                       toast({
                         title: "Error",
                         description: error.message,
-                        variant: "destructive"
+                        variant: "destructive",
                       });
                     }
                   }}
@@ -598,7 +636,9 @@ const Perfil = () => {
                 </Button>
               )}
             </div>
-            <p className="text-xs text-muted-foreground mt-2">JPG, PNG o GIF. Máximo 4MB</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              JPG, PNG o GIF. Máximo 4MB
+            </p>
           </div>
         </div>
 
@@ -606,7 +646,7 @@ const Perfil = () => {
           {/* Datos personales */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Información Personal</h3>
-            
+
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="nombre_completo">Nombre completo *</Label>
@@ -618,50 +658,65 @@ const Perfil = () => {
                   required
                   maxLength={100}
                   className={`bg-background ${
-                    formData.nombre_completo.length > 0 && formData.nombre_completo.length < 3
-                      ? 'border-destructive focus-visible:ring-destructive'
-                      : ''
+                    formData.nombre_completo.length > 0 &&
+                    formData.nombre_completo.length < 3
+                      ? "border-destructive focus-visible:ring-destructive"
+                      : ""
                   }`}
                 />
-                {formData.nombre_completo.length > 0 && formData.nombre_completo.length < 3 && (
-                  <p className="text-xs text-destructive">Mínimo 3 caracteres</p>
-                )}
+                {formData.nombre_completo.length > 0 &&
+                  formData.nombre_completo.length < 3 && (
+                    <p className="text-xs text-destructive">
+                      Mínimo 3 caracteres
+                    </p>
+                  )}
                 {formData.nombre_completo.length > 90 && (
-                  <p className="text-xs text-muted-foreground">{100 - formData.nombre_completo.length} caracteres restantes</p>
+                  <p className="text-xs text-muted-foreground">
+                    {100 - formData.nombre_completo.length} caracteres restantes
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="username">
                   Nombre de usuario
-                  {formData.username_updated_at && (() => {
-                    const lastUpdate = new Date(formData.username_updated_at);
-                    const daysSince = Math.floor((Date.now() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
-                    const daysRemaining = 7 - daysSince;
-                    
-                    if (daysRemaining > 0) {
+                  {formData.username_updated_at &&
+                    (() => {
+                      const lastUpdate = new Date(formData.username_updated_at);
+                      const daysSince = Math.floor(
+                        (Date.now() - lastUpdate.getTime()) /
+                          (1000 * 60 * 60 * 24),
+                      );
+                      const daysRemaining = 7 - daysSince;
+
+                      if (daysRemaining > 0) {
+                        return (
+                          <span className="ml-2 text-xs text-muted-foreground font-normal">
+                            (podrás cambiar en {daysRemaining} día
+                            {daysRemaining !== 1 ? "s" : ""})
+                          </span>
+                        );
+                      }
                       return (
-                        <span className="ml-2 text-xs text-muted-foreground font-normal">
-                          (podrás cambiar en {daysRemaining} día{daysRemaining !== 1 ? 's' : ''})
+                        <span className="ml-2 text-xs text-green-600 dark:text-green-400 font-normal">
+                          (puedes cambiar ahora)
                         </span>
                       );
-                    }
-                    return (
-                      <span className="ml-2 text-xs text-green-600 dark:text-green-400 font-normal">
-                        (puedes cambiar ahora)
-                      </span>
-                    );
-                  })()}
+                    })()}
                 </Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    @
+                  </span>
                   <Input
                     id="username"
                     name="username"
                     value={formData.username}
                     onChange={(e) => {
-                      const value = e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, '');
-                      setFormData(prev => ({ ...prev, username: value }));
+                      const value = e.target.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9._-]/g, "");
+                      setFormData((prev) => ({ ...prev, username: value }));
                     }}
                     placeholder="usuario.ejemplo"
                     pattern="[a-z0-9._-]{3,30}"
@@ -672,15 +727,20 @@ const Perfil = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   3-30 caracteres. Solo letras, números, puntos, guiones.
-                  {formData.username.length > 0 && formData.username.length < 3 && (
-                    <span className="block text-destructive mt-1">Mínimo 3 caracteres</span>
-                  )}
+                  {formData.username.length > 0 &&
+                    formData.username.length < 3 && (
+                      <span className="block text-destructive mt-1">
+                        Mínimo 3 caracteres
+                      </span>
+                    )}
                   {!formData.username && " Solo se puede cambiar cada 7 días."}
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fecha_nacimiento">Fecha de nacimiento (opcional)</Label>
+                <Label htmlFor="fecha_nacimiento">
+                  Fecha de nacimiento (opcional)
+                </Label>
                 <Input
                   id="fecha_nacimiento"
                   name="fecha_nacimiento"
@@ -745,7 +805,7 @@ const Perfil = () => {
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(s => !s)}
+                    onClick={() => setShowPassword((s) => !s)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
                   >
                     {showPassword ? (
@@ -762,7 +822,7 @@ const Perfil = () => {
           {/* Datos Scout */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Información Scout</h3>
-            
+
             <div className="grid gap-4 md:grid-cols-2">
               {formData.edad >= 7 && formData.edad <= 20 && (
                 <div className="space-y-2">
@@ -833,7 +893,9 @@ const Perfil = () => {
                     <option value="">Selecciona una opción</option>
                     <option value="No educador/a">No educador/a</option>
                     <option value="Educador/a">Educador/a</option>
-                    <option value="Miembro del Comité">Miembro del Comité</option>
+                    <option value="Miembro del Comité">
+                      Miembro del Comité
+                    </option>
                     <option value="Familiar de Scout">Familiar de Scout</option>
                   </select>
                 </div>
@@ -842,9 +904,9 @@ const Perfil = () => {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button 
-              type="submit" 
-              className="flex-1 gap-2" 
+            <Button
+              type="submit"
+              className="flex-1 gap-2"
               disabled={saving || !hasChanges()}
             >
               {saving ? (
@@ -855,27 +917,27 @@ const Perfil = () => {
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  {hasChanges() ? 'Guardar cambios' : 'Sin cambios'}
+                  {hasChanges() ? "Guardar cambios" : "Sin cambios"}
                 </>
               )}
             </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => {
                 if (hasChanges()) {
-                  if (confirm('¿Descartar los cambios sin guardar?')) {
-                    navigate('/perfil');
+                  if (confirm("¿Descartar los cambios sin guardar?")) {
+                    navigate("/perfil");
                   }
                 } else {
-                  navigate('/perfil');
+                  navigate("/perfil");
                 }
               }}
             >
               Cancelar
             </Button>
           </div>
-          
+
           {hasChanges() && (
             <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-md">
               <p className="text-sm text-primary font-medium">

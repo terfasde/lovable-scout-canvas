@@ -8,6 +8,7 @@ Este proyecto es un frontend (Vite + React + TS) que consume Supabase. Aquí tie
 ## 1) Contenedor del frontend (Nginx)
 
 ### Prerrequisitos
+
 - Docker Desktop (Windows con WSL2)
 - Variables públicas de Supabase (desde tu proyecto):
   - `VITE_SUPABASE_URL`
@@ -52,6 +53,7 @@ docker compose up --build -d
 Visita http://localhost:8080
 
 Notas:
+
 - El Dockerfile hace build con Node y sirve `dist/` con Nginx. `nginx.conf` incluye fallback a `index.html` (SPA) y cache básico de assets.
 - Si quieres rehacer la imagen al cambiar código, usa `--build` o activa una `volume` de `./dist` (solo si ya hiciste `npm run build` local).
 
@@ -82,5 +84,5 @@ Luego exporta en `.env.local` (para Vite en dev) los endpoints locales provistos
 ## 4) Troubleshooting
 
 - 404 al refrescar rutas: asegúrate de usar la `nginx.conf` incluida (tiene `try_files ... /index.html`).
-- Variables VITE_* undefined en runtime: recuerda que Vite las inyecta en build; si cambian, reconstruye la imagen.
+- Variables VITE\_\* undefined en runtime: recuerda que Vite las inyecta en build; si cambian, reconstruye la imagen.
 - Supabase `RLS` bloquea acciones: verifica que tu proyecto en Docker apunte al mismo Supabase Cloud en el que aplicaste migraciones.

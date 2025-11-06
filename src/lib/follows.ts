@@ -6,10 +6,10 @@ export type FollowStatus = "pending" | "accepted" | "blocked";
 export async function getMyUserId() {
   if (isLocalBackend()) {
     try {
-      const me = await apiFetch('/profiles/me') as any
-      return me?.id || me?.user_id || null
+      const me = (await apiFetch("/profiles/me")) as any;
+      return me?.id || me?.user_id || null;
     } catch {
-      return null
+      return null;
     }
   }
   const { data } = await supabase.auth.getUser();
@@ -19,10 +19,10 @@ export async function getMyUserId() {
 export async function getFollowRelation(withUserId: string) {
   if (isLocalBackend()) {
     try {
-      const rel = await apiFetch(`/follows/relation/${withUserId}`)
-      return { data: rel, error: null } as const
+      const rel = await apiFetch(`/follows/relation/${withUserId}`);
+      return { data: rel, error: null } as const;
     } catch (e: any) {
-      return { data: null, error: e } as const
+      return { data: null, error: e } as const;
     }
   }
   const me = await getMyUserId();
@@ -30,22 +30,28 @@ export async function getFollowRelation(withUserId: string) {
   return supabase
     .from("follows")
     .select("follower_id, followed_id, status, created_at, accepted_at")
-    .or(`and(follower_id.eq.${me},followed_id.eq.${withUserId}),and(follower_id.eq.${withUserId},followed_id.eq.${me})`)
+    .or(
+      `and(follower_id.eq.${me},followed_id.eq.${withUserId}),and(follower_id.eq.${withUserId},followed_id.eq.${me})`,
+    )
     .maybeSingle();
 }
 
 export async function followUser(targetUserId: string) {
   if (isLocalBackend()) {
     try {
-      await apiFetch('/follows/follow', { method: 'POST', body: JSON.stringify({ targetId: targetUserId }) })
-      return { error: null } as const
+      await apiFetch("/follows/follow", {
+        method: "POST",
+        body: JSON.stringify({ targetId: targetUserId }),
+      });
+      return { error: null } as const;
     } catch (e: any) {
-      return { error: e } as const
+      return { error: e } as const;
     }
   }
   const me = await getMyUserId();
   if (!me) return { error: new Error("No autenticado") } as const;
-  if (me === targetUserId) return { error: new Error("No puedes seguirte a ti mismo") } as const;
+  if (me === targetUserId)
+    return { error: new Error("No puedes seguirte a ti mismo") } as const;
   // Check if relationship already exists
   const { data: existing } = await supabase
     .from("follows")
@@ -54,21 +60,26 @@ export async function followUser(targetUserId: string) {
     .eq("followed_id", targetUserId)
     .maybeSingle();
   if (existing) {
-    if (existing.status === "pending") return { error: new Error("Ya tienes una solicitud pendiente") } as const;
-    if (existing.status === "accepted") return { error: new Error("Ya sigues a este usuario") } as const;
-    if (existing.status === "blocked") return { error: new Error("No puedes seguir a este usuario") } as const;
+    if (existing.status === "pending")
+      return { error: new Error("Ya tienes una solicitud pendiente") } as const;
+    if (existing.status === "accepted")
+      return { error: new Error("Ya sigues a este usuario") } as const;
+    if (existing.status === "blocked")
+      return { error: new Error("No puedes seguir a este usuario") } as const;
   }
-  const { error } = await supabase.from("follows").insert({ follower_id: me, followed_id: targetUserId });
+  const { error } = await supabase
+    .from("follows")
+    .insert({ follower_id: me, followed_id: targetUserId });
   return { error } as const;
 }
 
 export async function unfollowUser(targetUserId: string) {
   if (isLocalBackend()) {
     try {
-      await apiFetch(`/follows/${targetUserId}`, { method: 'DELETE' })
-      return { error: null } as const
+      await apiFetch(`/follows/${targetUserId}`, { method: "DELETE" });
+      return { error: null } as const;
     } catch (e: any) {
-      return { error: e } as const
+      return { error: e } as const;
     }
   }
   const me = await getMyUserId();
@@ -88,10 +99,10 @@ export async function cancelRequest(targetUserId: string) {
 export async function acceptFollow(followerId: string) {
   if (isLocalBackend()) {
     try {
-      await apiFetch(`/follows/${followerId}/accept`, { method: 'POST' })
-      return { error: null } as const
+      await apiFetch(`/follows/${followerId}/accept`, { method: "POST" });
+      return { error: null } as const;
     } catch (e: any) {
-      return { error: e } as const
+      return { error: e } as const;
     }
   }
   const me = await getMyUserId();
@@ -107,10 +118,10 @@ export async function acceptFollow(followerId: string) {
 export async function rejectFollow(followerId: string) {
   if (isLocalBackend()) {
     try {
-      await apiFetch(`/follows/${followerId}/reject`, { method: 'DELETE' })
-      return { error: null } as const
+      await apiFetch(`/follows/${followerId}/reject`, { method: "DELETE" });
+      return { error: null } as const;
     } catch (e: any) {
-      return { error: e } as const
+      return { error: e } as const;
     }
   }
   const me = await getMyUserId();
@@ -126,10 +137,12 @@ export async function rejectFollow(followerId: string) {
 export async function getFollowers(userId: string) {
   if (isLocalBackend()) {
     try {
-      const rows = await apiFetch(`/follows/followers?userId=${encodeURIComponent(userId)}`)
-      return { data: rows, error: null } as const
+      const rows = await apiFetch(
+        `/follows/followers?userId=${encodeURIComponent(userId)}`,
+      );
+      return { data: rows, error: null } as const;
     } catch (e: any) {
-      return { data: null, error: e } as const
+      return { data: null, error: e } as const;
     }
   }
   return supabase
@@ -143,10 +156,12 @@ export async function getFollowers(userId: string) {
 export async function getFollowing(userId: string) {
   if (isLocalBackend()) {
     try {
-      const rows = await apiFetch(`/follows/following?userId=${encodeURIComponent(userId)}`)
-      return { data: rows, error: null } as const
+      const rows = await apiFetch(
+        `/follows/following?userId=${encodeURIComponent(userId)}`,
+      );
+      return { data: rows, error: null } as const;
     } catch (e: any) {
-      return { data: null, error: e } as const
+      return { data: null, error: e } as const;
     }
   }
   return supabase
@@ -160,20 +175,27 @@ export async function getFollowing(userId: string) {
 export async function getPendingRequestsForMe() {
   if (isLocalBackend()) {
     try {
-      const me = await getMyUserId()
-      if (!me) return { data: [], error: new Error('No autenticado') } as const
-      const follows = await apiFetch('/follows/pending') as Array<{ follower_id: string; created_at: string }>
-      const ids = follows.map(f => f.follower_id)
-      if (ids.length === 0) return { data: [], error: null } as const
-      const profiles = await apiFetch('/profiles/batch', { method: 'POST', body: JSON.stringify({ ids }) }) as Array<any>
-      const result = follows.map(f => ({
+      const me = await getMyUserId();
+      if (!me) return { data: [], error: new Error("No autenticado") } as const;
+      const follows = (await apiFetch("/follows/pending")) as Array<{
+        follower_id: string;
+        created_at: string;
+      }>;
+      const ids = follows.map((f) => f.follower_id);
+      if (ids.length === 0) return { data: [], error: null } as const;
+      const profiles = (await apiFetch("/profiles/batch", {
+        method: "POST",
+        body: JSON.stringify({ ids }),
+      })) as Array<any>;
+      const result = follows.map((f) => ({
         follower_id: f.follower_id,
         created_at: f.created_at,
-        follower: profiles.find((p: any) => p.user_id === f.follower_id) || null,
-      }))
-      return { data: result, error: null } as const
+        follower:
+          profiles.find((p: any) => p.user_id === f.follower_id) || null,
+      }));
+      return { data: result, error: null } as const;
     } catch (e: any) {
-      return { data: [], error: e } as const
+      return { data: [], error: e } as const;
     }
   }
   const me = await getMyUserId();
@@ -184,18 +206,19 @@ export async function getPendingRequestsForMe() {
     .eq("followed_id", me)
     .eq("status", "pending")
     .order("created_at", { ascending: false });
-  if (followsError || !follows) return { data: [], error: followsError } as const;
-  const followerIds = follows.map(f => f.follower_id);
+  if (followsError || !follows)
+    return { data: [], error: followsError } as const;
+  const followerIds = follows.map((f) => f.follower_id);
   if (followerIds.length === 0) return { data: [], error: null } as const;
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
     .select("user_id, nombre_completo, avatar_url, username")
     .in("user_id", followerIds);
   if (profilesError) return { data: [], error: profilesError } as const;
-  const result = follows.map(f => ({
+  const result = follows.map((f) => ({
     follower_id: f.follower_id,
     created_at: f.created_at,
-    follower: profiles?.find(p => p.user_id === f.follower_id) || null
+    follower: profiles?.find((p) => p.user_id === f.follower_id) || null,
   }));
   return { data: result, error: null } as const;
 }
@@ -204,10 +227,12 @@ export async function getPendingRequestsForMe() {
 export async function getFollowersCount(userId: string) {
   if (isLocalBackend()) {
     try {
-      const rows = await apiFetch(`/follows/followers?userId=${encodeURIComponent(userId)}`) as Array<any>
-      return { count: rows?.length || 0 } as any
+      const rows = (await apiFetch(
+        `/follows/followers?userId=${encodeURIComponent(userId)}`,
+      )) as Array<any>;
+      return { count: rows?.length || 0 } as any;
     } catch {
-      return { count: 0 } as any
+      return { count: 0 } as any;
     }
   }
   return supabase
@@ -220,10 +245,12 @@ export async function getFollowersCount(userId: string) {
 export async function getFollowingCount(userId: string) {
   if (isLocalBackend()) {
     try {
-      const rows = await apiFetch(`/follows/following?userId=${encodeURIComponent(userId)}`) as Array<any>
-      return { count: rows?.length || 0 } as any
+      const rows = (await apiFetch(
+        `/follows/following?userId=${encodeURIComponent(userId)}`,
+      )) as Array<any>;
+      return { count: rows?.length || 0 } as any;
     } catch {
-      return { count: 0 } as any
+      return { count: 0 } as any;
     }
   }
   return supabase
@@ -234,21 +261,33 @@ export async function getFollowingCount(userId: string) {
 }
 
 // Lists with optional joined profiles (subject to RLS; may be null)
-export async function getFollowersWithProfiles(userId: string, from = 0, to = 49) {
+export async function getFollowersWithProfiles(
+  userId: string,
+  from = 0,
+  to = 49,
+) {
   if (isLocalBackend()) {
     try {
-      const rows = await apiFetch(`/follows/followers?userId=${encodeURIComponent(userId)}`) as Array<{ follower_id: string; created_at: string }>
-      const sliced = rows.slice(from, to + 1)
-      const ids = sliced.map(r => r.follower_id)
-      const profiles = ids.length ? (await apiFetch('/profiles/batch', { method: 'POST', body: JSON.stringify({ ids }) })) as Array<any> : []
-      const result = sliced.map(f => ({
+      const rows = (await apiFetch(
+        `/follows/followers?userId=${encodeURIComponent(userId)}`,
+      )) as Array<{ follower_id: string; created_at: string }>;
+      const sliced = rows.slice(from, to + 1);
+      const ids = sliced.map((r) => r.follower_id);
+      const profiles = ids.length
+        ? ((await apiFetch("/profiles/batch", {
+            method: "POST",
+            body: JSON.stringify({ ids }),
+          })) as Array<any>)
+        : [];
+      const result = sliced.map((f) => ({
         follower_id: f.follower_id,
         created_at: f.created_at,
-        follower: profiles.find((p: any) => p.user_id === f.follower_id) || null,
-      }))
-      return { data: result, error: null } as const
+        follower:
+          profiles.find((p: any) => p.user_id === f.follower_id) || null,
+      }));
+      return { data: result, error: null } as const;
     } catch (e: any) {
-      return { data: [], error: e } as const
+      return { data: [], error: e } as const;
     }
   }
   // Supabase path
@@ -259,39 +298,59 @@ export async function getFollowersWithProfiles(userId: string, from = 0, to = 49
     .eq("status", "accepted")
     .order("created_at", { ascending: false })
     .range(from, to);
-  if (followsError || !follows) return { data: [], error: followsError } as const;
-  const followerIds = follows.map(f => f.follower_id);
+  if (followsError || !follows)
+    return { data: [], error: followsError } as const;
+  const followerIds = follows.map((f) => f.follower_id);
   if (followerIds.length === 0) return { data: [], error: null } as const;
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
     .select("user_id, nombre_completo, avatar_url, username")
     .in("user_id", followerIds);
   if (profilesError) return { data: [], error: profilesError } as const;
-  const result = follows.map(f => ({
+  const result = follows.map((f) => ({
     follower_id: f.follower_id,
     created_at: f.created_at,
-    follower: profiles?.find(p => p.user_id === f.follower_id) || null
+    follower: profiles?.find((p) => p.user_id === f.follower_id) || null,
   }));
   return { data: result, error: null } as const;
 }
 
-export async function getFollowingWithProfiles(userId: string, from = 0, to = 49) {
+export async function getFollowingWithProfiles(
+  userId: string,
+  from = 0,
+  to = 49,
+) {
   if (isLocalBackend()) {
     try {
-      const rows = await apiFetch(`/follows/following?userId=${encodeURIComponent(userId)}`) as Array<{ following_id?: string; followed_id?: string; created_at: string }>
+      const rows = (await apiFetch(
+        `/follows/following?userId=${encodeURIComponent(userId)}`,
+      )) as Array<{
+        following_id?: string;
+        followed_id?: string;
+        created_at: string;
+      }>;
       // Local devuelve following_id; normalizamos a followed_id para consumidor
-      const normalized = rows.map(r => ({ followed_id: (r as any).following_id || (r as any).followed_id, created_at: r.created_at }))
-      const sliced = normalized.slice(from, to + 1)
-      const ids = sliced.map(r => r.followed_id)
-      const profiles = ids.length ? (await apiFetch('/profiles/batch', { method: 'POST', body: JSON.stringify({ ids }) })) as Array<any> : []
-      const result = sliced.map(f => ({
+      const normalized = rows.map((r) => ({
+        followed_id: (r as any).following_id || (r as any).followed_id,
+        created_at: r.created_at,
+      }));
+      const sliced = normalized.slice(from, to + 1);
+      const ids = sliced.map((r) => r.followed_id);
+      const profiles = ids.length
+        ? ((await apiFetch("/profiles/batch", {
+            method: "POST",
+            body: JSON.stringify({ ids }),
+          })) as Array<any>)
+        : [];
+      const result = sliced.map((f) => ({
         followed_id: f.followed_id,
         created_at: f.created_at,
-        followed: profiles.find((p: any) => p.user_id === f.followed_id) || null,
-      }))
-      return { data: result, error: null } as const
+        followed:
+          profiles.find((p: any) => p.user_id === f.followed_id) || null,
+      }));
+      return { data: result, error: null } as const;
     } catch (e: any) {
-      return { data: [], error: e } as const
+      return { data: [], error: e } as const;
     }
   }
   // Supabase path
@@ -302,18 +361,19 @@ export async function getFollowingWithProfiles(userId: string, from = 0, to = 49
     .eq("status", "accepted")
     .order("created_at", { ascending: false })
     .range(from, to);
-  if (followsError || !follows) return { data: [], error: followsError } as const;
-  const followedIds = follows.map(f => f.followed_id);
+  if (followsError || !follows)
+    return { data: [], error: followsError } as const;
+  const followedIds = follows.map((f) => f.followed_id);
   if (followedIds.length === 0) return { data: [], error: null } as const;
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
     .select("user_id, nombre_completo, avatar_url, username")
     .in("user_id", followedIds);
   if (profilesError) return { data: [], error: profilesError } as const;
-  const result = follows.map(f => ({
+  const result = follows.map((f) => ({
     followed_id: f.followed_id,
     created_at: f.created_at,
-    followed: profiles?.find(p => p.user_id === f.followed_id) || null
+    followed: profiles?.find((p) => p.user_id === f.followed_id) || null,
   }));
   return { data: result, error: null } as const;
 }

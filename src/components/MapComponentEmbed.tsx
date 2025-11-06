@@ -19,10 +19,10 @@ interface MapComponentEmbedProps {
  * - Completamente GRATIS sin límites
  * - Solo necesita Maps Embed API habilitada en Google Cloud Console
  */
-function MapComponentEmbed({ 
-  center = DEFAULT_CENTER, 
+function MapComponentEmbed({
+  center = DEFAULT_CENTER,
   address = DEFAULT_ADDRESS,
-  zoom = 15 
+  zoom = 15,
 }: MapComponentEmbedProps) {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 
@@ -31,7 +31,10 @@ function MapComponentEmbed({
     return (
       <div className="w-full h-full flex flex-col gap-2 items-center justify-center bg-muted/30 text-muted-foreground text-sm p-4">
         <MapPin className="w-8 h-8" />
-        <p className="text-center">Mapa deshabilitado. Configura VITE_GOOGLE_MAPS_API_KEY para habilitarlo.</p>
+        <p className="text-center">
+          Mapa deshabilitado. Configura VITE_GOOGLE_MAPS_API_KEY para
+          habilitarlo.
+        </p>
       </div>
     );
   }

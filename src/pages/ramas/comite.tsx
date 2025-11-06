@@ -13,7 +13,8 @@ const Comite = () => {
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground">
-                  Información sobre el Comité: coordinación, apoyo administrativo y relación con la comunidad.
+                  Información sobre el Comité: coordinación, apoyo
+                  administrativo y relación con la comunidad.
                 </p>
                 <ul className="list-disc pl-5 mt-4 text-muted-foreground space-y-2">
                   <li>Apoyo a la gestión</li>
@@ -29,7 +30,11 @@ const Comite = () => {
             </Card>
 
             <div>
-              <img src={communityImage} alt="Comité" className="rounded-2xl w-full object-cover shadow-lg" />
+              <img
+                src={communityImage}
+                alt="Comité"
+                className="rounded-2xl w-full object-cover shadow-lg"
+              />
             </div>
           </div>
         </div>

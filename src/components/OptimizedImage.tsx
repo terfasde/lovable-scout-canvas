@@ -32,7 +32,7 @@ export function OptimizedImage({
       {blur && !isLoaded && !error && (
         <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-muted animate-pulse" />
       )}
-      
+
       <img
         src={src}
         alt={alt}
@@ -41,7 +41,7 @@ export function OptimizedImage({
         className={cn(
           "w-full h-full object-cover transition-opacity duration-500",
           isLoaded ? "opacity-100" : "opacity-0",
-          error && "hidden"
+          error && "hidden",
         )}
         onLoad={() => setIsLoaded(true)}
         onError={() => setError(true)}

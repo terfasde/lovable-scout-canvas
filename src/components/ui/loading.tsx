@@ -8,10 +8,7 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function Skeleton({ className, ...props }: SkeletonProps) {
   return (
     <div
-      className={cn(
-        "animate-pulse rounded-md bg-muted",
-        className
-      )}
+      className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
   );
@@ -70,7 +67,13 @@ export function GallerySkeleton({ count = 6 }: { count?: number }) {
 /**
  * Skeleton para tabla
  */
-export function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) {
+export function TableSkeleton({
+  rows = 5,
+  cols = 4,
+}: {
+  rows?: number;
+  cols?: number;
+}) {
   return (
     <div className="space-y-2">
       {/* Header */}
@@ -111,11 +114,17 @@ export function FormSkeleton({ fields = 4 }: { fields?: number }) {
 /**
  * Loading Spinner - para acciones rápidas
  */
-export function Spinner({ className, size = "md" }: { className?: string; size?: "sm" | "md" | "lg" }) {
+export function Spinner({
+  className,
+  size = "md",
+}: {
+  className?: string;
+  size?: "sm" | "md" | "lg";
+}) {
   const sizeClasses = {
     sm: "h-4 w-4 border-2",
     md: "h-8 w-8 border-3",
-    lg: "h-12 w-12 border-4"
+    lg: "h-12 w-12 border-4",
   };
 
   return (
@@ -123,7 +132,7 @@ export function Spinner({ className, size = "md" }: { className?: string; size?:
       className={cn(
         "inline-block animate-spin rounded-full border-primary border-t-transparent",
         sizeClasses[size],
-        className
+        className,
       )}
       role="status"
       aria-label="Cargando"
@@ -136,14 +145,14 @@ export function Spinner({ className, size = "md" }: { className?: string; size?:
 /**
  * Loading con mensaje - pantalla completa o en contenedor
  */
-export function LoadingMessage({ 
-  message = "Cargando...", 
-  fullScreen = false 
-}: { 
-  message?: string; 
-  fullScreen?: boolean; 
+export function LoadingMessage({
+  message = "Cargando...",
+  fullScreen = false,
+}: {
+  message?: string;
+  fullScreen?: boolean;
 }) {
-  const containerClass = fullScreen 
+  const containerClass = fullScreen
     ? "fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
     : "flex items-center justify-center p-8";
 
@@ -175,7 +184,11 @@ export function EmptyState({
     <div className="flex flex-col items-center justify-center p-8 text-center">
       {Icon && <Icon className="h-12 w-12 text-muted-foreground mb-4" />}
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      {description && <p className="text-sm text-muted-foreground mb-4 max-w-md">{description}</p>}
+      {description && (
+        <p className="text-sm text-muted-foreground mb-4 max-w-md">
+          {description}
+        </p>
+      )}
       {action}
     </div>
   );

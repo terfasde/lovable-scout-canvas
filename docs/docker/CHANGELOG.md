@@ -6,19 +6,20 @@
 
 Se creó una arquitectura de microservicios completa con **7 contenedores**:
 
-| Servicio | Puerto | Descripción |
-|----------|--------|-------------|
-| **postgres** | 5432 | PostgreSQL 16 (base de datos principal) |
-| **pgadmin** | 5050 | Administrador web de PostgreSQL |
-| **server** | 8080 | Backend API (Express + TypeScript) |
-| **web** | 5173 | Frontend (React + Vite) |
-| **prometheus** | 9090 | Recolección de métricas |
-| **grafana** | 3000 | Dashboards de visualización |
-| **postgres_exporter** | 9187 | Exportador de métricas de PostgreSQL |
+| Servicio              | Puerto | Descripción                             |
+| --------------------- | ------ | --------------------------------------- |
+| **postgres**          | 5432   | PostgreSQL 16 (base de datos principal) |
+| **pgadmin**           | 5050   | Administrador web de PostgreSQL         |
+| **server**            | 8080   | Backend API (Express + TypeScript)      |
+| **web**               | 5173   | Frontend (React + Vite)                 |
+| **prometheus**        | 9090   | Recolección de métricas                 |
+| **grafana**           | 3000   | Dashboards de visualización             |
+| **postgres_exporter** | 9187   | Exportador de métricas de PostgreSQL    |
 
 ### 2. Base de Datos PostgreSQL
 
 **Creado**: `server/db/init.sql`
+
 - Schema completo con 5 tablas principales
 - Extensiones: `uuid-ossp`, `pg_stat_statements`
 - Triggers automáticos para `updated_at`
@@ -26,6 +27,7 @@ Se creó una arquitectura de microservicios completa con **7 contenedores**:
 - Usuario admin por defecto
 
 **Tablas**:
+
 - `users` - Autenticación
 - `profiles` - Perfiles scout
 - `gallery` - Galería de imágenes
@@ -37,15 +39,16 @@ Se creó una arquitectura de microservicios completa con **7 contenedores**:
 **Creado**: `server/src/db-adapter.ts`
 
 Wrapper unificado que soporta:
+
 - ✅ PostgreSQL (producción)
 - ✅ SQLite (desarrollo)
 
 ```typescript
 // Uso automático según env var DB_TYPE
-import { query, queryOne } from './db-adapter'
+import { query, queryOne } from "./db-adapter";
 
-const users = await query('SELECT * FROM users WHERE email = $1', [email])
-const user = await queryOne('SELECT * FROM profiles WHERE id = $1', [id])
+const users = await query("SELECT * FROM users WHERE email = $1", [email]);
+const user = await queryOne("SELECT * FROM profiles WHERE id = $1", [id]);
 ```
 
 ### 4. Sistema de Monitoreo
@@ -53,6 +56,7 @@ const user = await queryOne('SELECT * FROM profiles WHERE id = $1', [id])
 **Creado**: `server/src/metrics.ts`
 
 Métricas expuestas en `/metrics`:
+
 - `http_requests_total` - Total de peticiones
 - `http_request_duration_ms` - Latencia (histograma)
 - `process_cpu_percent` - Uso de CPU
@@ -67,6 +71,7 @@ Métricas expuestas en `/metrics`:
 **Creado**: `monitoring/prometheus.yml`
 
 Scraping configurado para:
+
 - Backend API cada 10s
 - PostgreSQL cada 30s
 - Auto-monitoreo cada 15s
@@ -76,6 +81,7 @@ Scraping configurado para:
 **Creado**: `monitoring/grafana/`
 
 Estructura:
+
 ```
 monitoring/grafana/
 ├── provisioning/
@@ -88,6 +94,7 @@ monitoring/grafana/
 ```
 
 **Dashboard "Scout - Monitoreo General"** incluye:
+
 - Tasa de peticiones HTTP
 - Latencia p95
 - Uso de CPU/Memoria del backend
@@ -97,10 +104,12 @@ monitoring/grafana/
 ### 7. Scripts de Inicio Automático
 
 **Creado**:
+
 - `start.ps1` (Windows PowerShell)
 - `start.sh` (Linux/Mac Bash)
 
 Comandos:
+
 ```powershell
 .\start.ps1 full   # Arquitectura completa
 .\start.ps1 dev    # Desarrollo simple
@@ -110,11 +119,13 @@ Comandos:
 ### 8. Documentación Completa
 
 **Creado**:
+
 - `ARCHITECTURE.md` - Guía completa (500+ líneas)
 - `QUICK_START.md` - Inicio rápido
 - `server/README.md` - Actualizado con nuevas features
 
 **Contenido**:
+
 - ✅ Arquitectura detallada
 - ✅ Instalación paso a paso
 - ✅ Configuración de servicios
@@ -127,11 +138,12 @@ Comandos:
 ### 9. Dependencias Actualizadas
 
 **Agregado a `server/package.json`**:
+
 ```json
 {
   "dependencies": {
-    "pg": "^8.11.3",           // PostgreSQL driver
-    "prom-client": "^15.1.0"   // Prometheus metrics
+    "pg": "^8.11.3", // PostgreSQL driver
+    "prom-client": "^15.1.0" // Prometheus metrics
   },
   "devDependencies": {
     "@types/pg": "^8.10.9"
@@ -142,6 +154,7 @@ Comandos:
 ### 10. Actualización de `.gitignore`
 
 **Agregado**:
+
 ```gitignore
 # Server data
 server/data/*.db
@@ -162,16 +175,16 @@ grafana_data/
 
 ## 📊 Comparación: Antes vs. Después
 
-| Aspecto | Antes | Después |
-|---------|-------|---------|
-| **Base de datos** | SQLite (archivo local) | PostgreSQL 16 (contenedor) + SQLite (dev) |
-| **Administración DB** | CLI sqlite3 | PgAdmin web interface |
-| **Monitoreo** | Ninguno | Prometheus + Grafana |
-| **Métricas** | Sin métricas | 6+ métricas en tiempo real |
-| **Dashboards** | Ninguno | Dashboard pre-configurado |
-| **Escalabilidad** | Limitada (1 proceso) | Alta (contenedores separados) |
-| **Healthchecks** | Manual | Automáticos en todos los servicios |
-| **Documentación** | Básica | Completa con ejemplos |
+| Aspecto               | Antes                  | Después                                   |
+| --------------------- | ---------------------- | ----------------------------------------- |
+| **Base de datos**     | SQLite (archivo local) | PostgreSQL 16 (contenedor) + SQLite (dev) |
+| **Administración DB** | CLI sqlite3            | PgAdmin web interface                     |
+| **Monitoreo**         | Ninguno                | Prometheus + Grafana                      |
+| **Métricas**          | Sin métricas           | 6+ métricas en tiempo real                |
+| **Dashboards**        | Ninguno                | Dashboard pre-configurado                 |
+| **Escalabilidad**     | Limitada (1 proceso)   | Alta (contenedores separados)             |
+| **Healthchecks**      | Manual                 | Automáticos en todos los servicios        |
+| **Documentación**     | Básica                 | Completa con ejemplos                     |
 
 ---
 
@@ -180,6 +193,7 @@ grafana_data/
 ### Corto plazo
 
 1. **Probar la arquitectura completa**:
+
    ```powershell
    .\start.ps1 full
    ```
@@ -229,11 +243,13 @@ grafana_data/
 ### Desarrollo Local
 
 **Opción 1: SQLite (más rápido)**
+
 ```powershell
 .\start.ps1 dev
 ```
 
 **Opción 2: PostgreSQL + Monitoreo (más completo)**
+
 ```powershell
 .\start.ps1 full
 ```
@@ -259,13 +275,13 @@ docker compose -f docker-compose.full.yml restart server
 
 ### Acceso Rápido
 
-| Servicio | URL | Usuario | Password |
-|----------|-----|---------|----------|
-| Frontend | http://localhost:5173 | - | - |
-| Backend | http://localhost:8080 | - | - |
-| PgAdmin | http://localhost:5050 | admin@scout.local | admin123 |
-| Prometheus | http://localhost:9090 | - | - |
-| Grafana | http://localhost:3000 | admin | admin123 |
+| Servicio   | URL                   | Usuario           | Password |
+| ---------- | --------------------- | ----------------- | -------- |
+| Frontend   | http://localhost:5173 | -                 | -        |
+| Backend    | http://localhost:8080 | -                 | -        |
+| PgAdmin    | http://localhost:5050 | admin@scout.local | admin123 |
+| Prometheus | http://localhost:9090 | -                 | -        |
+| Grafana    | http://localhost:3000 | admin             | admin123 |
 
 ---
 
@@ -297,6 +313,6 @@ Ahora tienes una arquitectura profesional con:
 ✅ Métricas de rendimiento  
 ✅ Separación de servicios  
 ✅ Fácil escalabilidad  
-✅ Documentación completa  
+✅ Documentación completa
 
 **¡Todo listo para desarrollo y producción! 🚀**

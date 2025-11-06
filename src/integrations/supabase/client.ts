@@ -3,18 +3,20 @@
  * Reemplaza la funcionalidad de Supabase con implementación local
  */
 
-import { authMock, type User, type Session } from '@/lib/auth-mock';
-import { localDB } from '@/lib/local-db';
+import { authMock, type User, type Session } from "@/lib/auth-mock";
+import { localDB } from "@/lib/local-db";
 // Mantenemos los tipos para compatibilidad
-import type { Database } from './types';
+import type { Database } from "./types";
 
 // Helper para crear promesa de respuesta vacía
 const mockPromise = () => Promise.resolve({ data: null, error: null });
 const mockArrayPromise = () => Promise.resolve({ data: [], error: null });
-const mockCountPromise = () => Promise.resolve({ data: null, error: null, count: 0 });
+const mockCountPromise = () =>
+  Promise.resolve({ data: null, error: null, count: 0 });
 
 // Tipos auxiliares para las queries - interfaz completa que retorna Promise
-interface QueryBuilder extends Promise<{ data: any; error: any; count?: number }> {
+interface QueryBuilder
+  extends Promise<{ data: any; error: any; count?: number }> {
   eq: (column: string, value: any) => QueryBuilder;
   in: (column: string, values: any[]) => QueryBuilder;
   or: (filter: string) => QueryBuilder;
@@ -30,54 +32,58 @@ interface QueryBuilder extends Promise<{ data: any; error: any; count?: number }
 // Helper para crear query builder mock que es una promesa real
 const createQueryBuilder = (table: string, filters: any = {}): QueryBuilder => {
   let data: any[] = [];
-  
+
   // Obtener datos de la tabla correspondiente
   switch (table) {
-    case 'profiles':
+    case "profiles":
       data = localDB.getProfiles();
       break;
-    case 'eventos':
-    case 'events':
+    case "eventos":
+    case "events":
       data = localDB.getEvents();
       break;
-    case 'gallery':
-    case 'gallery_images':
+    case "gallery":
+    case "gallery_images":
       data = localDB.getGallery();
       break;
-    case 'messages':
+    case "messages":
       data = localDB.getMessages();
       break;
-    case 'conversations':
+    case "conversations":
       data = localDB.getConversations();
       break;
-    case 'follows':
+    case "follows":
       data = localDB.getFollows();
       break;
-    case 'groups':
+    case "groups":
       data = localDB.getGroups();
       break;
-    case 'group_members':
+    case "group_members":
       data = localDB.getGroupMembers();
       break;
-    case 'group_messages':
+    case "group_messages":
       data = localDB.getGroupMessages();
       break;
     default:
       data = [];
   }
-  
+
   let filteredData = [...data];
   let limitValue: number | null = null;
   let rangeStart: number | null = null;
   let rangeEnd: number | null = null;
-  
+  let countRequested: false | "exact" | "planned" | "estimated" = false;
+  let headRequested = false;
+
   const builder: any = {
     eq: (column: string, value: any) => {
-      filteredData = filteredData.filter(item => item[column] === value);
+      filteredData = filteredData.filter((item) => item[column] === value);
       return builder;
     },
     in: (column: string, values: any[]) => {
-      filteredData = filteredData.filter(item => values.includes(item[column]));
+      filteredData = filteredData.filter((item) =>
+        values.includes(item[column]),
+      );
       return builder;
     },
     or: (filter: string) => {
@@ -85,8 +91,8 @@ const createQueryBuilder = (table: string, filters: any = {}): QueryBuilder => {
       return builder;
     },
     not: (column: string, operator: string, value: any) => {
-      if (operator === 'is') {
-        filteredData = filteredData.filter(item => item[column] !== value);
+      if (operator === "is") {
+        filteredData = filteredData.filter((item) => item[column] !== value);
       }
       return builder;
     },
@@ -110,31 +116,215 @@ const createQueryBuilder = (table: string, filters: any = {}): QueryBuilder => {
     },
     single: () => {
       const result = filteredData[0] || null;
+      if (result === null) {
+        // Emular comportamiento de Supabase: single() con 0 filas => error PGRST116
+        return Promise.resolve({
+          data: null,
+          error: {
+            code: "PGRST116",
+            message: "JSON object requested, multiple (or no) rows returned",
+          },
+        });
+      }
       return Promise.resolve({ data: result, error: null });
     },
     maybeSingle: () => {
       const result = filteredData[0] || null;
+      // maybeSingle no retorna error cuando no hay filas
       return Promise.resolve({ data: result, error: null });
     },
     select: (columns?: string, options?: any) => {
       if (options?.count) {
-        return Promise.resolve({ data: null, error: null, count: filteredData.length });
+        countRequested = options.count;
+      }
+      if (options?.head) {
+        headRequested = true;
       }
       return builder;
     },
     then: (resolve: any) => {
       let result = filteredData;
-      
+
       if (rangeStart !== null && rangeEnd !== null) {
         result = result.slice(rangeStart, rangeEnd + 1);
       } else if (limitValue !== null) {
         result = result.slice(0, limitValue);
       }
-      
+
+      // Soporte para update/delete si fueron configurados en from().update()/delete()
+      const isDelete = (builder as any)._isDelete === true;
+      const updateData = (builder as any)._updateData;
+      if (isDelete || updateData) {
+        switch (table) {
+          case "profiles": {
+            const list = localDB.getProfiles();
+            const key = "user_id";
+            const changed = isDelete
+              ? list.filter(
+                  (item) => !result.some((r: any) => r[key] === item[key]),
+                )
+              : list.map((item) =>
+                  result.some((r: any) => r[key] === item[key])
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveProfiles(changed as any);
+            break;
+          }
+          case "eventos":
+          case "events": {
+            const list = localDB.getEvents();
+            const key = "id";
+            const changed = isDelete
+              ? list.filter(
+                  (item) => !result.some((r: any) => r[key] === item[key]),
+                )
+              : list.map((item) =>
+                  result.some((r: any) => r[key] === item[key])
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveEvents(changed as any);
+            break;
+          }
+          case "gallery":
+          case "gallery_images": {
+            const list = localDB.getGallery();
+            const key = "id";
+            const changed = isDelete
+              ? list.filter(
+                  (item) => !result.some((r: any) => r[key] === item[key]),
+                )
+              : list.map((item) =>
+                  result.some((r: any) => r[key] === item[key])
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveGallery(changed as any);
+            break;
+          }
+          case "messages": {
+            const list = localDB.getMessages();
+            const key = "id";
+            const changed = isDelete
+              ? list.filter(
+                  (item) => !result.some((r: any) => r[key] === item[key]),
+                )
+              : list.map((item) =>
+                  result.some((r: any) => r[key] === item[key])
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveMessages(changed as any);
+            break;
+          }
+          case "conversations": {
+            const list = localDB.getConversations();
+            const key = "id";
+            const changed = isDelete
+              ? list.filter(
+                  (item) => !result.some((r: any) => r[key] === item[key]),
+                )
+              : list.map((item) =>
+                  result.some((r: any) => r[key] === item[key])
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveConversations(changed as any);
+            break;
+          }
+          case "follows": {
+            const list = localDB.getFollows();
+            const changed = isDelete
+              ? list.filter(
+                  (item) =>
+                    !result.some(
+                      (r: any) =>
+                        r.follower_id === item.follower_id &&
+                        r.followed_id === item.followed_id,
+                    ),
+                )
+              : list.map((item) =>
+                  result.some(
+                    (r: any) =>
+                      r.follower_id === item.follower_id &&
+                      r.followed_id === item.followed_id,
+                  )
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveFollows(changed as any);
+            break;
+          }
+          case "groups": {
+            const list = localDB.getGroups();
+            const key = "id";
+            const changed = isDelete
+              ? list.filter(
+                  (item) => !result.some((r: any) => r[key] === item[key]),
+                )
+              : list.map((item) =>
+                  result.some((r: any) => r[key] === item[key])
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveGroups(changed as any);
+            break;
+          }
+          case "group_members": {
+            const list = localDB.getGroupMembers();
+            const changed = isDelete
+              ? list.filter(
+                  (item) =>
+                    !result.some(
+                      (r: any) =>
+                        r.group_id === item.group_id &&
+                        r.user_id === item.user_id,
+                    ),
+                )
+              : list.map((item) =>
+                  result.some(
+                    (r: any) =>
+                      r.group_id === item.group_id &&
+                      r.user_id === item.user_id,
+                  )
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveGroupMembers(changed as any);
+            break;
+          }
+          case "group_messages": {
+            const list = localDB.getGroupMessages();
+            const key = "id";
+            const changed = isDelete
+              ? list.filter(
+                  (item) => !result.some((r: any) => r[key] === item[key]),
+                )
+              : list.map((item) =>
+                  result.some((r: any) => r[key] === item[key])
+                    ? { ...item, ...updateData }
+                    : item,
+                );
+            localDB.saveGroupMessages(changed as any);
+            break;
+          }
+        }
+      }
+
+      if (countRequested) {
+        const count = result.length;
+        return resolve({
+          data: headRequested ? null : result,
+          error: null,
+          count,
+        });
+      }
+
       return resolve({ data: result, error: null });
-    }
+    },
   };
-  
+
   return builder as QueryBuilder;
 };
 
@@ -143,58 +333,80 @@ export const supabase = {
   auth: {
     getSession: () => authMock.getSession(),
     getUser: () => authMock.getUser(),
-    signInWithPassword: (credentials: { email: string; password: string }) => 
+    signInWithPassword: (credentials: { email: string; password: string }) =>
       authMock.signInWithPassword(credentials),
     signInWithOAuth: (options: { provider: string; options?: any }) =>
-      Promise.resolve({ data: { url: null, provider: options.provider }, error: new Error('OAuth no disponible en modo local') }),
-    signUp: (credentials: { email: string; password: string; options?: any }) => 
+      Promise.resolve({
+        data: { url: null, provider: options.provider },
+        error: new Error("OAuth no disponible en modo local"),
+      }),
+    signUp: (credentials: { email: string; password: string; options?: any }) =>
       authMock.signUp(credentials),
     signOut: () => authMock.signOut(),
-    onAuthStateChange: (callback: (event: string, session: Session | null) => void) => 
-      authMock.onAuthStateChange(callback),
-    updateUser: (updates: Partial<User> & { password?: string }) => authMock.updateUser(updates),
+    onAuthStateChange: (
+      callback: (event: string, session: Session | null) => void,
+    ) => authMock.onAuthStateChange(callback),
+    updateUser: (updates: Partial<User> & { password?: string }) =>
+      authMock.updateUser(updates),
   },
-  
+
   // Mock de otras funcionalidades de Supabase
   from: (table: string) => ({
     select: (columns?: string, options?: any): any => {
+      // Siempre devolver query builder para permitir encadenamiento
+      const builder = createQueryBuilder(table);
+      // Si hay opciones, configurarlas en el builder
       if (options?.count) {
-        return mockCountPromise();
+        (builder as any).select("*", options);
       }
-      return createQueryBuilder(table);
+      return builder;
     },
     insert: (data: any, options?: any): any => {
       // Guardar datos en la tabla correspondiente
       let newItem: any;
-      
+
       switch (table) {
-        case 'profiles':
+        case "profiles":
           newItem = localDB.upsertProfile(data);
           break;
-        case 'eventos':
-        case 'events':
+        case "eventos":
+        case "events":
           newItem = localDB.addEvent(data);
           break;
-        case 'messages':
+        case "messages":
           newItem = localDB.addMessage(data);
           break;
-        case 'follows':
+        case "follows":
           newItem = localDB.addFollow(data.follower_id, data.followed_id);
           break;
-        case 'groups':
+        case "groups":
           newItem = localDB.addGroup(data);
           break;
-        case 'group_members':
+        case "group_members":
           newItem = localDB.addGroupMember(data);
           break;
-        case 'group_messages':
+        case "group_messages":
           newItem = localDB.addGroupMessage(data);
           break;
       }
-      
-      const promise = Promise.resolve({ data: newItem, error: null }) as any;
-      promise.select = () => createQueryBuilder(table);
-      return promise;
+
+      // Retornar promesa con método .select() encadenable
+      const insertPromise: any = Promise.resolve({
+        data: newItem,
+        error: null,
+      });
+      insertPromise.select = (columns?: string, options?: any) => {
+        // Para .select() después de insert, devolver query builder ya filtrado
+        const builder = createQueryBuilder(table);
+        // Aplicar filtro automático según la tabla y newItem
+        if (table === "profiles" && newItem?.user_id) {
+          return builder.eq("user_id", newItem.user_id);
+        } else if (newItem?.id) {
+          return builder.eq("id", newItem.id);
+        }
+        return builder;
+      };
+      return insertPromise;
     },
     update: (data: any): any => {
       // Update se maneja con el query builder
@@ -210,101 +422,166 @@ export const supabase = {
       return builder;
     },
     upsert: (data: any): any => {
-      if (table === 'profiles') {
+      if (table === "profiles") {
         const result = localDB.upsertProfile(data);
         return Promise.resolve({ data: result, error: null });
       }
       return mockPromise();
-    }
+    },
   }),
-  
+
   // Mock de RPC (Remote Procedure Calls)
   rpc: (functionName: string, params?: any) => {
     // Implementar RPCs específicas
-    if (functionName === 'list_profiles_directory') {
+    if (functionName === "list_profiles_directory") {
       const profiles = localDB.getProfiles();
       return Promise.resolve({ data: profiles, error: null });
     }
-    
-    if (functionName === 'create_or_get_conversation') {
+
+    if (functionName === "create_or_get_conversation") {
       return authMock.getUser().then(({ data: { user } }) => {
         if (user && params?.other_user_id) {
-          const conversation = localDB.getOrCreateConversation(user.id, params.other_user_id);
+          const conversation = localDB.getOrCreateConversation(
+            user.id,
+            params.other_user_id,
+          );
           return { data: conversation.id, error: null };
         }
         return { data: null, error: null };
       });
     }
-    
+
     return Promise.resolve({ data: null, error: null });
   },
-  
+
   storage: {
     from: (bucket: string) => ({
       upload: async (
         path: string,
         file: File | Blob,
-        options?: any
-      ): Promise<{ data: { path: string; fullPath: string } | null; error: any | null }> => {
-        // Convertir archivo a base64 y guardar en localStorage
+        options?: any,
+      ): Promise<{
+        data: { path: string; fullPath: string } | null;
+        error: any | null;
+      }> => {
+        const useMinio = (import.meta as any).env?.VITE_STORAGE === "minio";
+        if (useMinio) {
+          try {
+            const contentType =
+              (file as any).type || "application/octet-stream";
+            const resp = await fetch("http://localhost:4001/sign", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ bucket, path, contentType }),
+            });
+            const { url, publicUrl, error } = await resp.json();
+            if (!resp.ok || !url) {
+              return { data: null, error: error || "sign failed" };
+            }
+            // PUT directo al presigned URL
+            const put = await fetch(url, {
+              method: "PUT",
+              body: file,
+              headers: { "Content-Type": contentType },
+            });
+            if (!put.ok) return { data: null, error: "upload failed" };
+
+            // Guardar índice local apuntando al publicUrl
+            const {
+              data: { user },
+            } = await authMock.getUser();
+            if (user) {
+              localDB.addImage({
+                name: path,
+                url: publicUrl,
+                album: bucket,
+                user_id: user.id,
+              });
+            }
+            return {
+              data: { path, fullPath: `${bucket}/${path}` },
+              error: null,
+            };
+          } catch (e: any) {
+            return { data: null, error: e?.message || String(e) };
+          }
+        }
+
+        // Fallback local: base64 en localStorage
         return new Promise((resolve) => {
           const reader = new FileReader();
           reader.onloadend = () => {
             const base64 = reader.result as string;
-
-            // Guardar en galería si es el bucket de imágenes
-            if (bucket === 'avatars' || bucket === 'gallery' || bucket === 'thread-images') {
+            if (
+              bucket === "avatars" ||
+              bucket === "gallery" ||
+              bucket === "thread-images" ||
+              bucket === "group-covers"
+            ) {
               authMock.getUser().then(({ data: { user } }) => {
                 if (user) {
-                  const imageData = {
+                  localDB.addImage({
                     name: path,
                     url: base64,
                     album: bucket,
                     user_id: user.id,
-                  };
-                  localDB.addImage(imageData);
+                  });
                 }
               });
             }
-
-            resolve({ data: { path, fullPath: `${bucket}/${path}` }, error: null });
+            resolve({
+              data: { path, fullPath: `${bucket}/${path}` },
+              error: null,
+            });
           };
           reader.readAsDataURL(file);
         });
       },
-      getPublicUrl: (
-        path: string
-      ): { data: { publicUrl: string } } => {
-        // Buscar imagen en la galería
+      getPublicUrl: (path: string): { data: { publicUrl: string } } => {
+        const useMinio = (import.meta as any).env?.VITE_STORAGE === "minio";
         const images = localDB.getGallery();
         const image = images.find((img) => img.name === path);
-
-        if (image && image.url) {
-          return { data: { publicUrl: image.url } };
+        if (image?.url) return { data: { publicUrl: image.url } };
+        if (useMinio) {
+          // Asumir URL pública directa en MinIO
+          const [album, ...rest] = path.split("/");
+          const objectPath = rest.length ? rest.join("/") : album;
+          return {
+            data: {
+              publicUrl: `http://localhost:9000/${bucket}/${encodeURIComponent(objectPath)}`,
+            },
+          };
         }
-
-        return {
-          data: { publicUrl: `/mock-storage/${path}` },
-        };
+        return { data: { publicUrl: `/mock-storage/${path}` } };
       },
-      remove: (
-        paths: string[]
-      ): Promise<{ data: null; error: any | null }> => {
-        // Eliminar imágenes de la galería
-        paths.forEach((path) => {
-          const images = localDB.getGallery();
-          const image = images.find((img) => img.name === path);
-          if (image) {
-            localDB.deleteImage(image.id);
+      remove: (paths: string[]): Promise<{ data: null; error: any | null }> => {
+        const useMinio = (import.meta as any).env?.VITE_STORAGE === "minio";
+        return (async () => {
+          for (const path of paths) {
+            const images = localDB.getGallery();
+            const image = images.find((img) => img.name === path);
+            if (image) localDB.deleteImage(image.id);
+            if (useMinio) {
+              try {
+                const url = new URL("http://localhost:4001/object");
+                url.searchParams.set("bucket", bucket);
+                url.searchParams.set("path", path);
+                await fetch(url.toString(), { method: "DELETE" });
+              } catch (_e) {
+                /* noop */
+              }
+            }
           }
-        });
-        return Promise.resolve({ data: null, error: null });
+          return { data: null, error: null };
+        })();
       },
       list: (
         path?: string,
-        options?: any
-      ): Promise<{ data: Array<{ name: string; id: string; created_at: string }>; error: any | null }> => {
-        // Listar imágenes del bucket/álbum
+        options?: any,
+      ): Promise<{
+        data: Array<{ name: string; id: string; created_at: string }>;
+        error: any | null;
+      }> => {
         const images = localDB.getGallery(path);
         const fileObjects = images.map((img) => ({
           name: img.name,
@@ -315,12 +592,15 @@ export const supabase = {
       },
     }),
   },
-  
+
   channel: (name: string) => ({
     on: (event: string, filter: any, callback: any) => ({
-      subscribe: () => ({})
-    })
+      subscribe: () => ({}),
+    }),
   }),
-  
-  removeChannel: (channel: any) => {}
+
+  removeChannel: (channel: any) => {
+    // Mock: no mantenemos estado de canales en modo local
+    return true;
+  },
 };

@@ -3,17 +3,17 @@
  * Proporciona retry logic, timeout, y mejores mensajes de error
  */
 
-import { logger } from './logger';
+import { logger } from "./logger";
 
 export class APIError extends Error {
   constructor(
     message: string,
     public status?: number,
     public code?: string,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
   }
 
   /**
@@ -49,18 +49,18 @@ export class APIError extends Error {
    */
   getUserMessage(): string {
     if (this.isNetworkError()) {
-      return 'No se pudo conectar al servidor. Verifica tu conexión a internet.';
+      return "No se pudo conectar al servidor. Verifica tu conexión a internet.";
     }
     if (this.isAuthError()) {
-      return 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+      return "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.";
     }
     if (this.isValidationError()) {
-      return this.message || 'Los datos proporcionados no son válidos.';
+      return this.message || "Los datos proporcionados no son válidos.";
     }
     if (this.isServerError()) {
-      return 'Error del servidor. Por favor, intenta nuevamente más tarde.';
+      return "Error del servidor. Por favor, intenta nuevamente más tarde.";
     }
-    return this.message || 'Ocurrió un error inesperado.';
+    return this.message || "Ocurrió un error inesperado.";
   }
 }
 
@@ -75,7 +75,7 @@ interface FetchOptions extends RequestInit {
  */
 async function fetchWithTimeout(
   url: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<Response> {
   const { timeout = 30000, ...fetchOptions } = options;
 
@@ -91,8 +91,8 @@ async function fetchWithTimeout(
     return response;
   } catch (error) {
     clearTimeout(id);
-    if (error instanceof Error && error.name === 'AbortError') {
-      throw new APIError('Tiempo de espera agotado', 0, 'TIMEOUT');
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new APIError("Tiempo de espera agotado", 0, "TIMEOUT");
     }
     throw error;
   }
@@ -103,7 +103,7 @@ async function fetchWithTimeout(
  */
 async function fetchWithRetry(
   url: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<Response> {
   const { retries = 0, retryDelay = 1000, ...fetchOptions } = options;
 
@@ -112,26 +112,34 @@ async function fetchWithRetry(
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const response = await fetchWithTimeout(url, fetchOptions);
-      
+
       // Si el error es 5xx, reintentamos
       if (response.status >= 500 && attempt < retries) {
-        logger.warn(`Intento ${attempt + 1}/${retries + 1} falló con status ${response.status}`);
-        await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+        logger.warn(
+          `Intento ${attempt + 1}/${retries + 1} falló con status ${response.status}`,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelay * (attempt + 1)),
+        );
         continue;
       }
 
       return response;
     } catch (error) {
       lastError = error as Error;
-      
+
       if (attempt < retries) {
-        logger.warn(`Intento ${attempt + 1}/${retries + 1} falló: ${lastError.message}`);
-        await new Promise(resolve => setTimeout(resolve, retryDelay * (attempt + 1)));
+        logger.warn(
+          `Intento ${attempt + 1}/${retries + 1} falló: ${lastError.message}`,
+        );
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelay * (attempt + 1)),
+        );
       }
     }
   }
 
-  throw lastError || new APIError('Todos los reintentos fallaron');
+  throw lastError || new APIError("Todos los reintentos fallaron");
 }
 
 /**
@@ -139,19 +147,21 @@ async function fetchWithRetry(
  */
 export async function apiRequest<T = any>(
   endpoint: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<T> {
   const startTime = performance.now();
-  const url = endpoint.startsWith('http') ? endpoint : `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080'}${endpoint}`;
+  const url = endpoint.startsWith("http")
+    ? endpoint
+    : `${import.meta.env.VITE_BACKEND_URL || "http://localhost:8080"}${endpoint}`;
 
   try {
-    logger.debug(`API Request: ${options.method || 'GET'} ${endpoint}`);
+    logger.debug(`API Request: ${options.method || "GET"} ${endpoint}`);
 
     const response = await fetchWithRetry(url, {
       retries: options.retries ?? 2, // Por defecto 2 reintentos
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
     });
@@ -159,12 +169,7 @@ export async function apiRequest<T = any>(
     const duration = performance.now() - startTime;
 
     // Loguear respuesta
-    logger.api(
-      options.method || 'GET',
-      endpoint,
-      response.status,
-      duration
-    );
+    logger.api(options.method || "GET", endpoint, response.status, duration);
 
     // Manejar respuestas no exitosas
     if (!response.ok) {
@@ -180,7 +185,7 @@ export async function apiRequest<T = any>(
         errorData.message || errorData.error || `HTTP ${response.status}`,
         response.status,
         errorData.code,
-        errorData
+        errorData,
       );
     }
 
@@ -197,28 +202,28 @@ export async function apiRequest<T = any>(
 
     if (error instanceof APIError) {
       logger.api(
-        options.method || 'GET',
+        options.method || "GET",
         endpoint,
         error.status,
         duration,
-        error
+        error,
       );
       throw error;
     }
 
     // Error de red u otro tipo de error
     const apiError = new APIError(
-      error instanceof Error ? error.message : 'Error desconocido',
+      error instanceof Error ? error.message : "Error desconocido",
       0,
-      'NETWORK_ERROR'
+      "NETWORK_ERROR",
     );
 
     logger.api(
-      options.method || 'GET',
+      options.method || "GET",
       endpoint,
       undefined,
       duration,
-      apiError
+      apiError,
     );
 
     throw apiError;
@@ -230,29 +235,29 @@ export async function apiRequest<T = any>(
  */
 export const api = {
   get: <T = any>(endpoint: string, options?: FetchOptions) =>
-    apiRequest<T>(endpoint, { ...options, method: 'GET' }),
+    apiRequest<T>(endpoint, { ...options, method: "GET" }),
 
   post: <T = any>(endpoint: string, data?: any, options?: FetchOptions) =>
     apiRequest<T>(endpoint, {
       ...options,
-      method: 'POST',
+      method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     }),
 
   put: <T = any>(endpoint: string, data?: any, options?: FetchOptions) =>
     apiRequest<T>(endpoint, {
       ...options,
-      method: 'PUT',
+      method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     }),
 
   patch: <T = any>(endpoint: string, data?: any, options?: FetchOptions) =>
     apiRequest<T>(endpoint, {
       ...options,
-      method: 'PATCH',
+      method: "PATCH",
       body: data ? JSON.stringify(data) : undefined,
     }),
 
   delete: <T = any>(endpoint: string, options?: FetchOptions) =>
-    apiRequest<T>(endpoint, { ...options, method: 'DELETE' }),
+    apiRequest<T>(endpoint, { ...options, method: "DELETE" }),
 };

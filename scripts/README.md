@@ -11,11 +11,13 @@ Scripts auxiliares para facilitar el desarrollo y operación del proyecto.
 **Script principal para gestionar Docker**
 
 **Uso en Windows (PowerShell)**:
+
 ```powershell
 .\scripts\start.ps1 <comando>
 ```
 
 **Uso en Linux/Mac (Bash)**:
+
 ```bash
 chmod +x scripts/start.sh
 ./scripts/start.sh <comando>
@@ -23,13 +25,14 @@ chmod +x scripts/start.sh
 
 **Comandos**:
 
-| Comando | Descripción |
-|---------|-------------|
-| `full` | Inicia arquitectura completa (PostgreSQL + Monitoreo) |
-| `dev` | Inicia modo desarrollo simple (SQLite) |
-| `stop` | Detiene todos los servicios Docker |
+| Comando | Descripción                                           |
+| ------- | ----------------------------------------------------- |
+| `full`  | Inicia arquitectura completa (PostgreSQL + Monitoreo) |
+| `dev`   | Inicia modo desarrollo simple (SQLite)                |
+| `stop`  | Detiene todos los servicios Docker                    |
 
 **Ejemplos**:
+
 ```powershell
 # Arquitectura completa con PostgreSQL, Prometheus y Grafana
 .\scripts\start.ps1 full
@@ -91,6 +94,7 @@ Resultado:
 Copia el proyecto completo excluyendo archivos innecesarios (node_modules, dist, .git, etc.)
 
 **Uso**:
+
 ```powershell
 # Modo interactivo (te pregunta la ruta de destino)
 .\scripts\export-to-pendrive.ps1
@@ -100,6 +104,7 @@ Copia el proyecto completo excluyendo archivos innecesarios (node_modules, dist,
 ```
 
 **¿Qué excluye?**:
+
 - `node_modules/` (se regenera con npm install)
 - `dist/` (archivos compilados)
 - `.git/` (historial de Git)
@@ -108,6 +113,7 @@ Copia el proyecto completo excluyendo archivos innecesarios (node_modules, dist,
 - Archivos temporales y cache
 
 **Después de copiar a la nueva computadora**:
+
 1. Ver instrucciones en `INSTALACION.md`
 2. Ejecutar `npm install` en raíz y en `server/`
 3. Configurar archivo `.env`
@@ -122,6 +128,7 @@ Copia el proyecto completo excluyendo archivos innecesarios (node_modules, dist,
 Útil si Docker no está en el PATH del sistema.
 
 **Uso**:
+
 ```powershell
 .\scripts\add-docker-to-path.ps1
 ```
@@ -135,6 +142,7 @@ Copia el proyecto completo excluyendo archivos innecesarios (node_modules, dist,
 Alternativa al start.ps1 para usuarios que no pueden ejecutar PowerShell.
 
 **Uso**:
+
 ```cmd
 scripts\run-docker-dev.cmd
 ```

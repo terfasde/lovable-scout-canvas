@@ -16,15 +16,17 @@ const Events = () => {
       try {
         const rows = await getEventos().catch(() => []);
         if (rows && rows.length) {
-          setEvents(rows.map((r: any) => ({
-            title: r.title || r.nombre || 'Evento',
-            date: r.fecha_inicio || r.date || '',
-            location: r.location || '',
-            participants: r.participants || '',
-            type: r.type || '',
-            status: r.status || '',
-            color: r.color || 'primary',
-          })));
+          setEvents(
+            rows.map((r: any) => ({
+              title: r.title || r.nombre || "Evento",
+              date: r.fecha_inicio || r.date || "",
+              location: r.location || "",
+              participants: r.participants || "",
+              type: r.type || "",
+              status: r.status || "",
+              color: r.color || "primary",
+            })),
+          );
         } else {
           // Fallback a contenido estático si no hay datos en DB
           setEvents([
@@ -58,7 +60,11 @@ const Events = () => {
           ]);
         }
       } catch (e: any) {
-        toast({ title: 'Error', description: e?.message || 'No se pudieron cargar los eventos', variant: 'destructive' });
+        toast({
+          title: "Error",
+          description: e?.message || "No se pudieron cargar los eventos",
+          variant: "destructive",
+        });
       }
     })();
   }, []);
@@ -68,13 +74,15 @@ const Events = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal className="text-center mb-12 sm:mb-16">
           <div className="inline-block px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-3 sm:mb-4 shadow-sm">
-            <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">Próximos Eventos</span>
+            <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
+              Próximos Eventos
+            </span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
             Vive la aventura con nosotros
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Participa en nuestras actividades, campamentos y eventos especiales 
+            Participa en nuestras actividades, campamentos y eventos especiales
             como el prestigioso BAUEN.
           </p>
         </Reveal>
@@ -82,10 +90,10 @@ const Events = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {events.map((event, index) => (
             <Reveal key={index}>
-              <Card 
-                className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full"
-              >
-                <div className={`h-2 bg-gradient-to-r from-primary to-accent`}></div>
+              <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full">
+                <div
+                  className={`h-2 bg-gradient-to-r from-primary to-accent`}
+                ></div>
                 <CardHeader className="space-y-2 sm:space-y-3 p-4 sm:p-6">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs sm:text-sm font-semibold text-primary">
@@ -95,20 +103,28 @@ const Events = () => {
                       {event.status}
                     </span>
                   </div>
-                  <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight">{event.title}</CardTitle>
+                  <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight">
+                    {event.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
                   <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
                     <Calendar className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs sm:text-sm leading-relaxed">{event.date}</span>
+                    <span className="text-xs sm:text-sm leading-relaxed">
+                      {event.date}
+                    </span>
                   </div>
                   <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
                     <MapPin className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs sm:text-sm leading-relaxed">{event.location}</span>
+                    <span className="text-xs sm:text-sm leading-relaxed">
+                      {event.location}
+                    </span>
                   </div>
                   <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
                     <Users className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs sm:text-sm leading-relaxed">{event.participants}</span>
+                    <span className="text-xs sm:text-sm leading-relaxed">
+                      {event.participants}
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -129,9 +145,10 @@ const Events = () => {
                     </h3>
                   </div>
                   <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-                    La competencia más importante del escultismo uruguayo. 
-                    El Grupo Séptimo ha sido campeón en múltiples ocasiones, 
-                    demostrando excelencia en habilidades scout, trabajo en equipo y liderazgo.
+                    La competencia más importante del escultismo uruguayo. El
+                    Grupo Séptimo ha sido campeón en múltiples ocasiones,
+                    demostrando excelencia en habilidades scout, trabajo en
+                    equipo y liderazgo.
                   </p>
                   <div className="flex flex-wrap gap-2 sm:gap-3">
                     <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/20 text-primary rounded-full text-xs sm:text-sm md:text-base font-semibold border border-primary/30 transition-transform duration-300 hover:scale-105">
@@ -146,9 +163,9 @@ const Events = () => {
                   </div>
                 </div>
                 <Link to="/bauen" className="group w-full md:w-auto">
-                  <Button 
-                    size="lg" 
-                    variant="hero" 
+                  <Button
+                    size="lg"
+                    variant="hero"
                     className="w-full whitespace-nowrap text-sm sm:text-base md:text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105"
                   >
                     Ver Historial BAUEN

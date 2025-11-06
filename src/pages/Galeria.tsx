@@ -11,14 +11,40 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Camera, FolderPlus, ImagePlus, Images, Trash2, FolderX } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Camera,
+  FolderPlus,
+  ImagePlus,
+  Images,
+  Trash2,
+  FolderX,
+} from "lucide-react";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { getAuthUser } from "@/lib/backend";
-import { createAlbum, listAlbums, listImages, uploadImage, deleteImage, deleteAlbum } from "@/lib/gallery";
+import {
+  createAlbum,
+  listAlbums,
+  listImages,
+  uploadImage,
+  deleteImage,
+  deleteAlbum,
+} from "@/lib/gallery";
 import { useToast } from "@/hooks/use-toast";
 
 // Lista de emails con permisos de administración separados por comas
-const ADMIN_EMAILS = (import.meta.env.VITE_GALLERY_ADMIN_EMAILS || "admin@example.com")
+const ADMIN_EMAILS = (
+  import.meta.env.VITE_GALLERY_ADMIN_EMAILS || "admin@example.com"
+)
   .split(",")
   .map((e: string) => e.trim().toLowerCase());
 
@@ -40,6 +66,8 @@ const Galeria = () => {
   const [loadingImages, setLoadingImages] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<string | null>(null);
   const [newAlbumName, setNewAlbumName] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
@@ -53,13 +81,13 @@ const Galeria = () => {
         setIsAdmin(ADMIN_EMAILS.includes(email.toLowerCase()));
 
         // Cargar álbumes desde Storage
-  console.log("Cargando álbumes...");
+        console.log("Cargando álbumes...");
         const storageAlbums = await listAlbums().catch((err) => {
           console.error("Error cargando álbumes:", err);
           return [];
         });
         console.log("Álbumes encontrados:", storageAlbums);
-        
+
         if (storageAlbums.length) {
           setAlbums(storageAlbums);
           setSelected(storageAlbums[0].name);
@@ -94,7 +122,7 @@ const Galeria = () => {
       });
       return;
     }
-    
+
     try {
       setLoadingImages(true);
       setShowCreateDialog(false);
@@ -130,14 +158,14 @@ const Galeria = () => {
       });
       return;
     }
-    
+
     try {
       setLoadingImages(true);
-      
+
       for (const file of Array.from(files)) {
         await uploadImage(selected, file);
       }
-      
+
       const imgs = await listImages(selected).catch(() => []);
       setImages(imgs);
       toast({
@@ -157,32 +185,44 @@ const Galeria = () => {
   };
 
   const handleDelete = async (imagePath: string) => {
-    if (!confirm("¿Estás seguro de que quieres eliminar esta imagen?")) return;
-    
+    setImageToDelete(imagePath);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!imageToDelete) return;
+
     try {
       setLoadingImages(true);
-      await deleteImage(imagePath);
+      await deleteImage(imageToDelete);
       const imgs = await listImages(selected).catch(() => []);
       setImages(imgs);
       toast({
-        title: "Imagen eliminada",
-        description: "La imagen se eliminó correctamente.",
+        title: "✅ Imagen eliminada",
+        description: "La imagen se eliminó correctamente de la galería.",
       });
     } catch (error) {
       toast({
-        title: "Error",
+        title: "❌ Error al eliminar",
         description: `No se pudo eliminar la imagen: ${error}`,
         variant: "destructive",
       });
     } finally {
       setLoadingImages(false);
+      setShowDeleteDialog(false);
+      setImageToDelete(null);
     }
   };
 
   const handleDeleteAlbum = async () => {
     if (!selected) return;
-    if (!confirm(`¿Estás seguro de que quieres eliminar el álbum "${selected}" y todas sus fotos?`)) return;
-    
+    if (
+      !confirm(
+        `¿Estás seguro de que quieres eliminar el álbum "${selected}" y todas sus fotos?`,
+      )
+    )
+      return;
+
     try {
       setLoadingImages(true);
       await deleteAlbum(selected);
@@ -207,17 +247,22 @@ const Galeria = () => {
 
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-4 sm:pb-6">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
               <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span className="text-primary font-semibold text-xs sm:text-sm">Galería</span>
+              <span className="text-primary font-semibold text-xs sm:text-sm">
+                Galería
+              </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">Momentos del Grupo</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Explora los álbumes y revive nuestras actividades</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
+              Momentos del Grupo
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Explora los álbumes y revive nuestras actividades
+            </p>
           </div>
         </div>
       </section>
@@ -227,17 +272,43 @@ const Galeria = () => {
         <section className="pb-2 sm:pb-3">
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap items-center gap-2 sm:gap-3 justify-center">
-              <Button variant="outline" size="sm" onClick={() => setShowCreateDialog(true)} className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowCreateDialog(true)}
+                className="gap-1 sm:gap-2 text-xs sm:text-sm"
+              >
                 <FolderPlus className="w-3 h-3 sm:w-4 sm:h-4" /> Crear álbum
               </Button>
               <div>
-                <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={handleUpload} className="hidden" id="upload-input" />
-                <Button variant="outline" size="sm" onClick={() => document.getElementById("upload-input")?.click()} className="gap-1 sm:gap-2 text-xs sm:text-sm" disabled={!selected}>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleUpload}
+                  className="hidden"
+                  id="upload-input"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    document.getElementById("upload-input")?.click()
+                  }
+                  className="gap-1 sm:gap-2 text-xs sm:text-sm"
+                  disabled={!selected}
+                >
                   <ImagePlus className="w-3 h-3 sm:w-4 sm:h-4" /> Subir fotos
                 </Button>
               </div>
               {selected && (
-                <Button variant="outline" size="sm" onClick={handleDeleteAlbum} className="gap-1 sm:gap-2 text-xs sm:text-sm text-destructive hover:text-destructive">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDeleteAlbum}
+                  className="gap-1 sm:gap-2 text-xs sm:text-sm text-destructive hover:text-destructive"
+                >
                   <FolderX className="w-3 h-3 sm:w-4 sm:h-4" /> Eliminar
                 </Button>
               )}
@@ -252,7 +323,9 @@ const Galeria = () => {
           {!loading && albums.length === 0 ? (
             <div className="text-center text-muted-foreground py-4">
               <p className="text-xs sm:text-sm">
-                {isAdmin ? "No hay álbumes todavía. Crea tu primer álbum arriba." : "No hay álbumes disponibles."}
+                {isAdmin
+                  ? "No hay álbumes todavía. Crea tu primer álbum arriba."
+                  : "No hay álbumes disponibles."}
               </p>
             </div>
           ) : (
@@ -288,7 +361,10 @@ const Galeria = () => {
           ) : images.length ? (
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0.5 sm:gap-1 md:gap-2">
               {images.map((img, idx) => (
-                <Card key={idx} className="rounded-none overflow-hidden group relative">
+                <Card
+                  key={idx}
+                  className="rounded-none overflow-hidden group relative"
+                >
                   <div className="relative aspect-square">
                     <OptimizedImage
                       src={img.url}
@@ -317,7 +393,9 @@ const Galeria = () => {
           ) : (
             <div className="text-center text-muted-foreground py-16 sm:py-20">
               <Images className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-3" />
-              <p className="text-xs sm:text-sm">No hay imágenes en este álbum todavía.</p>
+              <p className="text-xs sm:text-sm">
+                No hay imágenes en este álbum todavía.
+              </p>
             </div>
           )}
         </div>
@@ -349,7 +427,10 @@ const Galeria = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowCreateDialog(false)}
+            >
               Cancelar
             </Button>
             <Button onClick={handleCreateAlbum}>
@@ -359,6 +440,29 @@ const Galeria = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* AlertDialog para confirmar eliminación */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar imagen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. La imagen se eliminará
+              permanentemente de la galería.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Footer global en App.tsx */}
     </div>

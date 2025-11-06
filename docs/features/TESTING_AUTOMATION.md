@@ -5,26 +5,34 @@ Este documento explica cómo automatizar completamente el setup y testing del si
 ## 📋 Scripts SQL Disponibles
 
 ### 1. `add_follow_system.sql`
+
 Crea la infraestructura del sistema de seguidores:
+
 - Enum `follow_status` (pending, accepted, blocked)
 - Tabla `follows` con composite primary key
 - Trigger `auto_accept_public_follow` para auto-aceptar follows a perfiles públicos
 - Políticas RLS para follows
 
 ### 2. `add_profiles_directory.sql`
+
 Crea función RPC para descubrir usuarios:
+
 - Función `list_profiles_directory()` con SECURITY DEFINER
 - Retorna datos mínimos (id, nombre, avatar, edad, is_public)
 - Bypass de RLS para permitir descubrimiento
 
 ### 3. `tune_profiles_policies.sql`
+
 Políticas RLS claras y separadas:
+
 - `profiles_read_self`: Leer tu propio perfil
 - `profiles_read_public`: Cualquier autenticado lee perfiles públicos
 - `profiles_read_accepted_follower`: Seguidores aceptados leen perfiles privados
 
 ### 4. `seed_test_data.sql` ⭐ **NUEVO**
+
 Crea datos de prueba automáticamente:
+
 - 4 usuarios con contraseñas conocidas
 - 2 perfiles públicos + 2 privados
 - 5 relaciones de seguimiento (algunas aceptadas, otras pendientes)
@@ -77,12 +85,12 @@ Get-Content supabase/migrations/seed_test_data.sql | supabase db execute
 
 ## 👥 Usuarios de Prueba Creados
 
-| Usuario | Email | Contraseña | Edad | Rama | Visibilidad |
-|---------|-------|------------|------|------|-------------|
-| María González | `test.maria@example.com` | `password123` | 9 | Manada | 🔒 Privado |
-| Juan Pérez | `test.juan@example.com` | `password123` | 13 | Tropa | 🌐 Público |
-| Ana Rodríguez | `test.ana@example.com` | `password123` | 16 | Pioneros | 🔒 Privado |
-| Pedro Martínez | `test.pedro@example.com` | `password123` | 19 | Rover | 🌐 Público |
+| Usuario        | Email                    | Contraseña    | Edad | Rama     | Visibilidad |
+| -------------- | ------------------------ | ------------- | ---- | -------- | ----------- |
+| María González | `test.maria@example.com` | `password123` | 9    | Manada   | 🔒 Privado  |
+| Juan Pérez     | `test.juan@example.com`  | `password123` | 13   | Tropa    | 🌐 Público  |
+| Ana Rodríguez  | `test.ana@example.com`   | `password123` | 16   | Pioneros | 🔒 Privado  |
+| Pedro Martínez | `test.pedro@example.com` | `password123` | 19   | Rover    | 🌐 Público  |
 
 ### Relaciones Pre-configuradas
 
@@ -101,6 +109,7 @@ Get-Content supabase/migrations/seed_test_data.sql | supabase db execute
 ### Prueba 1: Login con María (Privado)
 
 1. **Abre la app en ventana normal**
+
    ```
    http://localhost:5173/auth
    ```
@@ -123,6 +132,7 @@ Get-Content supabase/migrations/seed_test_data.sql | supabase db execute
 ### Prueba 2: Login con Juan (Público) en Incógnito
 
 1. **Abre ventana incógnito:**
+
    ```
    Ctrl + Shift + N (Chrome/Edge)
    Ctrl + Shift + P (Firefox)
@@ -152,7 +162,7 @@ Get-Content supabase/migrations/seed_test_data.sql | supabase db execute
 # → Ir a /perfil → Ver 1 siguiendo (Pedro), 0 seguidores, 1 pendiente (María pendiente)
 # → Ir a /usuarios → Ver solo a Pedro (público)
 
-# Terminal 2 - Pedro (público)  
+# Terminal 2 - Pedro (público)
 # Login: test.pedro@example.com / password123
 # → Ir a /perfil → Ver 1 seguidora (Ana), 1 siguiendo (Juan)
 # → Ir a /usuarios → Ver a Juan (público), NO ver a María ni Ana (privados)
@@ -168,23 +178,27 @@ Puedes crear un helper para auto-login en desarrollo:
 
 ```typescript
 // src/lib/testHelpers.ts
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 
-export const autoLogin = async (testUser: 'maria' | 'juan' | 'ana' | 'pedro') => {
+export const autoLogin = async (
+  testUser: "maria" | "juan" | "ana" | "pedro",
+) => {
   const credentials = {
-    maria: { email: 'test.maria@example.com', password: 'password123' },
-    juan: { email: 'test.juan@example.com', password: 'password123' },
-    ana: { email: 'test.ana@example.com', password: 'password123' },
-    pedro: { email: 'test.pedro@example.com', password: 'password123' },
+    maria: { email: "test.maria@example.com", password: "password123" },
+    juan: { email: "test.juan@example.com", password: "password123" },
+    ana: { email: "test.ana@example.com", password: "password123" },
+    pedro: { email: "test.pedro@example.com", password: "password123" },
   };
 
-  const { data, error } = await supabase.auth.signInWithPassword(credentials[testUser]);
-  
+  const { data, error } = await supabase.auth.signInWithPassword(
+    credentials[testUser],
+  );
+
   if (error) {
-    console.error('Auto-login failed:', error);
+    console.error("Auto-login failed:", error);
     return null;
   }
-  
+
   console.log(`✅ Auto-logged in as ${testUser.toUpperCase()}`);
   return data;
 };
@@ -201,7 +215,7 @@ Si necesitas resetear y volver a empezar:
 
 ```sql
 -- Eliminar relaciones de seguimiento
-delete from public.follows 
+delete from public.follows
 where follower_id in (
   'a1111111-1111-1111-1111-111111111111',
   'b2222222-2222-2222-2222-222222222222',
@@ -210,7 +224,7 @@ where follower_id in (
 );
 
 -- Eliminar perfiles de prueba
-delete from public.profiles 
+delete from public.profiles
 where user_id in (
   'a1111111-1111-1111-1111-111111111111',
   'b2222222-2222-2222-2222-222222222222',
@@ -219,7 +233,7 @@ where user_id in (
 );
 
 -- Eliminar usuarios de prueba (requiere permisos service_role)
-delete from auth.users 
+delete from auth.users
 where id in (
   'a1111111-1111-1111-1111-111111111111',
   'b2222222-2222-2222-2222-222222222222',
@@ -248,12 +262,12 @@ Después de ejecutar los scripts, verifica:
 
 ```sql
 -- Contar usuarios de prueba
-select count(*) from auth.users 
+select count(*) from auth.users
 where email like 'test.%@example.com';
 -- Debe retornar: 4
 
 -- Ver todas las relaciones
-select 
+select
   pf.nombre_completo as follower,
   pd.nombre_completo as followed,
   f.status,

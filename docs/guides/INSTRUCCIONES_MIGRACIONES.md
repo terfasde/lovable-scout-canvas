@@ -45,10 +45,12 @@ Esto te va a pedir el password de la base de datos (lo encontrás en Supabase Da
 Después de ejecutar las migraciones, verificá en Supabase Dashboard:
 
 ### Storage:
+
 - **Storage** → Deberías ver el bucket `thread-images` creado
 - Políticas activas para lectura pública y escritura autenticada
 
 ### Tablas:
+
 - **Table Editor** → Deberías ver:
   - `threads`
   - `thread_comments`
@@ -57,11 +59,13 @@ Después de ejecutar las migraciones, verificá en Supabase Dashboard:
   - `messages`
 
 ### Funciones:
+
 - **Database** → Functions → Deberías ver:
   - `list_profiles_directory` (actualizada con username)
   - `create_or_get_conversation`
 
 ### RLS Policies:
+
 - Cada tabla debe tener sus políticas visibles en **Authentication** → Policies
 
 ## Activar verificación de email (paso manual pendiente)

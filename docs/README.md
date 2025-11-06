@@ -21,15 +21,16 @@ docs/
 
 Documentación relacionada con Docker, contenedores y orquestación.
 
-| Documento | Descripción |
-|-----------|-------------|
-| **[QUICK_START.md](docker/QUICK_START.md)** | Guía rápida para iniciar con Docker |
+| Documento                                     | Descripción                                            |
+| --------------------------------------------- | ------------------------------------------------------ |
+| **[QUICK_START.md](docker/QUICK_START.md)**   | Guía rápida para iniciar con Docker                    |
 | **[ARCHITECTURE.md](docker/ARCHITECTURE.md)** | Arquitectura completa: PostgreSQL, Prometheus, Grafana |
-| **[DEV.md](docker/DEV.md)** | Configuración de desarrollo con Docker |
-| **[OVERVIEW.md](docker/OVERVIEW.md)** | Visión general de Docker en el proyecto |
-| **[CHANGELOG.md](docker/CHANGELOG.md)** | Historial de cambios de la arquitectura Docker |
+| **[DEV.md](docker/DEV.md)**                   | Configuración de desarrollo con Docker                 |
+| **[OVERVIEW.md](docker/OVERVIEW.md)**         | Visión general de Docker en el proyecto                |
+| **[CHANGELOG.md](docker/CHANGELOG.md)**       | Historial de cambios de la arquitectura Docker         |
 
 **Inicio rápido**:
+
 ```powershell
 .\scripts\start.ps1 full   # Arquitectura completa
 .\scripts\start.ps1 dev    # Desarrollo simple
@@ -41,13 +42,13 @@ Documentación relacionada con Docker, contenedores y orquestación.
 
 Guías paso a paso para configurar servicios externos e integraciones.
 
-| Documento | Descripción |
-|-----------|-------------|
-| **[GOOGLE_MAPS.md](setup/GOOGLE_MAPS.md)** | Configurar Google Maps API |
+| Documento                                                          | Descripción                                      |
+| ------------------------------------------------------------------ | ------------------------------------------------ |
+| **[GOOGLE_MAPS.md](setup/GOOGLE_MAPS.md)**                         | Configurar Google Maps API                       |
 | **[GOOGLE_MAPS_BILLING_FIX.md](setup/GOOGLE_MAPS_BILLING_FIX.md)** | Solución alternativa sin facturación (Embed API) |
-| **[EMAIL_VERIFICATION.md](setup/EMAIL_VERIFICATION.md)** | Configurar verificación de emails |
-| **[AVATAR.md](setup/AVATAR.md)** | Sistema de avatares con recorte |
-| **[SUPABASE_FIX.md](setup/SUPABASE_FIX.md)** | Soluciones rápidas de Supabase |
+| **[EMAIL_VERIFICATION.md](setup/EMAIL_VERIFICATION.md)**           | Configurar verificación de emails                |
+| **[AVATAR.md](setup/AVATAR.md)**                                   | Sistema de avatares con recorte                  |
+| **[SUPABASE_FIX.md](setup/SUPABASE_FIX.md)**                       | Soluciones rápidas de Supabase                   |
 
 ---
 
@@ -55,12 +56,13 @@ Guías paso a paso para configurar servicios externos e integraciones.
 
 Documentación sobre mejoras de performance, optimizaciones aplicadas y buenas prácticas.
 
-| Documento | Descripción |
-|-----------|-------------|
-| **[OPTIMIZATIONS.md](optimization/OPTIMIZATIONS.md)** | Todas las optimizaciones implementadas |
+| Documento                                                     | Descripción                                      |
+| ------------------------------------------------------------- | ------------------------------------------------ |
+| **[OPTIMIZATIONS.md](optimization/OPTIMIZATIONS.md)**         | Todas las optimizaciones implementadas           |
 | **[PERFORMANCE_GUIDE.md](optimization/PERFORMANCE_GUIDE.md)** | Guía completa de rendimiento y mejores prácticas |
 
 **Optimizaciones incluidas**:
+
 - ✅ Code splitting y lazy loading
 - ✅ React Query con caché optimizada
 - ✅ Build optimizado con Vite
@@ -73,10 +75,10 @@ Documentación sobre mejoras de performance, optimizaciones aplicadas y buenas p
 
 Documentación de características específicas del proyecto.
 
-| Documento | Descripción |
-|-----------|-------------|
-| **[PERFIL_FIXES.md](features/PERFIL_FIXES.md)** | Correcciones del perfil de usuario (fecha, username) |
-| **[TESTING_AUTOMATION.md](features/TESTING_AUTOMATION.md)** | Automatización de pruebas |
+| Documento                                                   | Descripción                                          |
+| ----------------------------------------------------------- | ---------------------------------------------------- |
+| **[PERFIL_FIXES.md](features/PERFIL_FIXES.md)**             | Correcciones del perfil de usuario (fecha, username) |
+| **[TESTING_AUTOMATION.md](features/TESTING_AUTOMATION.md)** | Automatización de pruebas                            |
 
 ---
 
@@ -84,9 +86,9 @@ Documentación de características específicas del proyecto.
 
 Guías y tutoriales sobre migraciones, workflows y procedimientos.
 
-| Documento | Descripción |
-|-----------|-------------|
-| **[MIGRAR_SIN_SUPABASE.md](guides/MIGRAR_SIN_SUPABASE.md)** | Guía completa de migración sin Supabase |
+| Documento                                                               | Descripción                                     |
+| ----------------------------------------------------------------------- | ----------------------------------------------- |
+| **[MIGRAR_SIN_SUPABASE.md](guides/MIGRAR_SIN_SUPABASE.md)**             | Guía completa de migración sin Supabase         |
 | **[INSTRUCCIONES_MIGRACIONES.md](guides/INSTRUCCIONES_MIGRACIONES.md)** | Instrucciones para migraciones de base de datos |
 
 ---
@@ -94,10 +96,13 @@ Guías y tutoriales sobre migraciones, workflows y procedimientos.
 ## 🔧 Documentación Adicional
 
 ### Backend
+
 - **[server/README.md](../server/README.md)** - Documentación del backend API
 
 ### Scripts
+
 Todos los scripts de utilidad están en [`scripts/`](../scripts/):
+
 - `start.ps1` / `start.sh` - Inicio automático de Docker
 - `add-docker-to-path.ps1` - Agregar Docker al PATH
 - `run-docker-dev.cmd` - Script batch de Windows

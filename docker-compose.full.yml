@@ -1,31 +1,20 @@
-# ============================================
-# ⚠️ ARCHIVO LEGACY - REQUIERE ACTUALIZACIÓN ⚠️
-# ============================================
-# 
-# Este archivo fue diseñado para la arquitectura anterior con:
-# - PostgreSQL como base de datos
-# - Backend Express con Node.js
-# - Supabase (ahora REMOVIDO)
+# ======================================================
+# Docker Compose - FULL Dev Stack (Batteries Included)
+# ======================================================
 #
-# ⚠️ ESTADO ACTUAL DEL PROYECTO:
-# - El proyecto ahora funciona SIN Supabase
-# - El backend es OPCIONAL y tiene dependencias no instaladas
-# - Se recomienda usar docker-compose.yml (solo frontend)
+# Incluye:
+# - web (Vite + React)
+# - postgres + pgadmin (base de datos + UI)
+# - mailhog (SMTP de pruebas)
+# - minio (S3 compatible para storage local)
 #
-# Para usar esta configuración completa, necesitas:
-# 1. Resolver dependencias del servidor (requiere Python)
-# 2. Configurar PostgreSQL manualmente
-# 3. Actualizar variables de entorno
+# Nota: La app actualmente usa almacenamiento/local DB en el navegador,
+# pero este stack te deja todo listo para migrar a servicios reales.
 #
-# ============================================
-# Docker Compose - Arquitectura completa con DB separada y monitoreo
-# Incluye: PostgreSQL, PgAdmin, Prometheus, Grafana, Backend y Frontend
-#
-# Uso:
-#   docker compose -f docker-compose.full.yml up -d          # Iniciar todos los servicios
-#   docker compose -f docker-compose.full.yml down           # Detener todos los servicios
-#   docker compose -f docker-compose.full.yml logs -f        # Ver logs en tiempo real
-#   docker compose -f docker-compose.full.yml ps             # Ver estado de contenedores
+# Comandos:
+#   docker compose -f docker-compose.full.yml up -d
+#   docker compose -f docker-compose.full.yml down -v
+#   docker compose -f docker-compose.full.yml logs -f
 
 services:
   # ============================================
@@ -44,7 +33,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./server/db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U scoutuser -d scoutdb"]
       interval: 10s
@@ -63,8 +51,8 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@scout.local
       PGADMIN_DEFAULT_PASSWORD: admin123
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     ports:
       - "5050:80"
     volumes:
@@ -76,76 +64,131 @@ services:
       - scout-network
 
   # ============================================
-  # BACKEND API - Express + Node.js
+  # SMTP de pruebas - Mailhog
+  # ============================================
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: scout-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    networks:
+      - scout-network
+
+  # ============================================
+  # Storage S3 compatible - MinIO
+  # ============================================
+  minio:
+    image: minio/minio:RELEASE.2024-11-07T00-52-20Z
+    container_name: scout-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio12345
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # Console
+    volumes:
+      - minio_data:/data
+    networks:
+      - scout-network
+
+  # ============================================
+  # Uploader - firma URLs para MinIO (presigned PUT)
+  # ============================================
+  uploader:
+    image: node:20-alpine
+    container_name: scout-uploader
+    restart: unless-stopped
+    working_dir: /app
+    command: sh -c "npm install && node index.js"
+    environment:
+      - UPLOADER_PORT=4001
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_USE_SSL=false
+      - MINIO_ACCESS_KEY=minio
+      - MINIO_SECRET_KEY=minio12345
+      - MINIO_PUBLIC_URL=http://localhost:9000
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./server/uploader:/app
+    depends_on:
+      minio:
+        condition: service_started
+    networks:
+      - scout-network
+
+  # ============================================
+  # BACKEND API - Node.js + Express + SQLite/PostgreSQL
   # ============================================
   server:
     image: node:20-alpine
     container_name: scout-server
     restart: unless-stopped
     working_dir: /app
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "apk add --no-cache python3 make g++ && npm install && npm run dev"
     environment:
-      # Configuración del servidor
       - PORT=8080
       - NODE_ENV=development
+      - DATABASE_URL=postgresql://scoutuser:scout_secure_password_2024@postgres:5432/scoutdb
       - ORIGIN=http://localhost:5173
-      
-      # Base de datos PostgreSQL
-      - DB_TYPE=postgres
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_NAME=scoutdb
-      - DB_USER=scoutuser
-      - DB_PASSWORD=scout_secure_password_2024
-      
-      # Configuración de autenticación
-      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
       - ADMIN_EMAILS=franciscolorenzo2406@gmail.com
-      - ADMIN_SECRET=local-dev-admin
-      
-      # Hot reload
+      - ADMIN_SECRET=local-dev-admin-secret
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+      - SMTP_FROM=noreply@scout.local
       - CHOKIDAR_USEPOLLING=true
+      - USE_MINIO=true
+      - UPLOADER_URL=http://uploader:4001
     ports:
       - "8080:8080"
     volumes:
       - ./server:/app
       - /app/node_modules
-      - ./server/uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      mailhog:
+        condition: service_started
+      uploader:
+        condition: service_started
     networks:
       - scout-network
 
   # ============================================
   # FRONTEND - Vite + React
-  # ⚠️ DESACTUALIZADO: Configurado para backend local
-  # Cambiar VITE_BACKEND=disabled para usar mocks
   # ============================================
   web:
     image: node:20-alpine
     container_name: scout-web
     restart: unless-stopped
     working_dir: /app
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm ci && npm run dev"
     ports:
       - "5173:5173"
     environment:
-      # ⚠️ CAMBIAR A: VITE_BACKEND=disabled
       - VITE_BACKEND=local
       - VITE_API_BASE=http://localhost:8080
       - VITE_GALLERY_ADMIN_EMAILS=franciscolorenzo2406@gmail.com
+      - VITE_GOOGLE_MAPS_API_KEY=AIzaSyCdG8MYDQuZmbEDypnEMlokDCY2t9B8560
       - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./:/app
       - /app/node_modules
     depends_on:
-      - server
+      postgres:
+        condition: service_healthy
+      server:
+        condition: service_started
+      mailhog:
+        condition: service_started
+      minio:
+        condition: service_started
+      uploader:
+        condition: service_started
     networks:
       - scout-network
 
@@ -156,19 +199,21 @@ services:
     image: prom/prometheus:latest
     container_name: scout-prometheus
     restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--web.enable-lifecycle'
     networks:
       - scout-network
+    depends_on:
+      server:
+        condition: service_started
 
   # ============================================
   # VISUALIZACIÓN - Grafana
@@ -177,38 +222,20 @@ services:
     image: grafana/grafana:latest
     container_name: scout-grafana
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
-      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
-    depends_on:
-      - prometheus
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     networks:
       - scout-network
-
-  # ============================================
-  # EXPORTADOR DE MÉTRICAS - PostgreSQL Exporter
-  # ============================================
-  postgres_exporter:
-    image: prometheuscommunity/postgres-exporter:latest
-    container_name: scout-postgres-exporter
-    restart: unless-stopped
-    environment:
-      DATA_SOURCE_NAME: "postgresql://scoutuser:scout_secure_password_2024@postgres:5432/scoutdb?sslmode=disable"
-    ports:
-      - "9187:9187"
     depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - scout-network
+      prometheus:
+        condition: service_started
 
 # ============================================
 # VOLÚMENES PERSISTENTES
@@ -217,6 +244,8 @@ volumes:
   postgres_data:
     driver: local
   pgadmin_data:
+    driver: local
+  minio_data:
     driver: local
   prometheus_data:
     driver: local

@@ -2,63 +2,63 @@
  * Utilidades para detectar y manejar diferentes entornos de ejecución
  */
 
-export type Environment = 'development' | 'staging' | 'production';
+export type Environment = "development" | "staging" | "production";
 
 /**
  * Obtener el entorno actual
  */
 export function getEnvironment(): Environment {
   const env = import.meta.env.VITE_ENV as Environment;
-  return env || 'development';
+  return env || "development";
 }
 
 /**
  * Verificar si estamos en desarrollo
  */
 export function isDevelopment(): boolean {
-  return getEnvironment() === 'development';
+  return getEnvironment() === "development";
 }
 
 /**
  * Verificar si estamos en staging
  */
 export function isStaging(): boolean {
-  return getEnvironment() === 'staging';
+  return getEnvironment() === "staging";
 }
 
 /**
  * Verificar si estamos en producción
  */
 export function isProduction(): boolean {
-  return getEnvironment() === 'production';
+  return getEnvironment() === "production";
 }
 
 /**
  * Verificar si las dev tools deben estar habilitadas
  */
 export function isDevToolsEnabled(): boolean {
-  return import.meta.env.VITE_ENABLE_DEVTOOLS === 'true';
+  return import.meta.env.VITE_ENABLE_DEVTOOLS === "true";
 }
 
 /**
  * Verificar si el logging debe estar habilitado
  */
 export function isLoggingEnabled(): boolean {
-  return import.meta.env.VITE_ENABLE_LOGGING === 'true';
+  return import.meta.env.VITE_ENABLE_LOGGING === "true";
 }
 
 /**
  * Verificar si el modo debug está habilitado
  */
 export function isDebugEnabled(): boolean {
-  return import.meta.env.VITE_ENABLE_DEBUG === 'true';
+  return import.meta.env.VITE_ENABLE_DEBUG === "true";
 }
 
 /**
  * Obtener la URL del backend según el entorno
  */
 export function getBackendURL(): string {
-  return import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080';
+  return import.meta.env.VITE_BACKEND_URL || "http://localhost:8080";
 }
 
 /**
@@ -71,7 +71,7 @@ export function getEnvConfig() {
     isStaging: isStaging(),
     isProd: isProduction(),
     backendURL: getBackendURL(),
-    backendMode: import.meta.env.VITE_BACKEND || 'local',
+    backendMode: import.meta.env.VITE_BACKEND || "local",
     features: {
       devtools: isDevToolsEnabled(),
       logging: isLoggingEnabled(),
@@ -85,6 +85,6 @@ export function getEnvConfig() {
  */
 export function logEnvConfig() {
   if (isDevelopment()) {
-    console.log('🌍 Environment Configuration:', getEnvConfig());
+    console.log("🌍 Environment Configuration:", getEnvConfig());
   }
 }

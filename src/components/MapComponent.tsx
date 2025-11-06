@@ -39,7 +39,10 @@ function MapComponent() {
     return (
       <div className="w-full h-full flex flex-col gap-2 items-center justify-center bg-muted/30 text-muted-foreground text-sm p-4">
         <MapPin className="w-8 h-8" />
-        <p className="text-center">Mapa deshabilitado. Configura VITE_GOOGLE_MAPS_API_KEY para habilitarlo.</p>
+        <p className="text-center">
+          Mapa deshabilitado. Configura VITE_GOOGLE_MAPS_API_KEY para
+          habilitarlo.
+        </p>
       </div>
     );
   }
@@ -52,7 +55,9 @@ function MapComponent() {
         <AlertCircle className="w-10 h-10" />
         <div className="text-center space-y-1">
           <p className="font-semibold">Error cargando Google Maps</p>
-          <p className="text-xs">Verifica que la API key sea válida y tenga los permisos necesarios.</p>
+          <p className="text-xs">
+            Verifica que la API key sea válida y tenga los permisos necesarios.
+          </p>
           <p className="text-xs text-muted-foreground mt-2">
             Ve a Google Cloud Console → APIs & Services → Credentials
           </p>
@@ -70,7 +75,8 @@ function MapComponent() {
           <p className="font-semibold">Error de Google Maps</p>
           <p className="text-xs">{mapError}</p>
           <p className="text-xs text-muted-foreground mt-2">
-            Posibles causas: restricciones de API key, límites de cuota o dominio no autorizado
+            Posibles causas: restricciones de API key, límites de cuota o
+            dominio no autorizado
           </p>
         </div>
       </div>

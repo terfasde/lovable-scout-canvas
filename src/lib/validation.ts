@@ -3,19 +3,19 @@
  * Proporciona validación type-safe tanto en frontend como backend
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Mensajes de error personalizados en español
 const errorMessages = {
-  required: 'Este campo es obligatorio',
-  email: 'Email inválido',
+  required: "Este campo es obligatorio",
+  email: "Email inválido",
   minLength: (min: number) => `Debe tener al menos ${min} caracteres`,
   maxLength: (max: number) => `No debe exceder ${max} caracteres`,
   min: (min: number) => `Debe ser al menos ${min}`,
   max: (max: number) => `No debe ser mayor a ${max}`,
-  url: 'URL inválida',
-  date: 'Fecha inválida',
-  phone: 'Número de teléfono inválido',
+  url: "URL inválida",
+  date: "Fecha inválida",
+  phone: "Número de teléfono inválido",
 };
 
 /**
@@ -26,13 +26,13 @@ export const profileSchema = z.object({
     .string({ required_error: errorMessages.required })
     .min(2, errorMessages.minLength(2))
     .max(100, errorMessages.maxLength(100)),
-  
+
   username: z
     .string({ required_error: errorMessages.required })
     .min(3, errorMessages.minLength(3))
     .max(30, errorMessages.maxLength(30))
-    .regex(/^[a-zA-Z0-9_-]+$/, 'Solo letras, números, guiones y guiones bajos'),
-  
+    .regex(/^[a-zA-Z0-9_-]+$/, "Solo letras, números, guiones y guiones bajos"),
+
   fecha_nacimiento: z
     .string()
     .refine(
@@ -40,7 +40,7 @@ export const profileSchema = z.object({
         const d = new Date(date);
         return !isNaN(d.getTime());
       },
-      { message: errorMessages.date }
+      { message: errorMessages.date },
     )
     .refine(
       (date) => {
@@ -49,23 +49,19 @@ export const profileSchema = z.object({
         const age = today.getFullYear() - birthDate.getFullYear();
         return age >= 5 && age <= 120;
       },
-      { message: 'La edad debe estar entre 5 y 120 años' }
+      { message: "La edad debe estar entre 5 y 120 años" },
     )
     .optional(),
-  
+
   rol_adulto: z
     .string()
     .max(50, errorMessages.maxLength(50))
     .optional()
     .nullable(),
-  
+
   is_public: z.boolean().optional(),
-  
-  bio: z
-    .string()
-    .max(500, errorMessages.maxLength(500))
-    .optional()
-    .nullable(),
+
+  bio: z.string().max(500, errorMessages.maxLength(500)).optional().nullable(),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
@@ -85,48 +81,50 @@ export type EmailFormData = z.infer<typeof emailSchema>;
 /**
  * Validación de contraseña
  */
-export const passwordSchema = z.object({
-  password: z
-    .string({ required_error: errorMessages.required })
-    .min(8, errorMessages.minLength(8))
-    .max(128, errorMessages.maxLength(128))
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Debe contener al menos una mayúscula, una minúscula y un número'
-    ),
-  confirmPassword: z.string({ required_error: errorMessages.required }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Las contraseñas no coinciden',
-  path: ['confirmPassword'],
-});
+export const passwordSchema = z
+  .object({
+    password: z
+      .string({ required_error: errorMessages.required })
+      .min(8, errorMessages.minLength(8))
+      .max(128, errorMessages.maxLength(128))
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Debe contener al menos una mayúscula, una minúscula y un número",
+      ),
+    confirmPassword: z.string({ required_error: errorMessages.required }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
 
 export type PasswordFormData = z.infer<typeof passwordSchema>;
 
 /**
  * Validación de registro
  */
-export const registerSchema = z.object({
-  email: emailSchema.shape.email,
-  password: z
-    .string({ required_error: errorMessages.required })
-    .min(8, errorMessages.minLength(8))
-    .max(128, errorMessages.maxLength(128))
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Debe contener al menos una mayúscula, una minúscula y un número'
-    ),
-  confirmPassword: z.string({ required_error: errorMessages.required }),
-  nombre_completo: profileSchema.shape.nombre_completo,
-  username: profileSchema.shape.username,
-  terms: z
-    .boolean()
-    .refine((val) => val === true, {
-      message: 'Debes aceptar los términos y condiciones',
+export const registerSchema = z
+  .object({
+    email: emailSchema.shape.email,
+    password: z
+      .string({ required_error: errorMessages.required })
+      .min(8, errorMessages.minLength(8))
+      .max(128, errorMessages.maxLength(128))
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Debe contener al menos una mayúscula, una minúscula y un número",
+      ),
+    confirmPassword: z.string({ required_error: errorMessages.required }),
+    nombre_completo: profileSchema.shape.nombre_completo,
+    username: profileSchema.shape.username,
+    terms: z.boolean().refine((val) => val === true, {
+      message: "Debes aceptar los términos y condiciones",
     }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Las contraseñas no coinciden',
-  path: ['confirmPassword'],
-});
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -135,7 +133,9 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
  */
 export const loginSchema = z.object({
   email: emailSchema.shape.email,
-  password: z.string({ required_error: errorMessages.required }).min(1, errorMessages.required),
+  password: z
+    .string({ required_error: errorMessages.required })
+    .min(1, errorMessages.required),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
@@ -146,7 +146,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export const messageSchema = z.object({
   content: z
     .string({ required_error: errorMessages.required })
-    .min(1, 'El mensaje no puede estar vacío')
+    .min(1, "El mensaje no puede estar vacío")
     .max(2000, errorMessages.maxLength(2000)),
 });
 
@@ -160,13 +160,13 @@ export const groupSchema = z.object({
     .string({ required_error: errorMessages.required })
     .min(3, errorMessages.minLength(3))
     .max(50, errorMessages.maxLength(50)),
-  
+
   description: z
     .string()
     .max(500, errorMessages.maxLength(500))
     .optional()
     .nullable(),
-  
+
   is_private: z.boolean().optional(),
 });
 
@@ -180,20 +180,19 @@ export const eventSchema = z.object({
     .string({ required_error: errorMessages.required })
     .min(3, errorMessages.minLength(3))
     .max(100, errorMessages.maxLength(100)),
-  
+
   description: z
     .string()
     .max(1000, errorMessages.maxLength(1000))
     .optional()
     .nullable(),
-  
+
   event_date: z
     .string({ required_error: errorMessages.required })
-    .refine(
-      (date) => !isNaN(new Date(date).getTime()),
-      { message: errorMessages.date }
-    ),
-  
+    .refine((date) => !isNaN(new Date(date).getTime()), {
+      message: errorMessages.date,
+    }),
+
   location: z
     .string()
     .max(200, errorMessages.maxLength(200))
@@ -208,16 +207,22 @@ export type EventFormData = z.infer<typeof eventSchema>;
  */
 export const imageFileSchema = z.custom<File>((file) => {
   if (!(file instanceof File)) return false;
-  
-  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+
+  const validTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+  ];
   const maxSize = 5 * 1024 * 1024; // 5MB
 
   if (!validTypes.includes(file.type)) {
-    throw new Error('Solo se permiten imágenes (JPG, PNG, GIF, WEBP)');
+    throw new Error("Solo se permiten imágenes (JPG, PNG, GIF, WEBP)");
   }
 
   if (file.size > maxSize) {
-    throw new Error('La imagen no debe superar 5MB');
+    throw new Error("La imagen no debe superar 5MB");
   }
 
   return true;
@@ -240,13 +245,12 @@ export type UrlFormData = z.infer<typeof urlSchema>;
  */
 export function validate<T extends z.ZodSchema>(
   schema: T,
-  data: unknown
-): 
+  data: unknown,
+):
   | { success: true; data: z.infer<T>; errors: null }
-  | { success: false; data: null; errors: z.ZodError } 
-{
+  | { success: false; data: null; errors: z.ZodError } {
   const result = schema.safeParse(data);
-  
+
   if (result.success) {
     return { success: true, data: result.data, errors: null };
   } else {
@@ -259,14 +263,14 @@ export function validate<T extends z.ZodSchema>(
  */
 export function getFieldError(
   errors: z.ZodError | null,
-  fieldName: string
+  fieldName: string,
 ): string | undefined {
   if (!errors) return undefined;
-  
-  const fieldError = errors.errors.find((err) => 
-    err.path.join('.') === fieldName
+
+  const fieldError = errors.errors.find(
+    (err) => err.path.join(".") === fieldName,
   );
-  
+
   return fieldError?.message;
 }
 
@@ -274,13 +278,16 @@ export function getFieldError(
  * Helper para obtener todos los errores en formato { field: message }
  */
 export function getFormErrors(
-  errors: z.ZodError | null
+  errors: z.ZodError | null,
 ): Record<string, string> {
   if (!errors) return {};
-  
-  return errors.errors.reduce((acc, err) => {
-    const path = err.path.join('.');
-    acc[path] = err.message;
-    return acc;
-  }, {} as Record<string, string>);
+
+  return errors.errors.reduce(
+    (acc, err) => {
+      const path = err.path.join(".");
+      acc[path] = err.message;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 }

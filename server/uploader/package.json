@@ -1,0 +1,12 @@
+{
+  "name": "uploader",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "minio": "^8.0.0"
+  }
+}

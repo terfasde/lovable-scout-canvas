@@ -1,49 +1,58 @@
-import { Router } from 'express'
-import { db } from '../db'
-import { z } from 'zod'
-import { authMiddleware } from '../auth'
+import { Router } from "express";
+import { db } from "../db";
+import { z } from "zod";
+import { authMiddleware } from "../auth";
 
-export const profilesRouter = Router()
+export const profilesRouter = Router();
 
 // Helper para calcular edad
 function calculateAge(fechaNacimiento: string | null): number | null {
-  if (!fechaNacimiento) return null
+  if (!fechaNacimiento) return null;
   try {
-    const birth = new Date(fechaNacimiento)
-    if (isNaN(birth.getTime())) return null
-    const now = new Date()
-    let years = now.getFullYear() - birth.getFullYear()
-    const m = now.getMonth() - birth.getMonth()
-    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) years--
-    return years
+    const birth = new Date(fechaNacimiento);
+    if (isNaN(birth.getTime())) return null;
+    const now = new Date();
+    let years = now.getFullYear() - birth.getFullYear();
+    const m = now.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) years--;
+    return years;
   } catch {
-    return null
+    return null;
   }
 }
 
-profilesRouter.get('/me', authMiddleware, (req: any, res: any) => {
-  const userId = (req as any).user.id as string
-  const user = db.prepare('SELECT id, email, username, created_at FROM users WHERE id = ?').get(userId) as any
+profilesRouter.get("/me", authMiddleware, (req: any, res: any) => {
+  const userId = (req as any).user.id as string;
+  const user = db
+    .prepare("SELECT id, email, username, created_at FROM users WHERE id = ?")
+    .get(userId) as any;
   if (!user) {
-    return res.status(401).json({ error: 'Usuario inválido. Vuelve a iniciar sesión.' })
+    return res
+      .status(401)
+      .json({ error: "Usuario inválido. Vuelve a iniciar sesión." });
   }
-  let profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(userId) as any
+  let profile = db
+    .prepare("SELECT * FROM profiles WHERE user_id = ?")
+    .get(userId) as any;
   // Si no existe perfil, crearlo con valores por defecto (sin borrar nada)
   if (!profile) {
-    db.prepare(`INSERT INTO profiles (user_id, nombre_completo, is_public) VALUES (?, ?, 0)`) 
-      .run(userId, user?.username || null)
-    profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(userId) as any
+    db.prepare(
+      `INSERT INTO profiles (user_id, nombre_completo, is_public) VALUES (?, ?, 0)`,
+    ).run(userId, user?.username || null);
+    profile = db
+      .prepare("SELECT * FROM profiles WHERE user_id = ?")
+      .get(userId) as any;
   }
-  const result = { ...profile, ...user }
+  const result = { ...profile, ...user };
   if (result.fecha_nacimiento) {
-    result.edad = calculateAge(result.fecha_nacimiento)
+    result.edad = calculateAge(result.fecha_nacimiento);
   }
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
-  res.json(result)
-})
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.json(result);
+});
 
 // Aceptar avatar_url como URL absoluta o ruta relativa de uploads
-const avatarUrlSchema = z.string().url().or(z.string().startsWith('/uploads/'))
+const avatarUrlSchema = z.string().url().or(z.string().startsWith("/uploads/"));
 
 const updateSchema = z.object({
   nombre_completo: z.string().nullable().optional(),
@@ -55,124 +64,228 @@ const updateSchema = z.object({
   seisena: z.string().nullable().optional(),
   patrulla: z.string().nullable().optional(),
   equipo_pioneros: z.string().nullable().optional(),
-  comunidad_rovers: z.string().nullable().optional()
-})
+  comunidad_rovers: z.string().nullable().optional(),
+});
 
-profilesRouter.put('/me', authMiddleware, (req: any, res: any) => {
-  const userId = (req as any).user.id as string
-  const existsUser = db.prepare('SELECT 1 FROM users WHERE id = ?').get(userId)
+profilesRouter.put("/me", authMiddleware, (req: any, res: any) => {
+  const userId = (req as any).user.id as string;
+  const existsUser = db.prepare("SELECT 1 FROM users WHERE id = ?").get(userId);
   if (!existsUser) {
-    return res.status(401).json({ error: 'Usuario inválido. Vuelve a iniciar sesión.' })
+    return res
+      .status(401)
+      .json({ error: "Usuario inválido. Vuelve a iniciar sesión." });
   }
-  const parse = updateSchema.safeParse(req.body)
-  if (!parse.success) return res.status(400).json({ error: parse.error.flatten() })
-  const { nombre_completo, telefono, is_public, avatar_url, fecha_nacimiento, rol_adulto, seisena, patrulla, equipo_pioneros, comunidad_rovers } = parse.data
-  const existing = db.prepare('SELECT user_id FROM profiles WHERE user_id = ?').get(userId)
+  const parse = updateSchema.safeParse(req.body);
+  if (!parse.success)
+    return res.status(400).json({ error: parse.error.flatten() });
+  const {
+    nombre_completo,
+    telefono,
+    is_public,
+    avatar_url,
+    fecha_nacimiento,
+    rol_adulto,
+    seisena,
+    patrulla,
+    equipo_pioneros,
+    comunidad_rovers,
+  } = parse.data;
+  const existing = db
+    .prepare("SELECT user_id FROM profiles WHERE user_id = ?")
+    .get(userId);
   if (!existing) {
-    db.prepare(`INSERT INTO profiles (user_id, nombre_completo, telefono, is_public, avatar_url, fecha_nacimiento, rol_adulto, seisena, patrulla, equipo_pioneros, comunidad_rovers) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run(userId, nombre_completo ?? null, telefono ?? null, is_public ? 1 : 0, avatar_url ?? null, 
-           fecha_nacimiento ?? null, rol_adulto ?? null, seisena ?? null, patrulla ?? null, 
-           equipo_pioneros ?? null, comunidad_rovers ?? null)
+    db.prepare(
+      `INSERT INTO profiles (user_id, nombre_completo, telefono, is_public, avatar_url, fecha_nacimiento, rol_adulto, seisena, patrulla, equipo_pioneros, comunidad_rovers) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(
+      userId,
+      nombre_completo ?? null,
+      telefono ?? null,
+      is_public ? 1 : 0,
+      avatar_url ?? null,
+      fecha_nacimiento ?? null,
+      rol_adulto ?? null,
+      seisena ?? null,
+      patrulla ?? null,
+      equipo_pioneros ?? null,
+      comunidad_rovers ?? null,
+    );
   } else {
     // Construir UPDATE dinámico para distinguir "campo ausente" vs "campo presente con null"
-    const sets: string[] = []
-    const values: any[] = []
+    const sets: string[] = [];
+    const values: any[] = [];
 
-    if (nombre_completo !== undefined) { sets.push('nombre_completo = ?'); values.push(nombre_completo ?? null) }
-    if (telefono !== undefined) { sets.push('telefono = ?'); values.push(telefono ?? null) }
-    if (is_public !== undefined) { sets.push('is_public = ?'); values.push(is_public ? 1 : 0) }
-    if (Object.prototype.hasOwnProperty.call(req.body, 'avatar_url')) { sets.push('avatar_url = ?'); values.push(avatar_url ?? null) }
-    if (fecha_nacimiento !== undefined) { sets.push('fecha_nacimiento = ?'); values.push(fecha_nacimiento ?? null) }
-    if (rol_adulto !== undefined) { sets.push('rol_adulto = ?'); values.push(rol_adulto ?? null) }
-    if (seisena !== undefined) { sets.push('seisena = ?'); values.push(seisena ?? null) }
-    if (patrulla !== undefined) { sets.push('patrulla = ?'); values.push(patrulla ?? null) }
-    if (equipo_pioneros !== undefined) { sets.push('equipo_pioneros = ?'); values.push(equipo_pioneros ?? null) }
-    if (comunidad_rovers !== undefined) { sets.push('comunidad_rovers = ?'); values.push(comunidad_rovers ?? null) }
+    if (nombre_completo !== undefined) {
+      sets.push("nombre_completo = ?");
+      values.push(nombre_completo ?? null);
+    }
+    if (telefono !== undefined) {
+      sets.push("telefono = ?");
+      values.push(telefono ?? null);
+    }
+    if (is_public !== undefined) {
+      sets.push("is_public = ?");
+      values.push(is_public ? 1 : 0);
+    }
+    if (Object.prototype.hasOwnProperty.call(req.body, "avatar_url")) {
+      sets.push("avatar_url = ?");
+      values.push(avatar_url ?? null);
+    }
+    if (fecha_nacimiento !== undefined) {
+      sets.push("fecha_nacimiento = ?");
+      values.push(fecha_nacimiento ?? null);
+    }
+    if (rol_adulto !== undefined) {
+      sets.push("rol_adulto = ?");
+      values.push(rol_adulto ?? null);
+    }
+    if (seisena !== undefined) {
+      sets.push("seisena = ?");
+      values.push(seisena ?? null);
+    }
+    if (patrulla !== undefined) {
+      sets.push("patrulla = ?");
+      values.push(patrulla ?? null);
+    }
+    if (equipo_pioneros !== undefined) {
+      sets.push("equipo_pioneros = ?");
+      values.push(equipo_pioneros ?? null);
+    }
+    if (comunidad_rovers !== undefined) {
+      sets.push("comunidad_rovers = ?");
+      values.push(comunidad_rovers ?? null);
+    }
 
     if (sets.length > 0) {
-      const sql = `UPDATE profiles SET ${sets.join(', ')} WHERE user_id = ?`
-      db.prepare(sql).run(...values, userId)
+      const sql = `UPDATE profiles SET ${sets.join(", ")} WHERE user_id = ?`;
+      db.prepare(sql).run(...values, userId);
     }
   }
-  const profile = db.prepare('SELECT * FROM profiles WHERE user_id = ?').get(userId) as any
-  const user = db.prepare('SELECT id, email, username, created_at FROM users WHERE id = ?').get(userId) as any
-  const result = { ...profile, ...user }
+  const profile = db
+    .prepare("SELECT * FROM profiles WHERE user_id = ?")
+    .get(userId) as any;
+  const user = db
+    .prepare("SELECT id, email, username, created_at FROM users WHERE id = ?")
+    .get(userId) as any;
+  const result = { ...profile, ...user };
   // Calcular edad si hay fecha de nacimiento
   if (result.fecha_nacimiento) {
-    result.edad = calculateAge(result.fecha_nacimiento)
+    result.edad = calculateAge(result.fecha_nacimiento);
   }
-  res.json(result)
-})
+  res.json(result);
+});
 
 // Obtener un perfil por ID (si es público o es el propio)
-profilesRouter.get('/:id', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const id = req.params.id as string
-  const profile = db.prepare('SELECT p.*, u.username FROM profiles p JOIN users u ON u.id = p.user_id WHERE p.user_id = ?').get(id) as any
-  if (!profile) return res.status(404).json({ error: 'Perfil no encontrado' })
-  if (id !== me && !profile.is_public) return res.status(403).json({ error: 'Perfil privado' })
-  res.json({ user_id: profile.user_id, nombre_completo: profile.nombre_completo, avatar_url: profile.avatar_url, username: profile.username })
-})
+profilesRouter.get("/:id", authMiddleware, (req: any, res: any) => {
+  const me = (req as any).user.id as string;
+  const id = req.params.id as string;
+  const profile = db
+    .prepare(
+      "SELECT p.*, u.username FROM profiles p JOIN users u ON u.id = p.user_id WHERE p.user_id = ?",
+    )
+    .get(id) as any;
+  if (!profile) return res.status(404).json({ error: "Perfil no encontrado" });
+  if (id !== me && !profile.is_public)
+    return res.status(403).json({ error: "Perfil privado" });
+  res.json({
+    user_id: profile.user_id,
+    nombre_completo: profile.nombre_completo,
+    avatar_url: profile.avatar_url,
+    username: profile.username,
+  });
+});
 
 // Obtener múltiples perfiles por IDs (batch)
-profilesRouter.post('/batch', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const ids = (Array.isArray(req.body?.ids) ? req.body.ids : []) as string[]
-  if (!Array.isArray(ids) || ids.length === 0) return res.json([])
+profilesRouter.post("/batch", authMiddleware, (req: any, res: any) => {
+  const me = (req as any).user.id as string;
+  const ids = (Array.isArray(req.body?.ids) ? req.body.ids : []) as string[];
+  if (!Array.isArray(ids) || ids.length === 0) return res.json([]);
   // Usamos un IN dinámico
-  const placeholders = ids.map(() => '?').join(',')
-  const rows = db.prepare(`
+  const placeholders = ids.map(() => "?").join(",");
+  const rows = db
+    .prepare(
+      `
     SELECT p.user_id, p.nombre_completo, p.avatar_url, p.is_public, u.username
     FROM profiles p JOIN users u ON u.id = p.user_id
     WHERE p.user_id IN (${placeholders})
-  `).all(...ids) as any[]
+  `,
+    )
+    .all(...ids) as any[];
   // Filtramos los privados salvo que sea yo
   const out = rows
-    .filter(r => r.is_public || r.user_id === me)
-    .map(r => ({ user_id: r.user_id, nombre_completo: r.nombre_completo, avatar_url: r.avatar_url, username: r.username }))
-  res.json(out)
-})
+    .filter((r) => r.is_public || r.user_id === me)
+    .map((r) => ({
+      user_id: r.user_id,
+      nombre_completo: r.nombre_completo,
+      avatar_url: r.avatar_url,
+      username: r.username,
+    }));
+  res.json(out);
+});
 
 // Directorio de perfiles (con búsqueda/paginación simples)
-profilesRouter.get('/directory', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const q = String(req.query.q || '').trim().toLowerCase()
-  const limit = Math.min(parseInt(String(req.query.limit || '100')) || 100, 200)
-  const offset = parseInt(String(req.query.offset || '0')) || 0
+profilesRouter.get("/directory", authMiddleware, (req: any, res: any) => {
+  const me = (req as any).user.id as string;
+  const q = String(req.query.q || "")
+    .trim()
+    .toLowerCase();
+  const limit = Math.min(
+    parseInt(String(req.query.limit || "100")) || 100,
+    200,
+  );
+  const offset = parseInt(String(req.query.offset || "0")) || 0;
 
   // Traer perfiles + username y calcular edad si hay fecha_nacimiento
-  let rows = db.prepare(`
+  let rows = db
+    .prepare(
+      `
     SELECT p.user_id, p.nombre_completo, p.avatar_url, p.fecha_nacimiento, p.is_public, u.username
     FROM profiles p JOIN users u ON u.id = p.user_id
     ORDER BY p.nombre_completo COLLATE NOCASE ASC
-  `).all() as any[]
+  `,
+    )
+    .all() as any[];
 
   if (q) {
-    rows = rows.filter(r => String(r.nombre_completo || '').toLowerCase().includes(q) || String(r.username || '').toLowerCase().includes(q))
+    rows = rows.filter(
+      (r) =>
+        String(r.nombre_completo || "")
+          .toLowerCase()
+          .includes(q) ||
+        String(r.username || "")
+          .toLowerCase()
+          .includes(q),
+    );
   }
 
   // paginado
-  rows = rows.slice(offset, offset + limit)
+  rows = rows.slice(offset, offset + limit);
 
-  const out = rows.map(r => {
-    let edad: number | null = null
+  const out = rows.map((r) => {
+    let edad: number | null = null;
     if (r.fecha_nacimiento) {
       try {
-        const birth = new Date(r.fecha_nacimiento)
+        const birth = new Date(r.fecha_nacimiento);
         if (!isNaN(birth.getTime())) {
-          const now = new Date()
-          let years = now.getFullYear() - birth.getFullYear()
-          const m = now.getMonth() - birth.getMonth()
-          if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) years--
-          edad = years
+          const now = new Date();
+          let years = now.getFullYear() - birth.getFullYear();
+          const m = now.getMonth() - birth.getMonth();
+          if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) years--;
+          edad = years;
         }
       } catch (e) {
         // ignore invalid date
       }
     }
-    return { user_id: r.user_id, nombre_completo: r.nombre_completo, avatar_url: r.avatar_url, edad, is_public: !!r.is_public, username: r.username }
-  })
+    return {
+      user_id: r.user_id,
+      nombre_completo: r.nombre_completo,
+      avatar_url: r.avatar_url,
+      edad,
+      is_public: !!r.is_public,
+      username: r.username,
+    };
+  });
 
-  res.json(out)
-})
+  res.json(out);
+});

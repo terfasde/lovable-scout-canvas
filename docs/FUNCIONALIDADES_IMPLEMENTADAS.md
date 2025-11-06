@@ -9,6 +9,7 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 ## 🎯 Funcionalidades Principales
 
 ### 1. **Autenticación Completa**
+
 - ✅ Registro de nuevos usuarios
 - ✅ Login con email/password
 - ✅ Logout
@@ -17,12 +18,14 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 - ✅ Sesión persistente (se mantiene después de recargar)
 
 **Usuario de prueba:**
+
 - Email: `admin@example.com`
 - Password: `admin123`
 
 ---
 
 ### 2. **Gestión de Perfiles**
+
 - ✅ Ver perfil propio
 - ✅ Editar perfil (nombre, biografía, etc.)
 - ✅ Avatar personalizado (sube imagen, se guarda en base64)
@@ -33,6 +36,7 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 ---
 
 ### 3. **Eventos**
+
 - ✅ Listar eventos
 - ✅ Crear nuevos eventos
 - ✅ Editar eventos existentes
@@ -46,6 +50,7 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 ---
 
 ### 4. **Galería de Imágenes**
+
 - ✅ Subir imágenes (se convierten a base64)
 - ✅ Organizar por álbumes
 - ✅ Eliminar imágenes
@@ -53,6 +58,7 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 - ✅ Almacenamiento persistente de imágenes
 
 **Álbumes soportados:**
+
 - `avatars` - Fotos de perfil
 - `gallery` - Galería general
 - Cualquier nombre personalizado
@@ -60,6 +66,7 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 ---
 
 ### 5. **Mensajería**
+
 - ✅ Conversaciones 1 a 1
 - ✅ Enviar mensajes
 - ✅ Recibir mensajes
@@ -70,6 +77,7 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 ---
 
 ### 6. **Grupos**
+
 - ✅ Crear grupos
 - ✅ Agregar miembros
 - ✅ Eliminar miembros
@@ -80,6 +88,7 @@ La aplicación ahora funciona **completamente** con persistencia local usando `l
 ---
 
 ### 7. **Sistema de Seguimiento**
+
 - ✅ Seguir usuarios
 - ✅ Dejar de seguir
 - ✅ Ver seguidores
@@ -96,43 +105,48 @@ La clase `LocalDatabase` gestiona 9 tablas en `localStorage`:
 
 ```typescript
 interface TablasDatos {
-  profiles: Profile[]           // Perfiles de usuarios
-  events: Event[]               // Eventos
-  gallery: GalleryImage[]       // Imágenes (base64)
-  messages: Message[]           // Mensajes directos
-  conversations: Conversation[] // Conversaciones
-  follows: Follow[]             // Relaciones seguir/seguidor
-  groups: Group[]               // Grupos
-  group_members: GroupMember[]  // Miembros de grupos
-  group_messages: GroupMessage[] // Mensajes grupales
+  profiles: Profile[]; // Perfiles de usuarios
+  events: Event[]; // Eventos
+  gallery: GalleryImage[]; // Imágenes (base64)
+  messages: Message[]; // Mensajes directos
+  conversations: Conversation[]; // Conversaciones
+  follows: Follow[]; // Relaciones seguir/seguidor
+  groups: Group[]; // Grupos
+  group_members: GroupMember[]; // Miembros de grupos
+  group_messages: GroupMessage[]; // Mensajes grupales
 }
 ```
 
 ### Métodos CRUD Disponibles
 
 **Perfiles:**
+
 - `getProfiles()` / `getProfile(id)`
 - `upsertProfile(data)`
 - `updateProfile(id, updates)`
 
 **Eventos:**
+
 - `getEvents()` / `getEvent(id)`
 - `addEvent(event)`
 - `updateEvent(id, updates)`
 - `deleteEvent(id)`
 
 **Galería:**
+
 - `getGallery(album?)` - Filtrar por álbum opcional
 - `addImage(imageData)` - Guarda imagen en base64
 - `deleteImage(id)`
 
 **Mensajes:**
+
 - `getConversations(userId)`
 - `getMessages(conversationId)`
 - `sendMessage(message)`
 - `getOrCreateConversation(userId1, userId2)`
 
 **Grupos:**
+
 - `getGroups()` / `getGroup(id)`
 - `createGroup(group)`
 - `addGroupMember(groupId, userId)`
@@ -141,6 +155,7 @@ interface TablasDatos {
 - `getGroupMessages(groupId)`
 
 **Seguimientos:**
+
 - `follow(followerId, followingId)`
 - `unfollow(followerId, followingId)`
 - `getFollowers(userId)`
@@ -164,11 +179,13 @@ Las imágenes se almacenan usando **base64**:
 4. Al mostrar, se usa directamente como `src` de imagen
 
 **Ventajas:**
+
 - ✅ Sin necesidad de servidor
 - ✅ Persistencia completa
 - ✅ Funciona offline
 
 **Limitaciones:**
+
 - ⚠️ Límite de ~5-10MB por dominio en `localStorage`
 - ⚠️ Para imágenes grandes, considerar alternativas (IndexedDB)
 
@@ -177,6 +194,7 @@ Las imágenes se almacenan usando **base64**:
 ## 🧪 Cómo Probar las Funcionalidades
 
 ### 1. Iniciar Sesión
+
 ```
 http://localhost:5173/auth
 Email: admin@example.com
@@ -184,6 +202,7 @@ Password: admin123
 ```
 
 ### 2. Ver Eventos Pre-cargados
+
 ```
 http://localhost:5173/eventos
 - Verás 2 eventos de ejemplo
@@ -191,6 +210,7 @@ http://localhost:5173/eventos
 ```
 
 ### 3. Editar Perfil
+
 ```
 http://localhost:5173/perfil
 - Sube un avatar
@@ -199,6 +219,7 @@ http://localhost:5173/perfil
 ```
 
 ### 4. Probar Galería
+
 ```
 http://localhost:5173/galeria
 - Sube imágenes
@@ -207,6 +228,7 @@ http://localhost:5173/galeria
 ```
 
 ### 5. Mensajería
+
 ```
 http://localhost:5173/perfil
 - Busca otros usuarios

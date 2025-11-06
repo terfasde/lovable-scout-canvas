@@ -20,6 +20,7 @@ docker compose down
 ```
 
 **Acceso:**
+
 - Frontend: http://localhost:5173
 - Usuario: `admin@scout.com`
 - Password: cualquiera
@@ -44,15 +45,18 @@ docker compose down
 **Estado:** Actualizado y funcional  
 **Descripción:** Levanta solo el frontend con mocks locales  
 **Servicios:**
+
 - `web` - Frontend Vite + React
 
 **Características:**
+
 - ✅ Sin dependencias de backend
 - ✅ Sin Supabase
 - ✅ Autenticación local (localStorage)
 - ✅ Listo para usar
 
 **Variables de entorno:**
+
 ```yaml
 VITE_BACKEND=disabled
 VITE_GALLERY_ADMIN_EMAILS=franciscolorenzo2406@gmail.com
@@ -64,15 +68,18 @@ CHOKIDAR_USEPOLLING=true
 **Estado:** Desactualizado, requiere configuración  
 **Descripción:** Modo desarrollo con backend opcional  
 **Servicios:**
+
 - `web` - Frontend
 - `server` - Backend (comentado, requiere Python)
 
 **Problemas conocidos:**
+
 - Backend requiere Python para compilar `better-sqlite3`
 - Dependencias del servidor no instaladas
 - Necesita configuración manual
 
 **Para habilitar:**
+
 1. Instalar Python
 2. `cd server && npm install`
 3. Descomentar sección `server` en el archivo
@@ -83,6 +90,7 @@ CHOKIDAR_USEPOLLING=true
 **Estado:** Obsoleto, requiere reconfiguración completa  
 **Descripción:** Arquitectura completa con PostgreSQL y monitoreo  
 **Servicios:**
+
 - `postgres` - PostgreSQL 16
 - `pgadmin` - Administrador de BD
 - `server` - Backend Express
@@ -91,6 +99,7 @@ CHOKIDAR_USEPOLLING=true
 - `grafana` - Dashboards
 
 **Problemas conocidos:**
+
 - Configurado para arquitectura con Supabase (removido)
 - Backend requiere dependencias no instaladas
 - Variables de entorno desactualizadas
@@ -117,6 +126,7 @@ CHOKIDAR_USEPOLLING=true
 ```
 
 **Cambios:**
+
 - ✅ Nuevo modo `simple` (por defecto)
 - ⚠️ Advertencias en modos legacy
 - ✅ Validación de requisitos
@@ -124,38 +134,42 @@ CHOKIDAR_USEPOLLING=true
 
 ## 🎯 Comparación de Modos
 
-| Característica | Simple | Dev (Legacy) | Full (Legacy) |
-|---|---|---|---|
-| **Estado** | ✅ Actualizado | ⚠️ Requiere config | ⚠️ Obsoleto |
-| **Frontend** | ✅ Funcional | ✅ Funcional | ✅ Funcional |
-| **Backend** | ❌ No necesario | ⚠️ Opcional | ⚠️ Requiere config |
-| **Base de datos** | ❌ Mocks locales | ⚠️ SQLite | ⚠️ PostgreSQL |
-| **Supabase** | ❌ Removido | ❌ Removido | ❌ Removido |
-| **Auth** | ✅ localStorage | ✅ localStorage | ✅ localStorage |
-| **Monitoreo** | ❌ No | ❌ No | ⚠️ Desconfigurado |
-| **Dependencias** | Node.js, Docker | Node.js, Docker, Python | Node.js, Docker, Python, PostgreSQL |
+| Característica    | Simple           | Dev (Legacy)            | Full (Legacy)                       |
+| ----------------- | ---------------- | ----------------------- | ----------------------------------- |
+| **Estado**        | ✅ Actualizado   | ⚠️ Requiere config      | ⚠️ Obsoleto                         |
+| **Frontend**      | ✅ Funcional     | ✅ Funcional            | ✅ Funcional                        |
+| **Backend**       | ❌ No necesario  | ⚠️ Opcional             | ⚠️ Requiere config                  |
+| **Base de datos** | ❌ Mocks locales | ⚠️ SQLite               | ⚠️ PostgreSQL                       |
+| **Supabase**      | ❌ Removido      | ❌ Removido             | ❌ Removido                         |
+| **Auth**          | ✅ localStorage  | ✅ localStorage         | ✅ localStorage                     |
+| **Monitoreo**     | ❌ No            | ❌ No                   | ⚠️ Desconfigurado                   |
+| **Dependencias**  | Node.js, Docker  | Node.js, Docker, Python | Node.js, Docker, Python, PostgreSQL |
 
 ## 📝 Recomendaciones
 
 ### Para Desarrollo
 
 **Opción 1: Local (sin Docker)**
+
 ```bash
 npm install
 npm run dev
 ```
 
 **Ventajas:**
+
 - Más rápido (no necesita construir contenedores)
 - Hot reload instantáneo
 - Fácil debugging
 
 **Opción 2: Docker Simple**
+
 ```bash
 docker compose up -d
 ```
 
 **Ventajas:**
+
 - Entorno aislado
 - Mismo ambiente que producción
 - No contamina sistema local
@@ -192,6 +206,7 @@ docker compose up -d
 
 **Causa:** Dependencias no actualizadas  
 **Solución:**
+
 ```bash
 npm install
 ```
@@ -200,6 +215,7 @@ npm install
 
 **Causa:** Servidor backend no configurado  
 **Solución:** Usar modo simple en su lugar:
+
 ```bash
 docker compose down
 docker compose up -d
@@ -213,6 +229,7 @@ docker compose up -d
 ### Puerto 5173 en uso
 
 **Solución:**
+
 ```bash
 # Windows
 netstat -ano | findstr :5173

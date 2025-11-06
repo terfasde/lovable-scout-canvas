@@ -33,6 +33,7 @@ El error `OR_BACR2_44` impide habilitar billing en Google Cloud. Aquí está la 
 Abre `src/pages/Contacto.tsx` y modifica las líneas 9-11:
 
 **ANTES:**
+
 ```tsx
 // Usa MapComponentEmbed si tienes problemas con billing de Google Cloud
 // import MapComponent from "../components/MapComponentEmbed";
@@ -40,6 +41,7 @@ import MapComponent from "../components/MapComponent";
 ```
 
 **DESPUÉS:**
+
 ```tsx
 // Usa MapComponentEmbed si tienes problemas con billing de Google Cloud
 import MapComponent from "../components/MapComponentEmbed";
@@ -58,14 +60,14 @@ El mapa debería funcionar ahora. Abre http://localhost:5173/contacto y verifica
 
 ## Diferencias entre las dos versiones
 
-| Característica | MapComponent (JavaScript API) | MapComponentEmbed (Embed API) |
-|---|---|---|
-| Requiere billing | ✅ Sí | ❌ No |
-| Costo | Gratis hasta $200/mes | 100% gratis sin límites |
-| Personalización | Alta | Limitada |
-| Marcadores personalizados | ✅ Sí | ❌ No |
-| Controles de zoom/pan | ✅ Sí | ✅ Sí |
-| Funciona inmediatamente | ❌ No (necesita billing) | ✅ Sí |
+| Característica            | MapComponent (JavaScript API) | MapComponentEmbed (Embed API) |
+| ------------------------- | ----------------------------- | ----------------------------- |
+| Requiere billing          | ✅ Sí                         | ❌ No                         |
+| Costo                     | Gratis hasta $200/mes         | 100% gratis sin límites       |
+| Personalización           | Alta                          | Limitada                      |
+| Marcadores personalizados | ✅ Sí                         | ❌ No                         |
+| Controles de zoom/pan     | ✅ Sí                         | ✅ Sí                         |
+| Funciona inmediatamente   | ❌ No (necesita billing)      | ✅ Sí                         |
 
 ## Si aún tienes problemas
 

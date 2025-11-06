@@ -1,6 +1,7 @@
 # ⚡ CONFIGURACIÓN RÁPIDA - SUPABASE PARA TESTING
 
 ## 🎯 PROBLEMA ACTUAL
+
 Supabase está validando que los emails sean reales y rechaza "pepe@gmail.com" u otros emails de prueba.
 
 ---
@@ -8,6 +9,7 @@ Supabase está validando que los emails sean reales y rechaza "pepe@gmail.com" u
 ## ✅ SOLUCIÓN INMEDIATA (3 pasos)
 
 ### 1️⃣ Ir a Supabase Dashboard
+
 🔗 https://supabase.com/dashboard/project/lndqeaspuwwgdwbggayd/settings/auth
 
 ### 2️⃣ Desactivar Confirmación de Email
@@ -41,9 +43,11 @@ Supabase tarda unos segundos en aplicar los cambios.
 ## 🔧 Si sigue sin funcionar:
 
 ### Opción A: Usar un email real
+
 Usa un email real temporalmente (tu Gmail, Outlook, etc.). No necesitarás confirmarlo porque Mailer Autoconfirm está ON.
 
 ### Opción B: Verificar configuración
+
 1. Refresca la página de Supabase
 2. Verifica que "Confirm email" está realmente OFF
 3. Espera 1 minuto y vuelve a intentar
@@ -65,6 +69,7 @@ Email Auth
 ## ⚠️ RECORDATORIO
 
 **ANTES DE PRODUCCIÓN**, vuelve a activar:
+
 - ✅ Confirm email: ON
 - ✅ Secure email change: ON
 - ❌ Mailer Autoconfirm: OFF

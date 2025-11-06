@@ -1,7 +1,14 @@
 import { Component, ErrorInfo, ReactNode } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface Props {
   children: ReactNode;
@@ -32,7 +39,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-    
+
     // Aquí podrías enviar el error a un servicio de logging como Sentry
     // logErrorToService(error, errorInfo);
   }
@@ -73,11 +80,19 @@ class ErrorBoundary extends Component<Props, State> {
               )}
             </CardContent>
             <CardFooter className="flex gap-2">
-              <Button onClick={this.handleReset} variant="default" className="flex-1">
+              <Button
+                onClick={this.handleReset}
+                variant="default"
+                className="flex-1"
+              >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Intentar de nuevo
               </Button>
-              <Button onClick={() => window.location.href = "/"} variant="outline" className="flex-1">
+              <Button
+                onClick={() => (window.location.href = "/")}
+                variant="outline"
+                className="flex-1"
+              >
                 Ir al inicio
               </Button>
             </CardFooter>

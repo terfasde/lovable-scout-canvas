@@ -37,7 +37,9 @@ export const Reveal: React.FC<RevealProps> = ({
     if (!el) return;
 
     // Respeta prefers-reduced-motion
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (prefersReduced) {
       setVisible(true);
       return;
@@ -54,7 +56,7 @@ export const Reveal: React.FC<RevealProps> = ({
           }
         });
       },
-      { root: null, rootMargin, threshold: 0.1 }
+      { root: null, rootMargin, threshold: 0.1 },
     );
 
     observer.observe(el);

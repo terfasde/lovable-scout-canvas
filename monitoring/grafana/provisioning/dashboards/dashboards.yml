@@ -2,9 +2,9 @@
 apiVersion: 1
 
 providers:
-  - name: 'Scout Dashboards'
+  - name: "Scout Dashboards"
     orgId: 1
-    folder: ''
+    folder: ""
     type: file
     disableDeletion: false
     updateIntervalSeconds: 10

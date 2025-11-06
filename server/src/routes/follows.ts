@@ -1,96 +1,138 @@
-import { Router } from 'express'
-import { z } from 'zod'
-import { db } from '../db'
-import { authMiddleware } from '../auth'
+import { Router } from "express";
+import { z } from "zod";
+import { db } from "../db";
+import { authMiddleware } from "../auth";
 
-export const followsRouter = Router()
+export const followsRouter = Router();
 
 // Helper to fetch a relation between me and other
-followsRouter.get('/relation/:otherId', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const other = req.params.otherId
+followsRouter.get(
+  "/relation/:otherId",
+  authMiddleware,
+  (req: any, res: any) => {
+    const me = (req as any).user.id as string;
+    const other = req.params.otherId;
 
-  const row = db.prepare(`
+    const row = db
+      .prepare(
+        `
     SELECT follower_id, following_id as followed_id, status, created_at
     FROM follows
     WHERE (follower_id = ? AND following_id = ?) OR (follower_id = ? AND following_id = ?)
-  `).get(me, other, other, me)
+  `,
+      )
+      .get(me, other, other, me);
 
-  if (!row) return res.json(null)
-  return res.json(row)
-})
+    if (!row) return res.json(null);
+    return res.json(row);
+  },
+);
 
 // Follow a user (creates pending by default if profile is private, but here accept directly)
-const followSchema = z.object({ targetId: z.string().uuid() })
-followsRouter.post('/follow', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const parse = followSchema.safeParse(req.body)
-  if (!parse.success) return res.status(400).json({ error: parse.error.flatten() })
-  const { targetId } = parse.data
-  if (me === targetId) return res.status(400).json({ error: 'No puedes seguirte a ti mismo' })
+const followSchema = z.object({ targetId: z.string().uuid() });
+followsRouter.post("/follow", authMiddleware, (req: any, res: any) => {
+  const me = (req as any).user.id as string;
+  const parse = followSchema.safeParse(req.body);
+  if (!parse.success)
+    return res.status(400).json({ error: parse.error.flatten() });
+  const { targetId } = parse.data;
+  if (me === targetId)
+    return res.status(400).json({ error: "No puedes seguirte a ti mismo" });
 
   // If target profile is public, accept; otherwise pending
-  const targetProfile = db.prepare('SELECT is_public FROM profiles WHERE user_id = ?').get(targetId) as { is_public?: number } | undefined
-  const status = targetProfile && targetProfile.is_public ? 'accepted' : 'pending'
-  const stmt = db.prepare('INSERT OR IGNORE INTO follows (follower_id, following_id, status) VALUES (?, ?, ?)')
-  stmt.run(me, targetId, status)
-  res.json({ ok: true })
-})
+  const targetProfile = db
+    .prepare("SELECT is_public FROM profiles WHERE user_id = ?")
+    .get(targetId) as { is_public?: number } | undefined;
+  const status =
+    targetProfile && targetProfile.is_public ? "accepted" : "pending";
+  const stmt = db.prepare(
+    "INSERT OR IGNORE INTO follows (follower_id, following_id, status) VALUES (?, ?, ?)",
+  );
+  stmt.run(me, targetId, status);
+  res.json({ ok: true });
+});
 
 // Unfollow or cancel pending
-followsRouter.delete('/:targetId', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const targetId = req.params.targetId
-  db.prepare('DELETE FROM follows WHERE follower_id = ? AND following_id = ?').run(me, targetId)
-  res.json({ ok: true })
-})
+followsRouter.delete("/:targetId", authMiddleware, (req: any, res: any) => {
+  const me = (req as any).user.id as string;
+  const targetId = req.params.targetId;
+  db.prepare(
+    "DELETE FROM follows WHERE follower_id = ? AND following_id = ?",
+  ).run(me, targetId);
+  res.json({ ok: true });
+});
 
 // Accept a follower (when I am the followed)
-followsRouter.post('/:followerId/accept', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const followerId = req.params.followerId
-  db.prepare('UPDATE follows SET status = ? WHERE following_id = ? AND follower_id = ?')
-    .run('accepted', me, followerId)
-  res.json({ ok: true })
-})
+followsRouter.post(
+  "/:followerId/accept",
+  authMiddleware,
+  (req: any, res: any) => {
+    const me = (req as any).user.id as string;
+    const followerId = req.params.followerId;
+    db.prepare(
+      "UPDATE follows SET status = ? WHERE following_id = ? AND follower_id = ?",
+    ).run("accepted", me, followerId);
+    res.json({ ok: true });
+  },
+);
 
 // Reject a follower request (delete pending)
-followsRouter.delete('/:followerId/reject', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const followerId = req.params.followerId
-  db.prepare('DELETE FROM follows WHERE following_id = ? AND follower_id = ?').run(me, followerId)
-  res.json({ ok: true })
-})
+followsRouter.delete(
+  "/:followerId/reject",
+  authMiddleware,
+  (req: any, res: any) => {
+    const me = (req as any).user.id as string;
+    const followerId = req.params.followerId;
+    db.prepare(
+      "DELETE FROM follows WHERE following_id = ? AND follower_id = ?",
+    ).run(me, followerId);
+    res.json({ ok: true });
+  },
+);
 
 // List followers of a user (accepted)
-followsRouter.get('/followers', authMiddleware, (req: any, res: any) => {
-  const userId = (req.query.userId as string) || ((req as any).user.id as string)
-  const rows = db.prepare(`
+followsRouter.get("/followers", authMiddleware, (req: any, res: any) => {
+  const userId =
+    (req.query.userId as string) || ((req as any).user.id as string);
+  const rows = db
+    .prepare(
+      `
     SELECT follower_id, created_at FROM follows
     WHERE following_id = ? AND status = 'accepted'
     ORDER BY datetime(created_at) DESC
-  `).all(userId)
-  res.json(rows)
-})
+  `,
+    )
+    .all(userId);
+  res.json(rows);
+});
 
 // List following of a user (accepted)
-followsRouter.get('/following', authMiddleware, (req: any, res: any) => {
-  const userId = (req.query.userId as string) || ((req as any).user.id as string)
-  const rows = db.prepare(`
+followsRouter.get("/following", authMiddleware, (req: any, res: any) => {
+  const userId =
+    (req.query.userId as string) || ((req as any).user.id as string);
+  const rows = db
+    .prepare(
+      `
     SELECT following_id, created_at FROM follows
     WHERE follower_id = ? AND status = 'accepted'
     ORDER BY datetime(created_at) DESC
-  `).all(userId)
-  res.json(rows)
-})
+  `,
+    )
+    .all(userId);
+  res.json(rows);
+});
 
 // Pending follow requests to me
-followsRouter.get('/pending', authMiddleware, (req: any, res: any) => {
-  const me = (req as any).user.id as string
-  const rows = db.prepare(`
+followsRouter.get("/pending", authMiddleware, (req: any, res: any) => {
+  const me = (req as any).user.id as string;
+  const rows = db
+    .prepare(
+      `
     SELECT follower_id, created_at FROM follows
     WHERE following_id = ? AND status = 'pending'
     ORDER BY datetime(created_at) DESC
-  `).all(me)
-  res.json(rows)
-})
+  `,
+    )
+    .all(me);
+  res.json(rows);
+});

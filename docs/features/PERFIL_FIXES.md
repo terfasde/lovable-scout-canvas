@@ -7,14 +7,16 @@
 **Solución**: Parsear la fecha manualmente sin conversión UTC.
 
 **Líneas 71-73** - Cambiar:
+
 ```tsx
 const nacimiento = new Date(formData.fecha_nacimiento);
 ```
 
 Por:
+
 ```tsx
 // Parsear fecha sin conversión UTC para evitar desfase de días
-const [year, month, day] = formData.fecha_nacimiento.split('-').map(Number);
+const [year, month, day] = formData.fecha_nacimiento.split("-").map(Number);
 const nacimiento = new Date(year, month - 1, day);
 ```
 
@@ -27,10 +29,11 @@ const nacimiento = new Date(year, month - 1, day);
 **Solución**: Recargar el perfil completo después de actualizar.
 
 **Líneas 477-490** - Después del toast de éxito, agregar:
+
 ```tsx
 toast({
   title: "¡Perfil actualizado!",
-  description: "Tus cambios han sido guardados."
+  description: "Tus cambios han sido guardados.",
 });
 
 // AGREGAR AQUÍ: Recargar el perfil desde el servidor para reflejar cambios

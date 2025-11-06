@@ -13,7 +13,8 @@ const Staff = () => {
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground">
-                  Información sobre el Staff: formación de educadores, roles y apoyo pedagógico.
+                  Información sobre el Staff: formación de educadores, roles y
+                  apoyo pedagógico.
                 </p>
                 <ul className="list-disc pl-5 mt-4 text-muted-foreground space-y-2">
                   <li>Formación de guías</li>
@@ -29,7 +30,11 @@ const Staff = () => {
             </Card>
 
             <div>
-              <img src={communityImage} alt="Staff" className="rounded-2xl w-full object-cover shadow-lg" />
+              <img
+                src={communityImage}
+                alt="Staff"
+                className="rounded-2xl w-full object-cover shadow-lg"
+              />
             </div>
           </div>
         </div>

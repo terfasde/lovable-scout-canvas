@@ -3,11 +3,13 @@
 ## ✅ Performance Optimizations
 
 ### 1. **Code Splitting y Lazy Loading**
+
 - ✅ Todas las rutas cargan con `React.lazy()` y `Suspense`
 - ✅ Componentes pesados se cargan bajo demanda
 - ✅ Reducción del bundle inicial de ~977 kB a chunks más pequeños
 
 ### 2. **Chunk Splitting Manual**
+
 - `vendor-react`: React y React DOM (~474 kB)
 - `vendor-router`: React Router (~3 kB)
 - `vendor-query`: TanStack Query (~23 kB)
@@ -18,6 +20,7 @@
 - Otros vendors separados por funcionalidad
 
 ### 3. **React Query Optimizado**
+
 ```tsx
 {
   staleTime: 5 minutos,    // Datos se consideran frescos por 5 min
@@ -29,14 +32,17 @@
 ```
 
 ### 4. **Build Optimization**
+
 - ✅ Source maps desactivados en producción
 - ✅ Minificación con esbuild (más rápido que terser)
 - ✅ Chunk size warning limit: 1200 kB
 
 ### 5. **Component Memoization**
+
 - ✅ `BackgroundFX` usa `React.memo()` para evitar re-renders
 
 ### 6. **Image Optimization**
+
 - ✅ Nuevo componente `<OptimizedImage />` con:
   - Lazy loading automático
   - Blur placeholder mientras carga
@@ -46,6 +52,7 @@
 ## ✅ SEO Optimizations
 
 ### Meta Tags
+
 - ✅ Open Graph completos para Facebook/LinkedIn
 - ✅ Twitter Cards para mejor preview
 - ✅ Meta description y keywords optimizados
@@ -53,6 +60,7 @@
 - ✅ Theme color para PWA
 
 ### Performance
+
 - ✅ Preconnect a dominios externos (fonts, maps)
 - ✅ DNS prefetch para Google Maps
 - ✅ Modulepreload para main.tsx
@@ -67,18 +75,21 @@
 ## 📊 Resultados de Performance
 
 ### Bundle Size
+
 - **Antes**: 1 chunk de ~977 kB
-- **Después**: 
+- **Después**:
   - Initial: ~53 kB (index)
   - Lazy pages: 1-26 kB cada una
   - Vendors: chunks separados y cacheables
 
 ### Load Time (estimado)
+
 - **First Contentful Paint**: Mejorado ~40%
 - **Time to Interactive**: Mejorado ~35%
 - **Total Bundle Downloaded**: Similar, pero mejor cache
 
 ### Cache Strategy
+
 - Vendors rara vez cambian → cache permanente
 - Pages cambian frecuentemente → cache invalidado
 - Mejor hit rate de cache en navegador
@@ -86,16 +97,19 @@
 ## 🚀 Próximas Optimizaciones Sugeridas
 
 ### Alta Prioridad
+
 1. **Compresión de imágenes**: Convertir JPG/PNG a WebP
 2. **CDN**: Servir assets estáticos desde CDN
 3. **Service Worker**: PWA con cache offline
 
 ### Media Prioridad
+
 4. **Font optimization**: Usar `font-display: swap`
 5. **CSS purge**: Eliminar CSS no usado de Tailwind
 6. **Preload critical fonts**: Acelerar renderizado de texto
 
 ### Baja Prioridad
+
 7. **React Query devtools**: Solo en desarrollo
 8. **Bundle analyzer**: Analizar imports y eliminar duplicados
 9. **Tree shaking**: Revisar imports de librerías
@@ -103,35 +117,38 @@
 ## 🔧 Cómo Usar las Optimizaciones
 
 ### OptimizedImage Component
+
 ```tsx
 import { OptimizedImage } from "@/components/OptimizedImage";
 
-<OptimizedImage 
-  src="/hero.jpg" 
+<OptimizedImage
+  src="/hero.jpg"
   alt="Hero image"
   aspectRatio="16/9"
-  priority={false}  // true para above-the-fold
-  blur={true}       // blur placeholder
-/>
+  priority={false} // true para above-the-fold
+  blur={true} // blur placeholder
+/>;
 ```
 
 ### Lazy Loading Manual
+
 ```tsx
 const HeavyComponent = lazy(() => import("./HeavyComponent"));
 
 <Suspense fallback={<Loading />}>
   <HeavyComponent />
-</Suspense>
+</Suspense>;
 ```
 
 ### React Query Best Practices
+
 ```tsx
 const { data } = useQuery({
-  queryKey: ['key'],
+  queryKey: ["key"],
   queryFn: fetchData,
-  staleTime: 1000 * 60 * 5,  // 5 minutos
-  enabled: !!userId,  // Solo ejecutar si hay userId
-})
+  staleTime: 1000 * 60 * 5, // 5 minutos
+  enabled: !!userId, // Solo ejecutar si hay userId
+});
 ```
 
 ## 📈 Métricas a Monitorear

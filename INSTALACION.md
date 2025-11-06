@@ -23,6 +23,7 @@ Antes de comenzar, asegurate de tener instalado:
 ### 1. Copiar el proyecto
 
 Copia toda la carpeta del pendrive a tu disco local, por ejemplo:
+
 ```
 C:\Users\TuUsuario\Documents\lovable-scout-canvas
 ```
@@ -59,6 +60,7 @@ notepad .env
 ```
 
 Configuracion minima en `.env`:
+
 ```
 # Backend local (recomendado para desarrollo)
 VITE_BACKEND=local
@@ -80,6 +82,7 @@ npm run dev
 ```
 
 Esto abrira:
+
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8080
 
@@ -126,15 +129,18 @@ lovable-scout-canvas/
 ## Solucion de Problemas
 
 ### Error: "npm not found"
+
 - Instala Node.js desde https://nodejs.org/
 
 ### Error al ejecutar scripts de PowerShell
+
 ```powershell
 # Cambiar politica de ejecucion
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### Puerto 5173 o 8080 ya en uso
+
 ```powershell
 # En Windows, buscar proceso usando el puerto
 netstat -ano | findstr :5173
@@ -143,6 +149,7 @@ taskkill /PID <numero_pid> /F
 ```
 
 ### Problemas con Docker
+
 - Asegurate de que Docker Desktop este corriendo
 - Reinicia Docker Desktop
 - Verifica: `docker --version`
@@ -150,6 +157,7 @@ taskkill /PID <numero_pid> /F
 ## Documentacion Adicional
 
 Para mas informacion, consulta:
+
 - `docs/README.md` - Indice de toda la documentacion
 - `docs/docker/QUICK_START.md` - Guia rapida de Docker
 - `docs/setup/` - Guias de configuracion especificas
@@ -158,6 +166,7 @@ Para mas informacion, consulta:
 ## Soporte
 
 Si encuentras problemas:
+
 1. Revisa la documentacion en la carpeta `docs/`
 2. Verifica que todas las dependencias esten instaladas
 3. Asegurate de que el archivo `.env` este configurado correctamente

@@ -13,12 +13,17 @@ const Manada = () => {
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground">
-                  Aquí va información amplia sobre la Manada: objetivos, actividades típicas, estructura, liderazgo, edades y cómo participar.
+                  Aquí va información amplia sobre la Manada: objetivos,
+                  actividades típicas, estructura, liderazgo, edades y cómo
+                  participar.
                 </p>
                 <ul className="list-disc pl-5 mt-4 text-muted-foreground space-y-2">
                   <li>Edades: 7–11 años</li>
                   <li>Reuniones semanales</li>
-                  <li>Actividades: juegos, descubrimiento, manualidades, campamentos cortos</li>
+                  <li>
+                    Actividades: juegos, descubrimiento, manualidades,
+                    campamentos cortos
+                  </li>
                 </ul>
                 <div className="mt-6">
                   <Button asChild>
@@ -29,7 +34,11 @@ const Manada = () => {
             </Card>
 
             <div>
-              <img src={communityImage} alt="Manada" className="rounded-2xl w-full object-cover shadow-lg" />
+              <img
+                src={communityImage}
+                alt="Manada"
+                className="rounded-2xl w-full object-cover shadow-lg"
+              />
             </div>
           </div>
         </div>

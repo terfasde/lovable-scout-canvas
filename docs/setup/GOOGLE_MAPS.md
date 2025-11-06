@@ -7,11 +7,14 @@ Este error aparece cuando la API key de Google Maps tiene restricciones o no est
 ## Solución paso a paso
 
 ### 1. Ve a Google Cloud Console
+
 - Abre https://console.cloud.google.com/
 - Selecciona tu proyecto o crea uno nuevo
 
 ### 2. Habilita las APIs necesarias
+
 Ve a **APIs & Services > Library** y habilita:
+
 - ✅ **Maps JavaScript API** (REQUERIDA)
 - ✅ **Maps Embed API** (opcional pero recomendada)
 - ✅ **Geocoding API** (si necesitas búsquedas)
@@ -19,6 +22,7 @@ Ve a **APIs & Services > Library** y habilita:
 ### 3. Configura tu API Key
 
 #### A. Crear o editar la API Key
+
 1. Ve a **APIs & Services > Credentials**
 2. Si ya tienes una key, haz clic en ella para editarla
 3. Si no, crea una nueva: **+ CREATE CREDENTIALS > API key**
@@ -26,10 +30,12 @@ Ve a **APIs & Services > Library** y habilita:
 #### B. Configurar restricciones (IMPORTANTE)
 
 **Opción 1: Sin restricciones (desarrollo local)**
+
 - En "Application restrictions" selecciona **None**
 - ⚠️ Solo para desarrollo local, NO para producción
 
 **Opción 2: Restricción por dominio HTTP (producción)**
+
 - En "Application restrictions" selecciona **HTTP referrers (web sites)**
 - Agrega los dominios permitidos:
   ```
@@ -39,15 +45,18 @@ Ve a **APIs & Services > Library** y habilita:
   ```
 
 **Opción 3: Restricción por IP (servidor)**
+
 - Solo si corres el backend desde IPs fijas
 
 #### C. Configurar restricciones de API
+
 1. En "API restrictions" selecciona **Restrict key**
 2. Marca solo las APIs que usas:
    - Maps JavaScript API
    - Maps Embed API (opcional)
 
 #### D. Guardar cambios
+
 - Haz clic en **Save**
 - ⏱️ Los cambios pueden tardar hasta 5 minutos en aplicarse
 
@@ -78,26 +87,32 @@ npm run dev
 ## Errores comunes y soluciones
 
 ### "This page can't load Google Maps correctly"
+
 - **Causa**: Restricciones de dominio/IP mal configuradas
 - **Solución**: Verifica que localhost esté permitido en HTTP referrers
 
 ### "This API project is not authorized to use this API"
+
 - **Causa**: Maps JavaScript API no está habilitada
 - **Solución**: Habilítala en APIs & Services > Library
 
 ### "The Google Maps JavaScript API has been disabled"
+
 - **Causa**: Billing no configurado o límites excedidos
 - **Solución**: Configura billing en Google Cloud Console
 
 ### "RefererNotAllowedMapError"
+
 - **Causa**: El dominio actual no está en la lista permitida
 - **Solución**: Agrega `http://localhost:*/*` a HTTP referrers
 
 ### Mapa gris sin errores
+
 - **Causa**: Facturación no habilitada
 - **Solución**: Ve a Billing y habilita una cuenta de facturación (tienen $200 gratis/mes)
 
 ### Error OR_BACR2_44 al habilitar billing
+
 - **Causa**: Restricciones de cuenta, permisos insuficientes o problemas con método de pago
 - **Soluciones posibles**:
   1. Verifica que tu cuenta de Google sea de tipo "personal" (no organización)
@@ -112,12 +127,14 @@ npm run dev
 Si tienes problemas habilitando billing, puedes usar **Google Maps Embed API** que es **100% gratis** y no requiere configurar facturación.
 
 ### Ventajas
+
 - ✅ Completamente gratis, sin límites
 - ✅ No requiere billing habilitado
 - ✅ Funciona inmediatamente
 - ✅ Mismo resultado visual
 
 ### Desventajas
+
 - ❌ Menos personalización
 - ❌ No puedes agregar marcadores personalizados programáticamente
 - ❌ Controles limitados
@@ -158,6 +175,7 @@ Para deshabilitar, simplemente comenta o elimina la variable del `.env`:
 ## Cuotas gratuitas de Google Maps
 
 Google ofrece **$200 USD gratis por mes**, que equivalen a:
+
 - ~28,000 cargas de mapa por mes
 - ~40,000 peticiones de geocoding
 

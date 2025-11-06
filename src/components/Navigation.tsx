@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, User, Share2, Settings, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  User,
+  Share2,
+  Settings,
+  ChevronDown,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -22,7 +30,7 @@ const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -62,22 +70,28 @@ const Navigation = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
-  const isHistoriaActive = historiaLinks.some(link => location.pathname === link.path);
-  const isEventosActive = eventosLinks.some(link => location.pathname === link.path);
+  const isHistoriaActive = historiaLinks.some(
+    (link) => location.pathname === link.path,
+  );
+  const isEventosActive = eventosLinks.some(
+    (link) => location.pathname === link.path,
+  );
 
   useEffect(() => {
     // Load profile for current user (if logged in)
     (async () => {
       try {
         if (isLocalBackend()) {
-          const me: any = await apiFetch('/profiles/me').catch(() => null)
+          const me: any = await apiFetch("/profiles/me").catch(() => null);
           if (me) {
-            setUserName(me.nombre_completo || null)
-            setAvatarUrl(me.avatar_url || null)
+            setUserName(me.nombre_completo || null);
+            setAvatarUrl(me.avatar_url || null);
           }
-          return
+          return;
         }
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) return;
         const { data: profile } = await supabase
           .from("profiles")
@@ -108,17 +122,25 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <img src={logoImage} alt="Grupo Scout Séptimo" className="w-12 h-12 object-contain" />
+            <img
+              src={logoImage}
+              alt="Grupo Scout Séptimo"
+              className="w-12 h-12 object-contain"
+            />
             <div className="hidden md:block">
-              <div className="text-xl font-bold text-foreground">Grupo Scout Séptimo</div>
-              <div className="text-sm text-muted-foreground dark:text-foreground">de Montevideo</div>
+              <div className="text-xl font-bold text-foreground">
+                Grupo Scout Séptimo
+              </div>
+              <div className="text-sm text-muted-foreground dark:text-foreground">
+                de Montevideo
+              </div>
             </div>
           </Link>
 
           {/* Desktop Navigation + Profile */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center gap-4">
             {/* Nav Links */}
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center gap-2">
               {/* Inicio */}
               <Link
                 to="/"
@@ -129,6 +151,29 @@ const Navigation = () => {
                 }`}
               >
                 Inicio
+              </Link>
+
+              {/* Comuni 7, Mensajes primero (preferencia de diseño previa) */}
+              <Link
+                to="/usuarios"
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  isActive("/usuarios")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                Comuni 7
+              </Link>
+
+              <Link
+                to="/mensajes"
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  isActive("/mensajes")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                Mensajes
               </Link>
 
               {/* Historia Dropdown */}
@@ -148,10 +193,7 @@ const Navigation = () => {
                 <DropdownMenuContent align="start">
                   {historiaLinks.map((link) => (
                     <DropdownMenuItem key={link.path} asChild>
-                      <Link 
-                        to={link.path}
-                        className="cursor-pointer"
-                      >
+                      <Link to={link.path} className="cursor-pointer">
                         {link.name}
                       </Link>
                     </DropdownMenuItem>
@@ -176,39 +218,13 @@ const Navigation = () => {
                 <DropdownMenuContent align="start">
                   {eventosLinks.map((link) => (
                     <DropdownMenuItem key={link.path} asChild>
-                      <Link 
-                        to={link.path}
-                        className="cursor-pointer"
-                      >
+                      <Link to={link.path} className="cursor-pointer">
                         {link.name}
                       </Link>
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              {/* Comuni 7, Galería, Contacto */}
-              <Link
-                to="/usuarios"
-                className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                  isActive("/usuarios")
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                Comuni 7
-              </Link>
-
-              <Link
-                to="/mensajes"
-                className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                  isActive("/mensajes")
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                Mensajes
-              </Link>
 
               <Link
                 to="/galeria"
@@ -243,8 +259,8 @@ const Navigation = () => {
                   className="inline-flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all hover:ring-2 hover:ring-primary/30"
                   aria-label="Abrir perfil"
                 >
-                  <UserAvatar 
-                    avatarUrl={avatarUrl} 
+                  <UserAvatar
+                    avatarUrl={avatarUrl}
                     userName={userName}
                     size="md"
                   />
@@ -253,34 +269,56 @@ const Navigation = () => {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{userName || "Usuario"}</p>
-                    <p className="text-xs leading-none text-muted-foreground">Mi cuenta</p>
+                    <p className="text-sm font-medium leading-none">
+                      {userName || "Usuario"}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      Mi cuenta
+                    </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={() => navigate('/perfil')} className="cursor-pointer">
+                <DropdownMenuItem
+                  onSelect={() => navigate("/perfil")}
+                  className="cursor-pointer"
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Ver perfil</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate('/perfil/editar')} className="cursor-pointer">
+                <DropdownMenuItem
+                  onSelect={() => navigate("/perfil/editar")}
+                  className="cursor-pointer"
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Editar perfil</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate('/perfil/compartir')} className="cursor-pointer">
+                <DropdownMenuItem
+                  onSelect={() => navigate("/perfil/compartir")}
+                  className="cursor-pointer"
+                >
                   <Share2 className="mr-2 h-4 w-4" />
                   <span>Compartir perfil</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onSelect={async () => { 
-                    try { await supabase.auth.signOut(); } catch { /* noop */ }
-                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch { /* noop */ }
-                    navigate('/auth'); 
+                <DropdownMenuItem
+                  onSelect={async () => {
+                    try {
+                      await supabase.auth.signOut();
+                    } catch {
+                      /* noop */
+                    }
+                    try {
+                      if (isLocalBackend())
+                        localStorage.removeItem("local_api_token");
+                    } catch {
+                      /* noop */
+                    }
+                    navigate("/auth");
                     toast({
                       title: "Sesión cerrada",
-                      description: "Has cerrado sesión correctamente"
+                      description: "Has cerrado sesión correctamente",
                     });
-                  }} 
+                  }}
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
@@ -299,8 +337,8 @@ const Navigation = () => {
                   className="inline-flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all hover:ring-2 hover:ring-primary/30"
                   aria-label="Abrir perfil"
                 >
-                  <UserAvatar 
-                    avatarUrl={avatarUrl} 
+                  <UserAvatar
+                    avatarUrl={avatarUrl}
                     userName={userName}
                     size="md"
                   />
@@ -309,34 +347,56 @@ const Navigation = () => {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{userName || "Usuario"}</p>
-                    <p className="text-xs leading-none text-muted-foreground">Mi cuenta</p>
+                    <p className="text-sm font-medium leading-none">
+                      {userName || "Usuario"}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      Mi cuenta
+                    </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={() => navigate('/perfil')} className="cursor-pointer">
+                <DropdownMenuItem
+                  onSelect={() => navigate("/perfil")}
+                  className="cursor-pointer"
+                >
                   <User className="mr-2 h-4 w-4" />
                   <span>Ver perfil</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate('/perfil/editar')} className="cursor-pointer">
+                <DropdownMenuItem
+                  onSelect={() => navigate("/perfil/editar")}
+                  className="cursor-pointer"
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Editar perfil</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigate('/perfil/compartir')} className="cursor-pointer">
+                <DropdownMenuItem
+                  onSelect={() => navigate("/perfil/compartir")}
+                  className="cursor-pointer"
+                >
                   <Share2 className="mr-2 h-4 w-4" />
                   <span>Compartir perfil</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onSelect={async () => { 
-                    try { await supabase.auth.signOut(); } catch { /* noop */ }
-                    try { if (isLocalBackend()) localStorage.removeItem('local_api_token'); } catch { /* noop */ }
-                    navigate('/auth'); 
+                <DropdownMenuItem
+                  onSelect={async () => {
+                    try {
+                      await supabase.auth.signOut();
+                    } catch {
+                      /* noop */
+                    }
+                    try {
+                      if (isLocalBackend())
+                        localStorage.removeItem("local_api_token");
+                    } catch {
+                      /* noop */
+                    }
+                    navigate("/auth");
                     toast({
                       title: "Sesión cerrada",
-                      description: "Has cerrado sesión correctamente"
+                      description: "Has cerrado sesión correctamente",
                     });
-                  }} 
+                  }}
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
@@ -353,7 +413,11 @@ const Navigation = () => {
               aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </Button>
           </div>
         </div>
@@ -386,6 +450,32 @@ const Navigation = () => {
                     } ${isActive("/") ? "border-l-4 border-primary" : ""}`}
                   >
                     Inicio
+                  </Link>
+
+                  {/* Comuni 7 */}
+                  <Link
+                    to="/usuarios"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
+                      isActive("/usuarios")
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-muted"
+                    } ${isActive("/usuarios") ? "border-l-4 border-primary" : ""}`}
+                  >
+                    Comuni 7
+                  </Link>
+
+                  {/* Mensajes */}
+                  <Link
+                    to="/mensajes"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
+                      isActive("/mensajes")
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-muted"
+                    } ${isActive("/mensajes") ? "border-l-4 border-primary" : ""}`}
+                  >
+                    Mensajes
                   </Link>
 
                   {/* Historia submenu en mobile */}
@@ -430,31 +520,7 @@ const Navigation = () => {
                     ))}
                   </div>
 
-                  {/* Comuni 7 */}
-                  <Link
-                    to="/usuarios"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
-                      isActive("/usuarios")
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
-                    } ${isActive("/usuarios") ? "border-l-4 border-primary" : ""}`}
-                  >
-                    Comuni 7
-                  </Link>
-
-                  {/* Mensajes */}
-                  <Link
-                    to="/mensajes"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
-                      isActive("/mensajes")
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
-                    } ${isActive("/mensajes") ? "border-l-4 border-primary" : ""}`}
-                  >
-                    Mensajes
-                  </Link>
+                  
 
                   {/* Galería */}
                   <Link

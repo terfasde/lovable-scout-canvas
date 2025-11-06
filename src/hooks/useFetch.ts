@@ -3,9 +3,9 @@
  * Previene memory leaks y race conditions
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { APIError } from '@/lib/api-wrapper';
-import { logger } from '@/lib/logger';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { APIError } from "@/lib/api-wrapper";
+import { logger } from "@/lib/logger";
 
 interface UseFetchState<T> {
   data: T | null;
@@ -34,7 +34,7 @@ interface UseFetchOptions {
 
 /**
  * Hook para fetching con cleanup automático y prevención de race conditions
- * 
+ *
  * @example
  * ```tsx
  * const { data, loading, error, refetch } = useFetch(
@@ -45,7 +45,7 @@ interface UseFetchOptions {
  */
 export function useFetch<T>(
   fetchFn: () => Promise<T>,
-  options: UseFetchOptions = {}
+  options: UseFetchOptions = {},
 ) {
   const { immediate = false, deps = [], onSuccess, onError } = options;
 
@@ -69,7 +69,7 @@ export function useFetch<T>(
     // Crear nuevo AbortController
     abortControllerRef.current = new AbortController();
 
-    setState(prev => ({ ...prev, loading: true, error: null }));
+    setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
       const data = await fetchFn();
@@ -81,25 +81,26 @@ export function useFetch<T>(
       }
     } catch (error) {
       // Ignorar errores de abort
-      if (error instanceof Error && error.name === 'AbortError') {
-        logger.debug('Request aborted');
+      if (error instanceof Error && error.name === "AbortError") {
+        logger.debug("Request aborted");
         return;
       }
 
-      const apiError = error instanceof APIError 
-        ? error 
-        : new APIError(
-            error instanceof Error ? error.message : 'Error desconocido',
-            undefined,
-            'UNKNOWN_ERROR'
-          );
+      const apiError =
+        error instanceof APIError
+          ? error
+          : new APIError(
+              error instanceof Error ? error.message : "Error desconocido",
+              undefined,
+              "UNKNOWN_ERROR",
+            );
 
       if (isMountedRef.current) {
         setState({ data: null, loading: false, error: apiError });
         onError?.(apiError);
       }
 
-      logger.error('useFetch error', apiError);
+      logger.error("useFetch error", apiError);
     }
   }, [fetchFn, onSuccess, onError]);
 
@@ -131,7 +132,7 @@ export function useFetch<T>(
  */
 export function useList<T>(
   fetchFn: (page?: number) => Promise<T[]>,
-  options: UseFetchOptions & { pageSize?: number } = {}
+  options: UseFetchOptions & { pageSize?: number } = {},
 ) {
   const [page, setPage] = useState(1);
   const [allData, setAllData] = useState<T[]>([]);
@@ -139,7 +140,7 @@ export function useList<T>(
 
   const { data, loading, error, refetch } = useFetch(
     () => fetchFn(page),
-    options
+    options,
   );
 
   useEffect(() => {
@@ -147,7 +148,7 @@ export function useList<T>(
       if (page === 1) {
         setAllData(data);
       } else {
-        setAllData(prev => [...prev, ...data]);
+        setAllData((prev) => [...prev, ...data]);
       }
 
       // Si devolvió menos datos que pageSize, no hay más
@@ -158,7 +159,7 @@ export function useList<T>(
 
   const loadMore = useCallback(() => {
     if (!loading && hasMore) {
-      setPage(p => p + 1);
+      setPage((p) => p + 1);
     }
   }, [loading, hasMore]);
 
@@ -188,7 +189,7 @@ export function useMutation<TData = any, TVariables = any>(
   options: {
     onSuccess?: (data: TData, variables: TVariables) => void;
     onError?: (error: APIError, variables: TVariables) => void;
-  } = {}
+  } = {},
 ) {
   const [state, setState] = useState<{
     data: TData | null;
@@ -222,24 +223,25 @@ export function useMutation<TData = any, TVariables = any>(
 
         return data;
       } catch (error) {
-        const apiError = error instanceof APIError
-          ? error
-          : new APIError(
-              error instanceof Error ? error.message : 'Error desconocido',
-              undefined,
-              'MUTATION_ERROR'
-            );
+        const apiError =
+          error instanceof APIError
+            ? error
+            : new APIError(
+                error instanceof Error ? error.message : "Error desconocido",
+                undefined,
+                "MUTATION_ERROR",
+              );
 
         if (isMountedRef.current) {
           setState({ data: null, loading: false, error: apiError });
           options.onError?.(apiError, variables);
         }
 
-        logger.error('useMutation error', apiError);
+        logger.error("useMutation error", apiError);
         throw apiError;
       }
     },
-    [mutationFn, options]
+    [mutationFn, options],
   );
 
   const reset = useCallback(() => {

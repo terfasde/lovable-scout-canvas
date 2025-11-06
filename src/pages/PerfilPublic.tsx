@@ -6,7 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { followUser, getFollowRelation, cancelRequest, unfollowUser } from "@/lib/follows";
+import {
+  followUser,
+  getFollowRelation,
+  cancelRequest,
+  unfollowUser,
+} from "@/lib/follows";
 import { UserPlus, UserMinus, Clock, Check, Loader2 } from "lucide-react";
 import {
   AlertDialog,
@@ -38,9 +43,9 @@ const PerfilPublic = () => {
           setProfile(data);
         } else {
           const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('user_id', id)
+            .from("profiles")
+            .select("*")
+            .eq("user_id", id)
             .single();
           if (error) throw error;
           setProfile(data);
@@ -49,31 +54,42 @@ const PerfilPublic = () => {
         const rel = await getFollowRelation(id);
         if (!rel.error) setRelation(rel.data);
       } catch (err: any) {
-        toast({ title: 'Error', description: err?.message || 'No se pudo cargar el perfil', variant: 'destructive' });
+        toast({
+          title: "Error",
+          description: err?.message || "No se pudo cargar el perfil",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
     })();
   }, [id]);
 
-  const status = useMemo(() => relation?.status as string | undefined, [relation]);
+  const status = useMemo(
+    () => relation?.status as string | undefined,
+    [relation],
+  );
 
   const handleFollow = async () => {
     if (!id || actionLoading) return;
-    
+
     setActionLoading(true);
     try {
       const { error } = await followUser(id);
       if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
         return;
       }
-      
-      toast({ 
-        title: 'Solicitud enviada', 
-        description: 'Te avisaremos cuando sea aceptada (si es privado).' 
+
+      toast({
+        title: "Solicitud enviada",
+        description: "Te avisaremos cuando sea aceptada (si es privado).",
       });
-      
+
       const rel = await getFollowRelation(id);
       if (!rel.error) setRelation(rel.data);
     } finally {
@@ -83,25 +99,33 @@ const PerfilPublic = () => {
 
   const handleCancelOrUnfollow = async () => {
     if (!id || actionLoading) return;
-    
+
     setActionLoading(true);
     try {
-      if (status === 'pending') {
+      if (status === "pending") {
         const { error } = await cancelRequest(id);
         if (error) {
-          toast({ title: 'Error', description: error.message, variant: 'destructive' });
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
           return;
         }
         setRelation(null);
-        toast({ title: 'Solicitud cancelada' });
-      } else if (status === 'accepted') {
+        toast({ title: "Solicitud cancelada" });
+      } else if (status === "accepted") {
         const { error } = await unfollowUser(id);
         if (error) {
-          toast({ title: 'Error', description: error.message, variant: 'destructive' });
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
           return;
         }
         setRelation(null);
-        toast({ title: 'Dejaste de seguir' });
+        toast({ title: "Dejaste de seguir" });
         setShowUnfollowDialog(false);
       }
     } finally {
@@ -109,18 +133,26 @@ const PerfilPublic = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div></div>
-
-  if (!profile) return (
-    <div className="min-h-screen flex items-center justify-center px-4 text-center">
-      <div>
-        <p className="mb-3">Este perfil es privado o no tienes acceso.</p>
-        {id && (
-          <Button onClick={handleFollow} className="gap-2">Solicitar seguir</Button>
-        )}
+  if (loading)
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
       </div>
-    </div>
-  )
+    );
+
+  if (!profile)
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 text-center">
+        <div>
+          <p className="mb-3">Este perfil es privado o no tienes acceso.</p>
+          {id && (
+            <Button onClick={handleFollow} className="gap-2">
+              Solicitar seguir
+            </Button>
+          )}
+        </div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-background py-12 px-4">
@@ -136,22 +168,42 @@ const PerfilPublic = () => {
               <CardTitle>{profile.nombre_completo}</CardTitle>
               <div className="flex items-center gap-2 mt-1">
                 {(profile as any).is_public ? (
-                  <p className="text-sm text-muted-foreground">Perfil público</p>
+                  <p className="text-sm text-muted-foreground">
+                    Perfil público
+                  </p>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Perfil privado</p>
+                  <p className="text-sm text-muted-foreground">
+                    Perfil privado
+                  </p>
                 )}
-                {status === 'accepted' && <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">Siguiendo</span>}
-                {status === 'pending' && <span className="text-xs px-2 py-0.5 rounded-full bg-muted">Pendiente</span>}
+                {status === "accepted" && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
+                    Siguiendo
+                  </span>
+                )}
+                {status === "pending" && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-muted">
+                    Pendiente
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="mb-4 flex gap-2">
-            {status === 'accepted' ? (
-              <AlertDialog open={showUnfollowDialog} onOpenChange={setShowUnfollowDialog}>
+            {status === "accepted" ? (
+              <AlertDialog
+                open={showUnfollowDialog}
+                onOpenChange={setShowUnfollowDialog}
+              >
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" disabled={actionLoading} className="gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={actionLoading}
+                    className="gap-2"
+                  >
                     {actionLoading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
@@ -166,7 +218,8 @@ const PerfilPublic = () => {
                   <AlertDialogHeader>
                     <AlertDialogTitle>¿Dejar de seguir?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Ya no verás las publicaciones de {profile?.nombre_completo || 'este usuario'} en tu feed.
+                      Ya no verás las publicaciones de{" "}
+                      {profile?.nombre_completo || "este usuario"} en tu feed.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -177,8 +230,14 @@ const PerfilPublic = () => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-            ) : status === 'pending' ? (
-              <Button variant="outline" size="sm" onClick={handleCancelOrUnfollow} disabled={actionLoading} className="gap-2">
+            ) : status === "pending" ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCancelOrUnfollow}
+                disabled={actionLoading}
+                className="gap-2"
+              >
                 {actionLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -189,7 +248,12 @@ const PerfilPublic = () => {
                 )}
               </Button>
             ) : (
-              <Button size="sm" onClick={handleFollow} disabled={actionLoading} className="gap-2">
+              <Button
+                size="sm"
+                onClick={handleFollow}
+                disabled={actionLoading}
+                className="gap-2"
+              >
                 {actionLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -202,15 +266,23 @@ const PerfilPublic = () => {
             )}
           </div>
           <div className="space-y-3">
-            <p><strong>Teléfono:</strong> {profile.telefono || '-'}</p>
-            <p><strong>Edad:</strong> {profile.edad ?? '-'}</p>
-            <p><strong>Seisena:</strong> {profile.seisena || '-'}</p>
-            <p><strong>Patrulla:</strong> {profile.patrulla || '-'}</p>
+            <p>
+              <strong>Teléfono:</strong> {profile.telefono || "-"}
+            </p>
+            <p>
+              <strong>Edad:</strong> {profile.edad ?? "-"}
+            </p>
+            <p>
+              <strong>Seisena:</strong> {profile.seisena || "-"}
+            </p>
+            <p>
+              <strong>Patrulla:</strong> {profile.patrulla || "-"}
+            </p>
           </div>
         </CardContent>
       </Card>
     </div>
   );
-}
+};
 
 export default PerfilPublic;

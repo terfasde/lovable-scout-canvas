@@ -29,7 +29,7 @@ export function useAppTheme(): ThemeConfig {
 
   const toggleTheme = () => {
     if (!mounted) return;
-    
+
     const currentTheme = resolvedTheme || systemTheme;
     setTheme(currentTheme === "dark" ? "light" : "dark");
   };
@@ -59,7 +59,7 @@ export function enableThemeTransitions(): void {
     document.documentElement.classList.add(
       "transition-colors",
       "duration-300",
-      "ease-in-out"
+      "ease-in-out",
     );
   }
 }
@@ -97,7 +97,7 @@ export const THEME_STORAGE_KEY = "app-theme";
 
 export function getStoredTheme(): Theme | null {
   if (typeof window === "undefined") return null;
-  
+
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
     if (stored === "light" || stored === "dark" || stored === "system") {
@@ -106,13 +106,13 @@ export function getStoredTheme(): Theme | null {
   } catch (error) {
     console.warn("Error al leer tema almacenado:", error);
   }
-  
+
   return null;
 }
 
 export function setStoredTheme(theme: Theme): void {
   if (typeof window === "undefined") return;
-  
+
   try {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   } catch (error) {
@@ -125,7 +125,7 @@ export function setStoredTheme(theme: Theme): void {
  */
 export function getSystemTheme(): "light" | "dark" {
   if (typeof window === "undefined") return "light";
-  
+
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
@@ -135,11 +135,13 @@ export function getSystemTheme(): "light" | "dark" {
  * Hook para detectar cambios en preferencia de sistema
  */
 export function useSystemTheme(): "light" | "dark" {
-  const [systemTheme, setSystemTheme] = useState<"light" | "dark">(getSystemTheme());
+  const [systemTheme, setSystemTheme] = useState<"light" | "dark">(
+    getSystemTheme(),
+  );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setSystemTheme(e.matches ? "dark" : "light");
     };
@@ -149,7 +151,7 @@ export function useSystemTheme(): "light" | "dark" {
       mediaQuery.addEventListener("change", handleChange);
       return () => mediaQuery.removeEventListener("change", handleChange);
     }
-    
+
     // Fallback para navegadores antiguos
     mediaQuery.addListener(handleChange);
     return () => mediaQuery.removeListener(handleChange);
@@ -164,12 +166,12 @@ export function useSystemTheme(): "light" | "dark" {
 export function themeAwareClass(
   baseClass: string,
   lightClass?: string,
-  darkClass?: string
+  darkClass?: string,
 ): string {
   const classes = [baseClass];
-  
+
   if (lightClass) classes.push(`light:${lightClass}`);
   if (darkClass) classes.push(`dark:${darkClass}`);
-  
+
   return classes.join(" ");
 }

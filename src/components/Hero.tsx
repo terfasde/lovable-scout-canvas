@@ -8,13 +8,14 @@ import { useSupabaseUser } from "@/App";
 const Hero = () => {
   const { toast } = useToast();
   const { user } = useSupabaseUser();
-  
+
   const handleJoinClick: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
     if (user) {
       // Evita navegar a /auth si ya está logueado
       e.preventDefault();
       toast({
-        title: "gracias por se parte de la pagina web oficial del Grupo scout septimo",
+        title:
+          "gracias por se parte de la pagina web oficial del Grupo scout septimo",
       });
     }
   };
@@ -22,10 +23,10 @@ const Hero = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Enhanced Overlay */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={heroImage} 
-          alt="Scouts del Séptimo en aventura" 
-          className="w-full h-full object-cover scale-[1.02]" 
+        <img
+          src={heroImage}
+          alt="Scouts del Séptimo en aventura"
+          className="w-full h-full object-cover scale-[1.02]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-scout-black/75 via-scout-black/60 to-scout-black/35"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-scout-black/50 via-transparent to-transparent"></div>
@@ -38,16 +39,20 @@ const Hero = () => {
             {/* Main Title */}
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000">
               <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight">
-                <span className="text-primary block mb-2">Grupo Scout Séptimo</span>
-                <span className="block text-white drop-shadow-lg">de Montevideo</span>
+                <span className="text-primary block mb-2">
+                  Grupo Scout Séptimo
+                </span>
+                <span className="block text-white drop-shadow-lg">
+                  de Montevideo
+                </span>
               </h1>
             </Reveal>
-            
+
             {/* Description */}
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
               <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100 leading-relaxed max-w-2xl">
-                Una comunidad de aventura, valores y formación integral para jóvenes. 
-                Construimos un futuro mejor a través del escultismo.
+                Una comunidad de aventura, valores y formación integral para
+                jóvenes. Construimos un futuro mejor a través del escultismo.
               </p>
             </Reveal>
 
@@ -55,20 +60,20 @@ const Hero = () => {
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Link to="/auth" className="group" onClick={handleJoinClick}>
-                  <Button 
-                    size="lg" 
-                    variant="hero" 
+                  <Button
+                    size="lg"
+                    variant="hero"
                     className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-2xl hover:scale-105"
                   >
                     Registrate en nuestra web
                     <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                   </Button>
                 </Link>
-                
+
                 <Link to="/historia" className="group">
-                  <Button 
-                    size="lg" 
-                    variant="heroSecondary" 
+                  <Button
+                    size="lg"
+                    variant="heroSecondary"
                     className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-xl hover:scale-105"
                   >
                     <Users className="mr-2 transition-transform duration-300 group-hover:scale-110" />
@@ -82,19 +87,29 @@ const Hero = () => {
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/20">
                 <div className="group">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">+61</div>
-                  <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">Años de historia</div>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
+                    +61
+                  </div>
+                  <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">
+                    Años de historia
+                  </div>
                 </div>
                 <div className="group">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent transition-transform duration-300 group-hover:scale-110">+100</div>
-                  <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">Scouts activos</div>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent transition-transform duration-300 group-hover:scale-110">
+                    +100
+                  </div>
+                  <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">
+                    Scouts activos
+                  </div>
                 </div>
                 <div className="group col-span-2 sm:col-span-1">
                   <div className="flex items-center gap-2 text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
                     <MapPin className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
                     <span>1</span>
                   </div>
-                  <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">Locales scouts</div>
+                  <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">
+                    Locales scouts
+                  </div>
                 </div>
               </div>
             </Reveal>

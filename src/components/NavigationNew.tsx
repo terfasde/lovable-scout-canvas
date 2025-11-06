@@ -1,6 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, User, Share2, Settings, ChevronDown, Home, Calendar, History, BookOpen, Mail, Users, MessageSquare } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  User,
+  Share2,
+  Settings,
+  ChevronDown,
+  Home,
+  Calendar,
+  History,
+  BookOpen,
+  Mail,
+  Users,
+  MessageSquare,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,7 +25,13 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import UserAvatar from "@/components/UserAvatar";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useToast } from "@/hooks/use-toast";
@@ -61,7 +82,7 @@ const Navigation = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -80,7 +101,7 @@ const Navigation = () => {
     (async () => {
       try {
         if (isLocalBackend()) {
-          const me: any = await apiFetch('/profiles/me').catch(() => null);
+          const me: any = await apiFetch("/profiles/me").catch(() => null);
           if (me) {
             setUserName(me.nombre_completo || null);
             setAvatarUrl(me.avatar_url || null);
@@ -88,7 +109,9 @@ const Navigation = () => {
           }
           return;
         }
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) {
           setIsLoggedIn(false);
           return;
@@ -112,7 +135,7 @@ const Navigation = () => {
   const handleSignOut = async () => {
     try {
       if (isLocalBackend()) {
-        await apiFetch('/auth/logout', { method: 'POST' });
+        await apiFetch("/auth/logout", { method: "POST" });
       } else {
         await supabase.auth.signOut();
       }
@@ -134,8 +157,8 @@ const Navigation = () => {
   };
 
   const isActive = (path: string) => location.pathname === path;
-  const isSectionActive = (links: NavLink[]) => 
-    links.some(link => location.pathname === link.path);
+  const isSectionActive = (links: NavLink[]) =>
+    links.some((link) => location.pathname === link.path);
 
   return (
     <>
@@ -145,14 +168,14 @@ const Navigation = () => {
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           isScrolled
             ? "bg-background/95 backdrop-blur-md shadow-md border-b"
-            : "bg-transparent"
+            : "bg-transparent",
         )}
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex items-center gap-3 group"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -168,7 +191,9 @@ const Navigation = () => {
                 <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                   Grupo Scout Séptimo
                 </h1>
-                <p className="text-xs text-muted-foreground">Montevideo, Uruguay</p>
+                <p className="text-xs text-muted-foreground">
+                  Montevideo, Uruguay
+                </p>
               </div>
             </Link>
 
@@ -185,7 +210,7 @@ const Navigation = () => {
                       "hover:bg-accent hover:text-accent-foreground",
                       isActive(link.path)
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground/80"
+                        : "text-foreground/80",
                     )}
                   >
                     {link.name}
@@ -200,7 +225,7 @@ const Navigation = () => {
                     variant="ghost"
                     className={cn(
                       "gap-1",
-                      isSectionActive(navSections[1].links) && "bg-accent"
+                      isSectionActive(navSections[1].links) && "bg-accent",
                     )}
                   >
                     Historia
@@ -226,7 +251,7 @@ const Navigation = () => {
                     variant="ghost"
                     className={cn(
                       "gap-1",
-                      isSectionActive(navSections[2].links) && "bg-accent"
+                      isSectionActive(navSections[2].links) && "bg-accent",
                     )}
                   >
                     Eventos
@@ -252,15 +277,26 @@ const Navigation = () => {
               {isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                      <UserAvatar userName={userName} avatarUrl={avatarUrl} size="sm" />
+                    <Button
+                      variant="ghost"
+                      className="relative h-10 w-10 rounded-full"
+                    >
+                      <UserAvatar
+                        userName={userName}
+                        avatarUrl={avatarUrl}
+                        size="sm"
+                      />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>
                       <div className="flex flex-col gap-1">
-                        <p className="text-sm font-medium">{userName || "Usuario"}</p>
-                        <p className="text-xs text-muted-foreground">Mi Cuenta</p>
+                        <p className="text-sm font-medium">
+                          {userName || "Usuario"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Mi Cuenta
+                        </p>
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
@@ -289,7 +325,10 @@ const Navigation = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive cursor-pointer">
+                    <DropdownMenuItem
+                      onClick={handleSignOut}
+                      className="text-destructive cursor-pointer"
+                    >
                       <LogOut className="h-4 w-4 mr-2" />
                       Cerrar Sesión
                     </DropdownMenuItem>
@@ -368,7 +407,9 @@ function MobileMenu({
         <div className="flex items-center gap-3 p-4 rounded-lg bg-accent">
           <UserAvatar userName={userName} avatarUrl={avatarUrl} size="md" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{userName || "Usuario"}</p>
+            <p className="text-sm font-medium truncate">
+              {userName || "Usuario"}
+            </p>
             <p className="text-xs text-muted-foreground">Mi Cuenta</p>
           </div>
         </div>
@@ -397,7 +438,7 @@ function MobileMenu({
                   "hover:bg-accent hover:text-accent-foreground",
                   isActive(link.path)
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground"
+                    : "text-foreground",
                 )}
               >
                 {link.icon && <link.icon className="h-5 w-5" />}

@@ -1,7 +1,7 @@
 # ============================================
 # Docker Compose - Solo Frontend (Sin Backend)
 # ============================================
-# 
+#
 # Este archivo levanta ÚNICAMENTE el frontend web
 # El proyecto funciona con mocks locales (localStorage)
 # No requiere Supabase ni servidor backend
@@ -34,13 +34,13 @@ services:
     environment:
       # Backend DESHABILITADO - Todo funciona con mocks locales
       - VITE_BACKEND=disabled
-      
+
       # Configuración de galería (solo visual)
       - VITE_GALLERY_ADMIN_EMAILS=franciscolorenzo2406@gmail.com
-      
+
       # Hot reload para desarrollo
       - CHOKIDAR_USEPOLLING=true
-      
+
       # Supabase DESHABILITADO
       # - VITE_SUPABASE_URL=
       # - VITE_SUPABASE_ANON_KEY=

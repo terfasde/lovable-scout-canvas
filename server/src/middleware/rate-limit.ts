@@ -49,14 +49,17 @@ const store = new Map<string, RateLimitInfo>();
 /**
  * Limpiar entradas expiradas cada 5 minutos
  */
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, info] of store.entries()) {
-    if (now > info.resetTime) {
-      store.delete(key);
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [key, info] of store.entries()) {
+      if (now > info.resetTime) {
+        store.delete(key);
+      }
     }
-  }
-}, 5 * 60 * 1000);
+  },
+  5 * 60 * 1000,
+);
 
 /**
  * Crear middleware de rate limiting
@@ -65,10 +68,11 @@ export function rateLimit(options: RateLimitOptions) {
   const {
     windowMs,
     max,
-    message = 'Demasiadas solicitudes, por favor intenta más tarde',
+    message = "Demasiadas solicitudes, por favor intenta más tarde",
     statusCode = 429,
     headers = true,
-    keyGenerator = (req: any) => req.ip || req.socket?.remoteAddress || 'unknown',
+    keyGenerator = (req: any) =>
+      req.ip || req.socket?.remoteAddress || "unknown",
     handler,
     skip,
   } = options;
@@ -103,15 +107,15 @@ export function rateLimit(options: RateLimitOptions) {
 
     // Añadir headers si está habilitado
     if (headers && res.setHeader) {
-      res.setHeader('X-RateLimit-Limit', max.toString());
-      res.setHeader('X-RateLimit-Remaining', remaining.toString());
-      res.setHeader('X-RateLimit-Reset', resetTime.toString());
+      res.setHeader("X-RateLimit-Limit", max.toString());
+      res.setHeader("X-RateLimit-Remaining", remaining.toString());
+      res.setHeader("X-RateLimit-Reset", resetTime.toString());
     }
 
     // Verificar si excedió el límite
     if (info.count > max) {
       if (headers && res.setHeader) {
-        res.setHeader('Retry-After', resetTime.toString());
+        res.setHeader("Retry-After", resetTime.toString());
       }
 
       if (handler) {
@@ -145,7 +149,7 @@ export const rateLimitPresets = {
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutos
     max: 5, // 5 intentos
-    message: 'Demasiados intentos de login, intenta en 15 minutos',
+    message: "Demasiados intentos de login, intenta en 15 minutos",
   },
 
   /**
@@ -154,7 +158,7 @@ export const rateLimitPresets = {
   api: {
     windowMs: 60 * 1000, // 1 minuto
     max: 60, // 60 requests
-    message: 'Límite de API excedido',
+    message: "Límite de API excedido",
   },
 
   /**
@@ -171,7 +175,7 @@ export const rateLimitPresets = {
   expensive: {
     windowMs: 60 * 60 * 1000, // 1 hora
     max: 10, // 10 requests
-    message: 'Límite de operaciones costosas excedido',
+    message: "Límite de operaciones costosas excedido",
   },
 
   /**
@@ -180,7 +184,7 @@ export const rateLimitPresets = {
   upload: {
     windowMs: 60 * 60 * 1000, // 1 hora
     max: 20, // 20 uploads
-    message: 'Límite de uploads excedido, intenta en 1 hora',
+    message: "Límite de uploads excedido, intenta en 1 hora",
   },
 };
 
@@ -193,7 +197,7 @@ export function rateLimitPerUser(options: RateLimitOptions) {
     keyGenerator: (req) => {
       // Usar user ID si está disponible, sino fallback a IP
       const userId = (req as any).user?.id || (req as any).user?.sub;
-      return userId || req.ip || 'unknown';
+      return userId || req.ip || "unknown";
     },
   });
 }
@@ -215,7 +219,7 @@ export function slowDown(options: {
   } = options;
 
   return (req: any, res: any, next: any) => {
-    const key = (req.ip || req.socket?.remoteAddress || 'unknown') as string;
+    const key = (req.ip || req.socket?.remoteAddress || "unknown") as string;
     const now = Date.now();
 
     let info = store.get(key);
@@ -231,10 +235,7 @@ export function slowDown(options: {
     info.count++;
 
     if (info.count > delayAfter) {
-      const delay = Math.min(
-        (info.count - delayAfter) * delayMs,
-        maxDelayMs
-      );
+      const delay = Math.min((info.count - delayAfter) * delayMs, maxDelayMs);
 
       setTimeout(next, delay);
     } else {

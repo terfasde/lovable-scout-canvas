@@ -13,7 +13,8 @@ const Tropa = () => {
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground">
-                  Información amplia sobre la Tropa: formación en habilidades, trabajo en equipo, patrullas y proyectos.
+                  Información amplia sobre la Tropa: formación en habilidades,
+                  trabajo en equipo, patrullas y proyectos.
                 </p>
                 <ul className="list-disc pl-5 mt-4 text-muted-foreground space-y-2">
                   <li>Edades: 11–14 años</li>
@@ -29,7 +30,11 @@ const Tropa = () => {
             </Card>
 
             <div>
-              <img src={communityImage} alt="Tropa" className="rounded-2xl w-full object-cover shadow-lg" />
+              <img
+                src={communityImage}
+                alt="Tropa"
+                className="rounded-2xl w-full object-cover shadow-lg"
+              />
             </div>
           </div>
         </div>

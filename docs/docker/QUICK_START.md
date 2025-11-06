@@ -3,6 +3,7 @@
 ## Opción 1: Script automático (Recomendado)
 
 ### Windows (PowerShell)
+
 ```powershell
 # Arquitectura completa con PostgreSQL + Monitoreo
 .\start.ps1 full
@@ -15,6 +16,7 @@
 ```
 
 ### Linux/Mac
+
 ```bash
 chmod +x start.sh
 
@@ -39,6 +41,7 @@ docker compose -f docker-compose.full.yml up -d
 ```
 
 **Incluye**:
+
 - 🌐 Frontend (React + Vite)
 - ⚙️ Backend API (Express + TypeScript)
 - 🐘 PostgreSQL 16
@@ -48,6 +51,7 @@ docker compose -f docker-compose.full.yml up -d
 - 📉 PostgreSQL Exporter
 
 **Acceso**:
+
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8080
 - PgAdmin: http://localhost:5050 (admin@scout.local / admin123)
@@ -63,10 +67,12 @@ docker compose -f docker-compose.dev.yml up -d
 ```
 
 **Incluye**:
+
 - 🌐 Frontend
 - ⚙️ Backend (SQLite)
 
 **Acceso**:
+
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8080
 
@@ -75,6 +81,7 @@ docker compose -f docker-compose.dev.yml up -d
 ## 📚 Documentación completa
 
 Ver **[ARCHITECTURE.md](./ARCHITECTURE.md)** para:
+
 - Arquitectura detallada
 - Configuración de servicios
 - Monitoreo con Prometheus y Grafana

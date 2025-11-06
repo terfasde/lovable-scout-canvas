@@ -3,6 +3,7 @@
 ## 🎯 Respuesta Corta
 
 La aplicación funciona **completamente en el navegador** usando:
+
 1. **localStorage** para persistir datos (sesiones, usuarios)
 2. **Mocks (simulaciones)** para reemplazar llamadas a backend/Supabase
 3. **Todo el procesamiento en el cliente** (navegador)
@@ -46,8 +47,8 @@ La aplicación funciona **completamente en el navegador** usando:
 ```typescript
 // Usuario se registra en Auth.tsx
 const { data, error } = await supabase.auth.signUp({
-  email: 'nuevo@example.com',
-  password: 'mi-password'
+  email: "nuevo@example.com",
+  password: "mi-password",
 });
 
 // ¿Qué pasa internamente?
@@ -58,6 +59,7 @@ const { data, error } = await supabase.auth.signUp({
 ```
 
 **localStorage después del registro:**
+
 ```json
 {
   "scout_users": [
@@ -68,7 +70,9 @@ const { data, error } = await supabase.auth.signUp({
     }
   ],
   "scout_auth_session": {
-    "user": { /* datos del usuario */ },
+    "user": {
+      /* datos del usuario */
+    },
     "access_token": "token_1730832000000_xyz789",
     "expires_at": 1731436800000
   }
@@ -80,8 +84,8 @@ const { data, error } = await supabase.auth.signUp({
 ```typescript
 // Usuario inicia sesión
 const { data, error } = await supabase.auth.signInWithPassword({
-  email: 'admin@scout.com',
-  password: 'cualquiera'
+  email: "admin@scout.com",
+  password: "cualquiera",
 });
 
 // ¿Qué pasa internamente?
@@ -95,7 +99,9 @@ const { data, error } = await supabase.auth.signInWithPassword({
 
 ```typescript
 // App.tsx verifica si hay sesión al cargar
-const { data: { session } } = await supabase.auth.getSession();
+const {
+  data: { session },
+} = await supabase.auth.getSession();
 
 // ¿Qué pasa internamente?
 // 1. Lee "scout_auth_session" de localStorage
@@ -122,7 +128,7 @@ const { data: { session } } = await supabase.auth.getSession();
     "access_token": "token_abc123",
     "expires_at": 1731436800000
   },
-  
+
   // Todos los usuarios registrados
   "scout_users": [
     {
@@ -147,8 +153,8 @@ const { data: { session } } = await supabase.auth.getSession();
 
 ```typescript
 // 1. Usuario actualiza nombre en Perfil.tsx
-await supabase.auth.updateUser({ 
-  user_metadata: { nombre: 'Juan' } 
+await supabase.auth.updateUser({
+  user_metadata: { nombre: 'Juan' }
 });
 
 // 2. Mock intercepta la llamada
@@ -164,21 +170,21 @@ export const supabase = {
 async updateUser(updates) {
   // Lee sesión actual de localStorage
   const session = JSON.parse(localStorage.getItem('scout_auth_session'));
-  
+
   // Lee lista de usuarios
   const users = JSON.parse(localStorage.getItem('scout_users'));
-  
+
   // Encuentra y actualiza el usuario
   const userIndex = users.findIndex(u => u.id === session.user.id);
   users[userIndex] = { ...users[userIndex], ...updates };
-  
+
   // Guarda en localStorage
   localStorage.setItem('scout_users', JSON.stringify(users));
   localStorage.setItem('scout_auth_session', JSON.stringify({
     ...session,
     user: users[userIndex]
   }));
-  
+
   return { data: { user: users[userIndex] }, error: null };
 }
 
@@ -191,10 +197,10 @@ async updateUser(updates) {
 
 ```typescript
 // Cuando el código hace:
-const { data } = await supabase.from('profiles').select('*');
+const { data } = await supabase.from("profiles").select("*");
 
 // El mock retorna:
-Promise.resolve({ data: [], error: null })
+Promise.resolve({ data: [], error: null });
 
 // ❌ No hay perfiles guardados
 // ✅ No hay error (funciona, pero sin datos)
@@ -204,13 +210,13 @@ Promise.resolve({ data: [], error: null })
 
 ```typescript
 // Cuando el código hace:
-await supabase.storage.from('avatars').upload('path', file);
+await supabase.storage.from("avatars").upload("path", file);
 
 // El mock retorna:
-Promise.resolve({ 
-  data: { path: 'path' }, 
-  error: null 
-})
+Promise.resolve({
+  data: { path: "path" },
+  error: null,
+});
 
 // ❌ No se guarda el archivo realmente
 // ✅ Retorna éxito para no romper el flujo
@@ -220,10 +226,16 @@ Promise.resolve({
 
 ```typescript
 // Cuando el código hace:
-supabase.channel('messages').on('INSERT', callback).subscribe();
+supabase.channel("messages").on("INSERT", callback).subscribe();
 
 // El mock retorna:
-{ data: { subscription: { unsubscribe: () => {} } } }
+{
+  data: {
+    subscription: {
+      unsubscribe: () => {};
+    }
+  }
+}
 
 // ❌ No hay eventos en tiempo real
 // ✅ No rompe el código que espera un subscription
@@ -299,21 +311,21 @@ VITE_BACKEND_URL=http://localhost:8080
 
 ```typescript
 // Reemplazar localStorage con IndexedDB
-import { openDB } from 'idb';
+import { openDB } from "idb";
 
-const db = await openDB('scout-db', 1, {
+const db = await openDB("scout-db", 1, {
   upgrade(db) {
-    db.createObjectStore('users');
-    db.createObjectStore('events');
-    db.createObjectStore('profiles');
-  }
+    db.createObjectStore("users");
+    db.createObjectStore("events");
+    db.createObjectStore("profiles");
+  },
 });
 
 // Guardar usuario
-await db.put('users', userData, userId);
+await db.put("users", userData, userId);
 
 // Leer usuario
-const user = await db.get('users', userId);
+const user = await db.get("users", userId);
 ```
 
 ### Opción 3: Supabase Real (Volver Atrás)
@@ -357,12 +369,14 @@ La app funciona **sin backend** porque:
 4. **Persistencia → localStorage** (datos sobreviven a recargas)
 
 Es perfecto para:
+
 - ✅ Demostración visual
 - ✅ Prototipado rápido
 - ✅ Testing de UI/UX
 - ✅ Desarrollo frontend
 
 **Para producción con datos reales**, necesitarás:
+
 - 🔧 Backend (Node.js, Python, etc.)
 - 🗄️ Base de datos (PostgreSQL, MongoDB, etc.)
 - 🔐 Auth real (Supabase, Auth0, Firebase, etc.)

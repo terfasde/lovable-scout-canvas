@@ -24,6 +24,7 @@ docker compose down
 Accede a http://localhost:5173
 
 **Usuario por defecto:**
+
 - Email: `admin@scout.com`
 - Password: cualquiera (validación simplificada)
 
@@ -55,15 +56,18 @@ docker compose -f docker-compose.dev.yml up -d
 ## 📚 Documentación
 
 ### 🏗️ Arquitectura
+
 - **[Arquitectura Local](docs/LOCAL_ARCHITECTURE.md)** - ⭐ Sistema sin Supabase (ACTUAL)
 - **[Arquitectura Docker](docs/docker/ARCHITECTURE.md)** - Legacy: PostgreSQL y monitoreo
 
 ### 🐳 Docker
+
 - **[Inicio Rápido](docs/docker/QUICK_START.md)** - ⚠️ Desactualizado
 - **[Desarrollo](docs/docker/DEV.md)** - ⚠️ Requiere backend opcional
 - **[Changelog](docs/docker/CHANGELOG.md)** - Historial de cambios
 
 ### ⚙️ Configuración Inicial
+
 - **[Google Maps](docs/setup/GOOGLE_MAPS.md)** - Configurar Google Maps API
 - **[Google Maps Billing Fix](docs/setup/GOOGLE_MAPS_BILLING_FIX.md)** - Solución sin facturación
 - **[Email Verification](docs/setup/EMAIL_VERIFICATION.md)** - ⚠️ No disponible sin backend
@@ -71,14 +75,17 @@ docker compose -f docker-compose.dev.yml up -d
 - **[Supabase Fix](docs/setup/SUPABASE_FIX.md)** - ⚠️ Obsoleto: Supabase removido
 
 ### 🚀 Optimización
+
 - **[Optimizaciones](docs/optimization/OPTIMIZATIONS.md)** - Mejoras de rendimiento aplicadas
 - **[Guía de Performance](docs/optimization/PERFORMANCE_GUIDE.md)** - Buenas prácticas
 
 ### ✨ Features
+
 - **[Perfil Fixes](docs/features/PERFIL_FIXES.md)** - Correcciones del perfil de usuario
 - **[Testing Automation](docs/features/TESTING_AUTOMATION.md)** - Automatización de pruebas
 
 ### 📖 Guías
+
 - **[Migrar sin Supabase](docs/guides/MIGRAR_SIN_SUPABASE.md)** - Guía de migración
 - **[Instrucciones Migraciones](docs/guides/INSTRUCCIONES_MIGRACIONES.md)** - Migraciones de BD
 
@@ -87,6 +94,7 @@ docker compose -f docker-compose.dev.yml up -d
 ## 🛠️ Tecnologías
 
 ### Frontend
+
 - **React 18** con TypeScript
 - **Vite** - Build tool ultrarrápido
 - **TailwindCSS** - Estilos utility-first
@@ -96,6 +104,7 @@ docker compose -f docker-compose.dev.yml up -d
 - **localStorage** - Persistencia de datos local
 
 ### Backend (OPCIONAL - No instalado)
+
 - **Node.js 20** con TypeScript
 - **Express** - API REST
 - **PostgreSQL** o **SQLite** - Base de datos
@@ -106,6 +115,7 @@ docker compose -f docker-compose.dev.yml up -d
 > ⚠️ **Nota:** El backend no está configurado actualmente. El proyecto funciona con mocks locales.
 
 ### ~~Supabase~~ (REMOVIDO)
+
 - ~~Autenticación~~
 - ~~Base de datos~~
 - ~~Storage~~
@@ -114,6 +124,7 @@ docker compose -f docker-compose.dev.yml up -d
 Reemplazado por sistema de autenticación local en `src/lib/auth-mock.ts`.
 
 ### DevOps
+
 - **Docker** - Contenedores
 - **Docker Compose** - Orquestación
 - **Prometheus** - Métricas
@@ -155,14 +166,14 @@ lovable-scout-canvas/
 
 ## 🌐 Servicios (Docker Full)
 
-| Servicio | Puerto | Credenciales |
-|----------|--------|--------------|
-| **Frontend** | 5173 | - |
-| **Backend API** | 8080 | - |
-| **PostgreSQL** | 5432 | scoutuser / scout_secure_password_2024 |
-| **PgAdmin** | 5050 | admin@scout.local / admin123 |
-| **Prometheus** | 9090 | - |
-| **Grafana** | 3000 | admin / admin123 |
+| Servicio        | Puerto | Credenciales                           |
+| --------------- | ------ | -------------------------------------- |
+| **Frontend**    | 5173   | -                                      |
+| **Backend API** | 8080   | -                                      |
+| **PostgreSQL**  | 5432   | scoutuser / scout_secure_password_2024 |
+| **PgAdmin**     | 5050   | admin@scout.local / admin123           |
+| **Prometheus**  | 9090   | -                                      |
+| **Grafana**     | 3000   | admin / admin123                       |
 
 ---
 
