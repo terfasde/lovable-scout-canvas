@@ -33,7 +33,7 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 z-10 pt-20 pb-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 z-10 pt-20 pb-24 md:pb-32">
         <div className="max-w-4xl">
           <div className="space-y-8">
             {/* Main Title */}
@@ -65,12 +65,17 @@ const Hero = () => {
                     variant="hero"
                     className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-2xl hover:scale-105"
                   >
-                    Registrate en nuestra web
+                    Únete al Grupo
                     <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                   </Button>
                 </Link>
 
-                <Link to="/historia" className="group">
+                <button
+                  onClick={() => {
+                    document.getElementById("historia")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="group"
+                >
                   <Button
                     size="lg"
                     variant="heroSecondary"
@@ -79,13 +84,13 @@ const Hero = () => {
                     <Users className="mr-2 transition-transform duration-300 group-hover:scale-110" />
                     Conoce Nuestra Historia
                   </Button>
-                </Link>
+                </button>
               </div>
             </Reveal>
 
             {/* Stats */}
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/20">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-white/20">
                 <div className="group">
                   <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
                     +61
