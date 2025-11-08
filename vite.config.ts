@@ -74,5 +74,10 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    // Deduplicate React to fix "Invalid hook call" error
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@tanstack/react-query'],
   },
 }));
