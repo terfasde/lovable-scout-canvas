@@ -7,15 +7,15 @@
 import { createClient } from "@supabase/supabase-js";
 import { authMock, type User, type Session } from "@/lib/auth-mock";
 import { localDB } from "@/lib/local-db";
+import { getSupabaseConfig } from "@/lib/lovable-config";
 import type { Database } from "./types";
 
 // Detectar modo de backend
 const BACKEND_MODE = (import.meta.env.VITE_BACKEND || "supabase").toLowerCase();
 const isLocalMode = BACKEND_MODE === "local";
 
-// Configuración de Supabase (solo se usa si no es modo local)
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Configuración de Supabase con fallback hardcodeado
+const { url: supabaseUrl, key: supabaseAnonKey } = getSupabaseConfig();
 
 // Helper para crear promesa de respuesta vacía
 const mockPromise = () => Promise.resolve({ data: null, error: null });
