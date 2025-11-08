@@ -621,8 +621,38 @@ const mockSupabase = {
 // EXPORTACIÓN: Cliente real de Supabase o Mock según configuración
 // ============================================================================
 
-export const supabase = isLocalMode
-  ? (mockSupabase as any) // En modo local, usar mock
-  : createClient<Database>(supabaseUrl, supabaseAnonKey); // En producción, usar cliente real
+// Función para crear el cliente con validación
+function createSupabaseClient() {
+  if (isLocalMode) {
+    console.log("🔧 Modo LOCAL: Usando cliente mock de Supabase");
+    return mockSupabase as any;
+  }
+
+  // Modo producción: usar Supabase real
+  console.log("☁️ Modo PRODUCCIÓN: Usando Supabase real");
+  console.log("📍 VITE_BACKEND:", import.meta.env.VITE_BACKEND || "(vacío - por defecto Supabase)");
+  console.log("🔗 VITE_SUPABASE_URL:", supabaseUrl ? "✓ Configurado" : "✗ FALTA");
+  console.log("🔑 VITE_SUPABASE_ANON_KEY:", supabaseAnonKey ? "✓ Configurado" : "✗ FALTA");
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("❌ ERROR: Variables de Supabase no configuradas correctamente");
+    console.error("Necesitas configurar VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY");
+    // Retornar mock como fallback para evitar crash
+    console.warn("⚠️ Usando cliente mock como fallback");
+    return mockSupabase as any;
+  }
+
+  try {
+    const client = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    console.log("✅ Cliente de Supabase creado exitosamente");
+    return client;
+  } catch (error) {
+    console.error("❌ Error al crear cliente de Supabase:", error);
+    console.warn("⚠️ Usando cliente mock como fallback");
+    return mockSupabase as any;
+  }
+}
+
+export const supabase = createSupabaseClient();
 
 export type { Database };

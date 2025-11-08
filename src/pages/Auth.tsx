@@ -30,15 +30,47 @@ const Auth = () => {
 
   useEffect(() => {
     // Verificar sesión en Supabase (mock o real según configuración)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/");
-    });
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) navigate("/");
-    });
-    return () => subscription.unsubscribe();
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Error al obtener sesión:", error);
+          return;
+        }
+        
+        if (session) {
+          console.log("Sesión activa detectada, redirigiendo a /");
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Error inesperado al verificar sesión:", error);
+      }
+    };
+
+    checkSession();
+
+    // Suscribirse a cambios de autenticación
+    let subscription: any;
+    try {
+      const {
+        data: { subscription: sub },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session) {
+          console.log("Cambio de sesión detectado, redirigiendo a /");
+          navigate("/");
+        }
+      });
+      subscription = sub;
+    } catch (error) {
+      console.error("Error al suscribirse a cambios de auth:", error);
+    }
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, [navigate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
