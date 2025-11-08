@@ -231,7 +231,7 @@ const Navigation = () => {
                     to={link.path}
                     className={cn(
                       "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                      "hover:bg-accent hover:text-accent-foreground",
+                      "hover:bg-nav-hover hover:text-nav-hover-foreground",
                       isActive(link.path)
                         ? "bg-primary text-primary-foreground"
                         : "text-foreground/80",
@@ -446,23 +446,23 @@ function MobileMenu({
             {section.label}
           </h3>
           <div className="space-y-1">
-            {section.links.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                onClick={onLinkClick}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
-                  "hover:bg-accent hover:text-accent-foreground",
-                  isActive(link.path)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground",
-                )}
-              >
-                {link.icon && <link.icon className="h-5 w-5" />}
-                <span className="text-sm font-medium">{link.name}</span>
-              </Link>
-            ))}
+              {section.links.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={onLinkClick}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-md transition-colors",
+                    "hover:bg-nav-hover hover:text-nav-hover-foreground",
+                    isActive(link.path)
+                      ? "bg-primary text-primary-foreground"
+                      : "text-foreground",
+                  )}
+                >
+                  {link.icon && <link.icon className="h-5 w-5" />}
+                  <span className="text-sm font-medium">{link.name}</span>
+                </Link>
+              ))}
           </div>
         </div>
       ))}
@@ -477,7 +477,7 @@ function MobileMenu({
             <Link
               to="/perfil"
               onClick={onLinkClick}
-              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-accent transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-nav-hover hover:text-nav-hover-foreground transition-colors"
             >
               <User className="h-5 w-5" />
               <span className="text-sm font-medium">Mi Perfil</span>
@@ -485,7 +485,7 @@ function MobileMenu({
             <Link
               to="/perfil/compartir"
               onClick={onLinkClick}
-              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-accent transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-nav-hover hover:text-nav-hover-foreground transition-colors"
             >
               <Share2 className="h-5 w-5" />
               <span className="text-sm font-medium">Compartir Perfil</span>

@@ -31,6 +31,10 @@ All colors MUST be HSL.
     --accent-foreground: 0 0% 10%;
   /* Hover accent (less bright yellow for hover states) */
   --accent-hover: 60 95% 45%;
+  
+  /* Nav hover - subtle and discrete */
+  --nav-hover: 0 0% 92%;
+  --nav-hover-foreground: 0 0% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
@@ -102,6 +106,10 @@ All colors MUST be HSL.
     --accent-foreground: 0 0% 10%;
   /* Hover accent (less bright yellow for hover states) */
   --accent-hover: 60 95% 45%;
+  
+  /* Nav hover - subtle and discrete */
+  --nav-hover: 0 0% 16%;
+  --nav-hover-foreground: 0 0% 95%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;

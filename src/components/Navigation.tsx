@@ -147,7 +147,7 @@ const Navigation = () => {
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
                   isActive("/")
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
+                    : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                 }`}
               >
                 Inicio
@@ -159,7 +159,7 @@ const Navigation = () => {
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
                   isActive("/usuarios")
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
+                    : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                 }`}
               >
                 Comuni 7
@@ -170,7 +170,7 @@ const Navigation = () => {
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
                   isActive("/mensajes")
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
+                    : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                 }`}
               >
                 Mensajes
@@ -183,7 +183,7 @@ const Navigation = () => {
                     className={`px-4 py-2 rounded-md font-medium transition-colors inline-flex items-center gap-1 ${
                       isHistoriaActive
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
+                        : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                     }`}
                   >
                     Historia
@@ -208,7 +208,7 @@ const Navigation = () => {
                     className={`px-4 py-2 rounded-md font-medium transition-colors inline-flex items-center gap-1 ${
                       isEventosActive
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
+                        : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                     }`}
                   >
                     Eventos
@@ -231,7 +231,7 @@ const Navigation = () => {
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
                   isActive("/galeria")
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
+                    : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                 }`}
               >
                 Galería
@@ -242,7 +242,7 @@ const Navigation = () => {
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
                   isActive("/contacto")
                     ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
+                    : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                 }`}
               >
                 Contacto
@@ -443,10 +443,10 @@ const Navigation = () => {
                   <Link
                     to="/"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
+                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none ${
                       isActive("/")
                         ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-muted"
+                        : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                     } ${isActive("/") ? "border-l-4 border-primary" : ""}`}
                   >
                     Inicio
