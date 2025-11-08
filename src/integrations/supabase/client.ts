@@ -1,12 +1,21 @@
 /**
- * Mock Supabase Client
- * Reemplaza la funcionalidad de Supabase con implementación local
+ * Supabase Client - Modo Dual (Real o Mock)
+ * Usa el cliente real de Supabase en producción/staging
+ * Usa mock local cuando VITE_BACKEND="local"
  */
 
+import { createClient } from "@supabase/supabase-js";
 import { authMock, type User, type Session } from "@/lib/auth-mock";
 import { localDB } from "@/lib/local-db";
-// Mantenemos los tipos para compatibilidad
 import type { Database } from "./types";
+
+// Detectar modo de backend
+const BACKEND_MODE = (import.meta.env.VITE_BACKEND || "supabase").toLowerCase();
+const isLocalMode = BACKEND_MODE === "local";
+
+// Configuración de Supabase (solo se usa si no es modo local)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Helper para crear promesa de respuesta vacía
 const mockPromise = () => Promise.resolve({ data: null, error: null });
@@ -328,8 +337,11 @@ const createQueryBuilder = (table: string, filters: any = {}): QueryBuilder => {
   return builder as QueryBuilder;
 };
 
-// Mock del cliente Supabase usando servicio local
-export const supabase = {
+// ============================================================================
+// CLIENTE MOCK (para desarrollo local)
+// ============================================================================
+
+const mockSupabase = {
   auth: {
     getSession: () => authMock.getSession(),
     getUser: () => authMock.getUser(),
@@ -604,3 +616,13 @@ export const supabase = {
     return true;
   },
 };
+
+// ============================================================================
+// EXPORTACIÓN: Cliente real de Supabase o Mock según configuración
+// ============================================================================
+
+export const supabase = isLocalMode
+  ? (mockSupabase as any) // En modo local, usar mock
+  : createClient<Database>(supabaseUrl, supabaseAnonKey); // En producción, usar cliente real
+
+export type { Database };
