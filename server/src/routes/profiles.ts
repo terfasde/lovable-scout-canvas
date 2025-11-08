@@ -9,12 +9,13 @@ export const profilesRouter = Router();
 function calculateAge(fechaNacimiento: string | null): number | null {
   if (!fechaNacimiento) return null;
   try {
-    const birth = new Date(fechaNacimiento);
-    if (isNaN(birth.getTime())) return null;
+    const [y, m, d] = String(fechaNacimiento).split("-").map((x) => parseInt(x, 10));
+    if (!y || !m || !d) return null;
+    const birth = new Date(y, m - 1, d);
     const now = new Date();
     let years = now.getFullYear() - birth.getFullYear();
-    const m = now.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) years--;
+    const mm = now.getMonth() - birth.getMonth();
+    if (mm < 0 || (mm === 0 && now.getDate() < birth.getDate())) years--;
     return years;
   } catch {
     return null;
@@ -24,7 +25,7 @@ function calculateAge(fechaNacimiento: string | null): number | null {
 profilesRouter.get("/me", authMiddleware, (req: any, res: any) => {
   const userId = (req as any).user.id as string;
   const user = db
-    .prepare("SELECT id, email, username, created_at FROM users WHERE id = ?")
+    .prepare("SELECT id, email, username, email_verified_at, created_at FROM users WHERE id = ?")
     .get(userId) as any;
   if (!user) {
     return res
@@ -43,7 +44,11 @@ profilesRouter.get("/me", authMiddleware, (req: any, res: any) => {
       .prepare("SELECT * FROM profiles WHERE user_id = ?")
       .get(userId) as any;
   }
-  const result = { ...profile, ...user };
+  const result = { 
+    ...profile, 
+    ...user,
+    email_verified: !!user.email_verified_at 
+  };
   if (result.fecha_nacimiento) {
     result.edad = calculateAge(result.fecha_nacimiento);
   }
@@ -65,6 +70,13 @@ const updateSchema = z.object({
   patrulla: z.string().nullable().optional(),
   equipo_pioneros: z.string().nullable().optional(),
   comunidad_rovers: z.string().nullable().optional(),
+  // username se guarda en tabla users y marca timestamp en profiles.username_updated_at
+  username: z
+    .string()
+    .min(3)
+    .max(30)
+    .regex(/^[a-z0-9._-]+$/)
+    .optional(),
 });
 
 profilesRouter.put("/me", authMiddleware, (req: any, res: any) => {
@@ -89,6 +101,7 @@ profilesRouter.put("/me", authMiddleware, (req: any, res: any) => {
     patrulla,
     equipo_pioneros,
     comunidad_rovers,
+    username,
   } = parse.data;
   const existing = db
     .prepare("SELECT user_id FROM profiles WHERE user_id = ?")
@@ -111,6 +124,38 @@ profilesRouter.put("/me", authMiddleware, (req: any, res: any) => {
       comunidad_rovers ?? null,
     );
   } else {
+    // Si se envía username, validar cooldown (7 días) y unicidad
+    if (username !== undefined) {
+      const nowIso = new Date().toISOString();
+      const current = db
+        .prepare(
+          "SELECT u.username, p.username_updated_at FROM users u LEFT JOIN profiles p ON p.user_id = u.id WHERE u.id = ?",
+        )
+        .get(userId) as any;
+      const last = current?.username_updated_at
+        ? new Date(current.username_updated_at)
+        : null;
+      const canChange = !last || Date.now() - last.getTime() >= 7 * 24 * 60 * 60 * 1000;
+      if (!canChange && username !== current?.username) {
+        return res
+          .status(400)
+          .json({ error: "El nombre de usuario solo puede cambiarse cada 7 días" });
+      }
+      // Unicidad
+      const taken = db
+        .prepare("SELECT 1 FROM users WHERE username = ? AND id <> ?")
+        .get(username, userId);
+      if (taken) {
+        return res.status(409).json({ error: "Nombre de usuario no disponible" });
+      }
+      // Actualizar username y timestamp
+      db.prepare("UPDATE users SET username = ? WHERE id = ?").run(username, userId);
+      db.prepare("UPDATE profiles SET username_updated_at = ? WHERE user_id = ?").run(
+        nowIso,
+        userId,
+      );
+    }
+
     // Construir UPDATE dinámico para distinguir "campo ausente" vs "campo presente con null"
     const sets: string[] = [];
     const values: any[] = [];

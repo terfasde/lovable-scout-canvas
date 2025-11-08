@@ -55,7 +55,10 @@ const navSections: NavSection[] = [
   {
     label: "Principal",
     links: [
-      { name: "Inicio", path: "/", icon: Home },
+  { name: "Inicio", path: "/", icon: Home },
+  // Visibles en el nav principal (ya no en dropdown de usuario)
+  { name: "Comuni 7", path: "/usuarios", icon: Users },
+      { name: "Mensajes", path: "/mensajes", icon: MessageSquare },
       { name: "Galería", path: "/galeria", icon: BookOpen },
       { name: "Contacto", path: "/contacto", icon: Mail },
     ],
@@ -134,20 +137,41 @@ const Navigation = () => {
 
   const handleSignOut = async () => {
     try {
+      console.log("🔓 Cerrando sesión...");
+      
+      // Limpiar TODOS los sistemas de autenticación
       if (isLocalBackend()) {
-        await apiFetch("/auth/logout", { method: "POST" });
+        console.log("🔓 Modo local: limpiando token del backend");
+        localStorage.removeItem("local_api_token");
       } else {
+        console.log("🔓 Modo Supabase: signOut");
         await supabase.auth.signOut();
       }
+      
+      // IMPORTANTE: Limpiar también la sesión mock de Supabase (usado en modo local)
+      console.log("🔓 Limpiando sesión mock de Supabase");
+      localStorage.removeItem("scout-session");
+      
+      // Limpiar cualquier otro dato de sesión
+      console.log("🔓 Limpiando sessionStorage");
+      sessionStorage.clear();
+      
+      // Actualizar estado local
+      console.log("🔓 Actualizando estado...");
+      setIsLoggedIn(false);
+      setUserName(null);
+      setAvatarUrl(null);
+      
       toast({
         title: "Sesión cerrada",
         description: "Has cerrado sesión exitosamente",
       });
-      navigate("/");
-      setIsLoggedIn(false);
-      setUserName(null);
-      setAvatarUrl(null);
+      
+      console.log("🔓 Redirigiendo a /auth...");
+      // Forzar navegación completa sin SPA
+      window.location.href = "/auth";
     } catch (error) {
+      console.error("❌ Error al cerrar sesión:", error);
       toast({
         title: "Error",
         description: "No se pudo cerrar sesión",
@@ -313,15 +337,9 @@ const Navigation = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/usuarios" className="cursor-pointer">
-                        <Users className="h-4 w-4 mr-2" />
-                        Comunidad
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/mensajes" className="cursor-pointer">
-                        <MessageSquare className="h-4 w-4 mr-2" />
-                        Mensajes
+                      <Link to="/perfil/editar" className="cursor-pointer">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Configuración
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -472,22 +490,7 @@ function MobileMenu({
               <Share2 className="h-5 w-5" />
               <span className="text-sm font-medium">Compartir Perfil</span>
             </Link>
-            <Link
-              to="/usuarios"
-              onClick={onLinkClick}
-              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-accent transition-colors"
-            >
-              <Users className="h-5 w-5" />
-              <span className="text-sm font-medium">Comunidad</span>
-            </Link>
-            <Link
-              to="/mensajes"
-              onClick={onLinkClick}
-              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-accent transition-colors"
-            >
-              <MessageSquare className="h-5 w-5" />
-              <span className="text-sm font-medium">Mensajes</span>
-            </Link>
+            {/* Comunidad y Mensajes ya están en la sección Principal del menú */}
             <button
               onClick={() => {
                 handleSignOut();

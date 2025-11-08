@@ -27,7 +27,7 @@ chmod +x scripts/start.sh
 
 | Comando | Descripción                                           |
 | ------- | ----------------------------------------------------- |
-| `full`  | Inicia arquitectura completa (PostgreSQL + Monitoreo) |
+| `full`  | Inicia arquitectura completa (PostgreSQL + Storage + Monitoreo) |
 | `dev`   | Inicia modo desarrollo simple (SQLite)                |
 | `stop`  | Detiene todos los servicios Docker                    |
 
@@ -60,7 +60,7 @@ Uso rápido (PowerShell en Windows):
 
 ```powershell
 # Staging
-.\scriptsuild.ps1 staging
+.\scripts\build.ps1 staging
 .\scripts\deploy.ps1 staging -Zip
 
 # Producción

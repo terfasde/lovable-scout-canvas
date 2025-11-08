@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { getAuthUser } from "@/lib/backend";
+import { getAuthUser, isLocalBackend, apiFetch } from "@/lib/backend";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/UserAvatar";
 import { getProfile, deleteMyAccount } from "@/lib/api";
@@ -98,7 +98,16 @@ const PerfilView = () => {
         }
         setUserId(auth.id);
         setUserEmail(auth.email || "");
-        const p = await getProfile(auth.id).catch(() => null);
+        let p = await getProfile(auth.id).catch(() => null);
+        // Garantizar que exista perfil en modo local (auto-crear en /profiles/me)
+        if (!p && isLocalBackend()) {
+          try {
+            const ensured = (await apiFetch("/profiles/me")) as any;
+            p = ensured || null;
+          } catch {
+            p = null;
+          }
+        }
         // Load pending follow requests for me
         const { data: pend } = await getPendingRequestsForMe();
         setPending(
@@ -217,18 +226,9 @@ const PerfilView = () => {
   }
 
   if (!profile) {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Navigation global en App.tsx */}
-        <div className="h-20"></div>
-        <div className="flex flex-col items-center justify-center py-20">
-          <p className="text-muted-foreground mb-4">No se encontró perfil.</p>
-          <Button onClick={() => navigate("/perfil/editar")}>
-            Crear perfil
-          </Button>
-        </div>
-      </div>
-    );
+    // Si por alguna razón no hay perfil, redirigir a edición para completarlo
+    navigate("/perfil/editar");
+    return null;
   }
 
   return (
@@ -473,9 +473,11 @@ const PerfilView = () => {
                   Fecha de nacimiento
                 </h3>
                 <p className="text-sm sm:text-base">
-                  {new Date(profile.fecha_nacimiento).toLocaleDateString(
-                    "es-UY",
-                  )}
+                  {(() => {
+                    const s = String(profile.fecha_nacimiento);
+                    const [y, m, d] = s.split("-");
+                    return `${d}/${m}/${y}`;
+                  })()}
                 </p>
               </div>
             )}

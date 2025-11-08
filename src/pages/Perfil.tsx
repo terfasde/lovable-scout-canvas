@@ -69,7 +69,11 @@ const Perfil = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Calcular edad automáticamente si hay fecha de nacimiento
+  // Fecha máxima para el datepicker (hoy) evitando desfases UTC
+  const today = new Date();
+  const maxDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  // Calcular edad automáticamente DESDE fecha de nacimiento (edad no editable)
   useEffect(() => {
     if (formData.fecha_nacimiento) {
       const hoy = new Date();
@@ -399,10 +403,10 @@ const Perfil = () => {
       return;
     }
 
-    if (formData.edad < 7 || formData.edad > 120) {
+    if (!formData.fecha_nacimiento) {
       toast({
-        title: "Edad inválida",
-        description: "La edad debe estar entre 7 y 120 años",
+        title: "Campo requerido",
+        description: "Debes ingresar tu fecha de nacimiento",
         variant: "destructive",
       });
       return;
@@ -490,7 +494,29 @@ const Perfil = () => {
       }
 
       if (isLocalBackend()) {
-        await updateLocalProfile(profileData);
+        const updated = (await updateLocalProfile(profileData as any)) as any;
+        if (updated) {
+          // Aplicar respuesta del backend directamente para evitar parpadeos
+          const refreshed = {
+            ...formData,
+            nombre_completo: updated?.nombre_completo || formData.nombre_completo,
+            telefono: updated?.telefono ?? formData.telefono,
+            fecha_nacimiento: updated?.fecha_nacimiento
+              ? String(updated.fecha_nacimiento).split("T")[0]
+              : formData.fecha_nacimiento,
+            rol_adulto: updated?.rol_adulto ?? formData.rol_adulto,
+            seisena: updated?.seisena ?? formData.seisena,
+            patrulla: updated?.patrulla ?? formData.patrulla,
+            equipo_pioneros: updated?.equipo_pioneros ?? formData.equipo_pioneros,
+            comunidad_rovers: updated?.comunidad_rovers ?? formData.comunidad_rovers,
+            avatar_url: updated?.avatar_url ?? avatarUrl,
+            username: updated?.username ?? formData.username,
+            username_updated_at:
+              updated?.username_updated_at ?? formData.username_updated_at,
+          };
+          setFormData(refreshed);
+          setOriginalData(refreshed);
+        }
       } else {
         const { error: profileError } = await supabase
           .from("profiles")
@@ -504,8 +530,8 @@ const Perfil = () => {
         description: "Tus cambios han sido guardados.",
       });
 
-      // Recargar perfil desde servidor para reflejar cambios (sin mostrar loading)
-      await getProfile(false);
+  // Recargar perfil desde servidor para reflejar cambios (sin mostrar loading)
+  if (!isLocalBackend()) await getProfile(false);
 
       // Limpiar estados temporales
       setAvatarFile(null);
@@ -738,9 +764,7 @@ const Perfil = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="fecha_nacimiento">
-                  Fecha de nacimiento (opcional)
-                </Label>
+                <Label htmlFor="fecha_nacimiento">Fecha de nacimiento *</Label>
                 <Input
                   id="fecha_nacimiento"
                   name="fecha_nacimiento"
@@ -748,6 +772,8 @@ const Perfil = () => {
                   value={formData.fecha_nacimiento}
                   onChange={handleChange}
                   className="bg-background"
+                  required
+                  max={maxDate}
                 />
               </div>
 
@@ -757,13 +783,9 @@ const Perfil = () => {
                   id="edad"
                   name="edad"
                   type="number"
-                  min="7"
-                  max="99"
                   value={formData.edad || ""}
-                  onChange={handleChange}
-                  disabled={!!formData.fecha_nacimiento}
-                  required
-                  className="bg-background"
+                  disabled
+                  className="bg-muted"
                 />
               </div>
 

@@ -9,12 +9,14 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 function calculateAge(fechaNacimiento: string | null): number | null {
   if (!fechaNacimiento) return null;
   try {
-    const birth = new Date(fechaNacimiento);
-    if (isNaN(birth.getTime())) return null;
+    // Evitar desfases de zona horaria: parsear como YYYY-MM-DD a componentes locales
+    const [y, m, d] = String(fechaNacimiento).split("-").map((x) => parseInt(x, 10));
+    if (!y || !m || !d) return null;
+    const birth = new Date(y, m - 1, d);
     const now = new Date();
     let years = now.getFullYear() - birth.getFullYear();
-    const m = now.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) years--;
+    const mm = now.getMonth() - birth.getMonth();
+    if (mm < 0 || (mm === 0 && now.getDate() < birth.getDate())) years--;
     return years;
   } catch {
     return null;
@@ -26,7 +28,7 @@ export async function getProfile(userId: string) {
   if (isLocalBackend()) {
     // En backend local, si el userId coincide con el autenticado, obtener /profiles/me
     // Si no, intentar obtener desde localDB directamente (para perfiles públicos)
-    const auth = (await apiFetch("/auth/me").catch(() => null)) as any;
+    const auth = (await apiFetch("/profiles/me").catch(() => null)) as any;
     if (auth && auth.id === userId) {
       const me = (await apiFetch("/profiles/me")) as any;
       // Calcular edad desde fecha_nacimiento
@@ -80,11 +82,13 @@ export async function updateProfile(
       body.equipo_pioneros = (profile as any).equipo_pioneros;
     if ((profile as any).comunidad_rovers !== undefined)
       body.comunidad_rovers = (profile as any).comunidad_rovers;
-    await apiFetch("/profiles/me", {
+    if ((profile as any).username !== undefined)
+      body.username = (profile as any).username;
+    const updated = (await apiFetch("/profiles/me", {
       method: "PUT",
       body: JSON.stringify(body),
-    });
-    return;
+    })) as any;
+    return updated as Profile;
   }
   // Evitar duplicados por unique(user_id): usar update basado en filtro
   const { error } = await supabase
@@ -93,6 +97,13 @@ export async function updateProfile(
     .eq("user_id", profile.user_id);
 
   if (error) throw error;
+  // En modo Supabase, devolver el perfil actualizado
+  const { data } = await supabase
+    .from("profiles")
+    .select()
+    .eq("user_id", profile.user_id)
+    .single();
+  return data as Profile;
 }
 
 // Obtener eventos

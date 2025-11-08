@@ -17,6 +17,16 @@ db.exec(`
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     username TEXT UNIQUE,
+    email_verified_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS verification_tokens (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TEXT NOT NULL,
+    used_at TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
@@ -160,6 +170,40 @@ function ensureProfileColumns() {
       missing.push({
         sql: `ALTER TABLE profiles ADD COLUMN comunidad_rovers TEXT`,
       });
+    if (!names.has("is_public"))
+      missing.push({
+        sql: `ALTER TABLE profiles ADD COLUMN is_public INTEGER DEFAULT 0`,
+      });
+    if (!names.has("avatar_url"))
+      missing.push({
+        sql: `ALTER TABLE profiles ADD COLUMN avatar_url TEXT`,
+      });
+    if (!names.has("username_updated_at"))
+      missing.push({
+        sql: `ALTER TABLE profiles ADD COLUMN username_updated_at TEXT`,
+      });
+    if (missing.length) {
+      const tx = db.transaction((stmts: Array<{ sql: string }>) => {
+        for (const s of stmts) db.exec(s.sql);
+      });
+      tx(missing);
+    }
+  } catch (e) {
+    // ignore; best-effort migration
+  }
+}
+
+function ensureUserColumns() {
+  try {
+    const cols = db.prepare(`PRAGMA table_info(users)`).all() as Array<{
+      name: string;
+    }>;
+    const names = new Set(cols.map((c) => c.name));
+    const missing: Array<{ sql: string }> = [];
+    if (!names.has("email_verified_at"))
+      missing.push({
+        sql: `ALTER TABLE users ADD COLUMN email_verified_at TEXT`,
+      });
     if (missing.length) {
       const tx = db.transaction((stmts: Array<{ sql: string }>) => {
         for (const s of stmts) db.exec(s.sql);
@@ -172,3 +216,4 @@ function ensureProfileColumns() {
 }
 
 ensureProfileColumns();
+ensureUserColumns();
