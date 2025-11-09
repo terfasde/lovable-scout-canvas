@@ -21,16 +21,16 @@ All colors MUST be HSL.
     --primary: 0 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 60 100% 50%;
+    --secondary: 45 85% 55%;
     --secondary-foreground: 0 0% 10%;
 
   --muted: 0 0% 88%;
     --muted-foreground: 0 0% 40%;
 
-    --accent: 60 100% 50%;
+    --accent: 45 85% 55%;
     --accent-foreground: 0 0% 10%;
-  /* Hover accent (less bright yellow for hover states) */
-  --accent-hover: 60 95% 45%;
+  /* Hover accent (tono amarillo más discreto para hover) */
+  --accent-hover: 45 80% 50%;
   
   /* Nav hover - subtle and discrete */
   --nav-hover: 0 0% 92%;
@@ -47,12 +47,12 @@ All colors MUST be HSL.
     
     /* Scout brand colors */
     --scout-red: 0 100% 50%;
-    --scout-yellow: 60 100% 50%;
+    --scout-yellow: 45 85% 55%;
     --scout-black: 0 0% 10%;
     
     /* Gradients */
     --gradient-hero: linear-gradient(135deg, hsl(0 100% 50%) 0%, hsl(20 100% 50%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(60 100% 50%) 0%, hsl(45 100% 55%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(45 85% 55%) 0%, hsl(40 85% 60%) 100%);
     --gradient-dark: linear-gradient(135deg, hsl(0 0% 10%) 0%, hsl(0 0% 20%) 100%);
     
     /* Shadows */
@@ -96,16 +96,16 @@ All colors MUST be HSL.
     --primary: 0 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 60 100% 50%;
+    --secondary: 45 85% 55%;
     --secondary-foreground: 0 0% 10%;
 
     --muted: 0 0% 14%;
     --muted-foreground: 0 0% 68%;
 
-    --accent: 60 100% 50%;
+    --accent: 45 85% 55%;
     --accent-foreground: 0 0% 10%;
-  /* Hover accent (less bright yellow for hover states) */
-  --accent-hover: 60 95% 45%;
+  /* Hover accent (tono amarillo más discreto para hover) */
+  --accent-hover: 45 80% 50%;
   
   /* Nav hover - subtle and discrete */
   --nav-hover: 0 0% 16%;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { getAuthUser, isLocalBackend, apiFetch } from "@/lib/backend";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,9 @@ const PerfilView = () => {
     }[]
   >([]);
   const [userId, setUserId] = useState<string>("");
+  const [isOwnProfile, setIsOwnProfile] = useState(true);
+  const [searchParams] = useSearchParams();
+  const targetUserId = searchParams.get("userId");
   const [followersCount, setFollowersCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [followersOpen, setFollowersOpen] = useState(false);
@@ -98,9 +101,15 @@ const PerfilView = () => {
         }
         setUserId(auth.id);
         setUserEmail(auth.email || "");
-        let p = await getProfile(auth.id).catch(() => null);
+        
+        // Determinar si estamos viendo nuestro perfil o el de otro usuario
+        const viewingUserId = targetUserId || auth.id;
+        const isOwn = viewingUserId === auth.id;
+        setIsOwnProfile(isOwn);
+        
+        let p = await getProfile(viewingUserId).catch(() => null);
         // Garantizar que exista perfil en modo local (auto-crear en /profiles/me)
-        if (!p && isLocalBackend()) {
+        if (!p && isLocalBackend() && isOwn) {
           try {
             const ensured = (await apiFetch("/profiles/me")) as any;
             p = ensured || null;
@@ -108,28 +117,32 @@ const PerfilView = () => {
             p = null;
           }
         }
-        // Load pending follow requests for me
-        const { data: pend } = await getPendingRequestsForMe();
-        setPending(
-          pend
-            ? pend.map((x: any) => ({
-                follower_id: String(x.follower_id),
-                created_at: String(x.created_at),
-                follower: x.follower
-                  ? {
-                      id: String(x.follower.user_id || x.follower.id),
-                      nombre_completo: x.follower.nombre_completo ?? null,
-                      avatar_url: x.follower.avatar_url ?? null,
-                      username: x.follower.username ?? null,
-                    }
-                  : undefined,
-              }))
-            : [],
-        );
-        // Load counts
+        
+        // Solo cargar solicitudes pendientes si es mi propio perfil
+        if (isOwn) {
+          const { data: pend } = await getPendingRequestsForMe();
+          setPending(
+            pend
+              ? pend.map((x: any) => ({
+                  follower_id: String(x.follower_id),
+                  created_at: String(x.created_at),
+                  follower: x.follower
+                    ? {
+                        id: String(x.follower.user_id || x.follower.id),
+                        nombre_completo: x.follower.nombre_completo ?? null,
+                        avatar_url: x.follower.avatar_url ?? null,
+                        username: x.follower.username ?? null,
+                      }
+                    : undefined,
+                }))
+              : [],
+          );
+        }
+        
+        // Load counts para el usuario que estamos viendo
         const [{ count: fCount }, { count: gCount }] = await Promise.all([
-          getFollowersCount(auth.id),
-          getFollowingCount(auth.id),
+          getFollowersCount(viewingUserId),
+          getFollowingCount(viewingUserId),
         ]);
         setFollowersCount(fCount || 0);
         setFollowingCount(gCount || 0);
@@ -144,7 +157,7 @@ const PerfilView = () => {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [targetUserId]);
 
   // Lazy load lists when dialogs open
   useEffect(() => {
@@ -262,79 +275,88 @@ const PerfilView = () => {
                 )}
               </div>
               <div className="flex gap-2 w-full sm:w-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate("/perfil/editar")}
-                  className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
-                >
-                  <Settings className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden xs:inline">Editar perfil</span>
-                  <span className="xs:hidden">Editar</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate("/perfil/compartir")}
-                  className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
-                >
-                  <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden xs:inline">Compartir</span>
-                  <span className="xs:hidden">Compartir</span>
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
+                {isOwnProfile && (
+                  <>
                     <Button
-                      variant="destructive"
+                      variant="outline"
                       size="sm"
+                      onClick={() => navigate("/perfil/editar")}
                       className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
-                      disabled={deleting}
                     >
-                      Eliminar cuenta
+                      <Settings className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden xs:inline">Editar perfil</span>
+                      <span className="xs:hidden">Editar</span>
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>¿Eliminar tu cuenta?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Esta acción eliminará tu usuario y todos los datos
-                        asociados (perfil, follows, grupos, DMs, hilos) en el
-                        backend local. No podrás deshacerlo.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={async () => {
-                          try {
-                            setDeleting(true);
-                            await deleteMyAccount();
-                            // Cerrar sesión local y de Supabase por si estaba activa
-                            try {
-                              localStorage.removeItem("local_api_token");
-                            } catch {
-                              /* noop */
-                            }
-                            try {
-                              await supabase.auth.signOut();
-                            } catch {
-                              /* noop */
-                            }
-                            toast({ title: "Cuenta eliminada" });
-                            navigate("/auth");
-                          } catch (err: any) {
-                            toast({
-                              title: "Error",
-                              description:
-                                err?.message || "No se pudo eliminar la cuenta",
-                              variant: "destructive",
-                            });
-                          } finally {
-                            setDeleting(false);
-                          }
-                        }}
-                      >
-                        Sí, eliminar
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate("/perfil/compartir")}
+                      className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
+                    >
+                      <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden xs:inline">Compartir</span>
+                      <span className="xs:hidden">Compartir</span>
+                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
+                          disabled={deleting}
+                        >
+                          Eliminar cuenta
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>¿Eliminar tu cuenta?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Esta acción eliminará tu usuario y todos los datos
+                            asociados (perfil, follows, grupos, DMs, hilos) en el
+                            backend local. No podrás deshacerlo.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={async () => {
+                              try {
+                                setDeleting(true);
+                                await deleteMyAccount();
+                                // Cerrar sesión local y de Supabase por si estaba activa
+                                try {
+                                  localStorage.removeItem("local_api_token");
+                                } catch {
+                                  /* noop */
+                                }
+                                try {
+                                  await supabase.auth.signOut();
+                                } catch {
+                                  /* noop */
+                                }
+                                toast({ title: "Cuenta eliminada" });
+                                navigate("/auth");
+                              } catch (err: any) {
+                                toast({
+                                  title: "Error",
+                                  description:
+                                    err?.message || "No se pudo eliminar la cuenta",
+                                  variant: "destructive",
+                                });
+                              } finally {
+                                setDeleting(false);
+                              }
+                            }}
+                          >
+                            Sí, eliminar
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </>
+                )}
+              </div>
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
