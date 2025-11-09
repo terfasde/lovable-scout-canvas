@@ -214,7 +214,7 @@ const Historia = () => {
                       <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     </div>
                     <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
-                      Acontecimientos Clave
+                      Acontecimientos Importantes
                     </h2>
                   </div>
                   <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground">
@@ -229,9 +229,9 @@ const Historia = () => {
                     </li>
                     <li className="flex gap-2 sm:gap-3">
                       <span className="text-primary font-bold flex-shrink-0">
-                        2019
+                        2014
                       </span>
-                      <span>Ganadores de la competencia BAUEN.</span>
+                      <span>Aniversario y celebración de los 50 años del Grupo Séptimo.</span>
                     </li>
                     <li className="flex gap-2 sm:gap-3">
                       <span className="text-primary font-bold flex-shrink-0">
