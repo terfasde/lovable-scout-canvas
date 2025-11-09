@@ -73,13 +73,17 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Obtener sesión actual
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) ensureProfileExists(u).catch(() => {});
     });
 
     // Escuchar cambios en la sesión
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setUser(session?.user ?? null);
+        const u = session?.user ?? null;
+        setUser(u);
+        if (u) ensureProfileExists(u).catch(() => {});
       },
     );
 
@@ -94,6 +98,36 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
     </SupabaseUserContext.Provider>
   );
 };
+
+// Garantiza que exista una fila en profiles para el usuario autenticado
+async function ensureProfileExists(user: { id: string; email?: string | null; user_metadata?: any }) {
+  try {
+    // ¿Ya existe?
+    const { data: existing, error } = await supabase
+      .from("profiles")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (error) return;
+    if (existing) return; // ya existe
+
+    // Crear perfil mínimo
+    const nombreFallback =
+      (user.user_metadata?.nombre as string | undefined) ||
+      (user.email as string | undefined) ||
+      "Scout";
+    const telefonoFallback = (user.user_metadata?.telefono as string | undefined) || "";
+
+    await supabase.from("profiles").insert({
+      user_id: user.id,
+      nombre_completo: nombreFallback,
+      telefono: telefonoFallback,
+      is_public: false,
+    });
+  } catch {
+    // No bloquear flujo si falla
+  }
+}
 
 const App = () => (
   <ErrorBoundary>
