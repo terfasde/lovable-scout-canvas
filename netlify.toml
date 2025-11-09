@@ -8,7 +8,7 @@
   from = "/*"
   to = "/index.html"
   status = 200
-  force = true
+  # Importante: no forzar, así Netlify no reescribe archivos existentes (assets JS/CSS)
 
 # Security & basic headers
 [[headers]]
