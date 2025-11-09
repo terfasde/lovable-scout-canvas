@@ -1,7 +1,9 @@
 // Navigation y Footer son globales en App.tsx
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Users, Flame } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { Link } from "react-router-dom";
 
 const Historia = () => {
   const locales = [
@@ -264,10 +266,16 @@ const Historia = () => {
                     fuego: cantos, historias y reflexión. "Am Lagerfeuer" resume
                     la esencia del compañerismo scout.
                   </p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
                     Eventos periódicos en el campo de campamento donde
                     compartimos experiencias y fortalecemos lazos.
                   </p>
+                  <Link to="/am-lagerfeuer">
+                    <Button className="w-full sm:w-auto gap-2">
+                      <Flame className="w-4 h-4" />
+                      Ver Repositorio Am Lagerfeuer
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </Reveal>
