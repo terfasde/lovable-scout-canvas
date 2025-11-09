@@ -56,6 +56,7 @@ const PerfilView = () => {
     }[]
   >([]);
   const [userId, setUserId] = useState<string>("");
+  const [viewingUserId, setViewingUserId] = useState<string>("");
   const [isOwnProfile, setIsOwnProfile] = useState(true);
   const [searchParams] = useSearchParams();
   const targetUserId = searchParams.get("userId");
@@ -103,11 +104,12 @@ const PerfilView = () => {
         setUserEmail(auth.email || "");
         
         // Determinar si estamos viendo nuestro perfil o el de otro usuario
-        const viewingUserId = targetUserId || auth.id;
-        const isOwn = viewingUserId === auth.id;
+        const viewingId = targetUserId || auth.id;
+        setViewingUserId(viewingId);
+        const isOwn = viewingId === auth.id;
         setIsOwnProfile(isOwn);
         
-        let p = await getProfile(viewingUserId).catch(() => null);
+        let p = await getProfile(viewingId).catch(() => null);
         // Garantizar que exista perfil en modo local (auto-crear en /profiles/me)
         if (!p && isLocalBackend() && isOwn) {
           try {
@@ -141,8 +143,8 @@ const PerfilView = () => {
         
         // Load counts para el usuario que estamos viendo
         const [{ count: fCount }, { count: gCount }] = await Promise.all([
-          getFollowersCount(viewingUserId),
-          getFollowingCount(viewingUserId),
+          getFollowersCount(viewingId),
+          getFollowingCount(viewingId),
         ]);
         setFollowersCount(fCount || 0);
         setFollowingCount(gCount || 0);
@@ -163,8 +165,8 @@ const PerfilView = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (followersOpen && userId) {
-          const { data, error } = await getFollowersWithProfiles(userId, 0, 49);
+        if (followersOpen && viewingUserId) {
+          const { data, error } = await getFollowersWithProfiles(viewingUserId, 0, 49);
           if (!error) {
             setFollowersList(
               (data || []).map((x: any) => ({
@@ -186,13 +188,13 @@ const PerfilView = () => {
         // ignore
       }
     })();
-  }, [followersOpen, userId]);
+  }, [followersOpen, viewingUserId]);
 
   useEffect(() => {
     (async () => {
       try {
-        if (followingOpen && userId) {
-          const { data, error } = await getFollowingWithProfiles(userId, 0, 49);
+        if (followingOpen && viewingUserId) {
+          const { data, error } = await getFollowingWithProfiles(viewingUserId, 0, 49);
           if (!error) {
             setFollowingList(
               (data || []).map((x: any) => ({
@@ -214,7 +216,7 @@ const PerfilView = () => {
         // ignore
       }
     })();
-  }, [followingOpen, userId]);
+  }, [followingOpen, viewingUserId]);
 
   const getRamaActual = (edad: number | null) => {
     if (!edad) return "No especificada";
@@ -356,11 +358,6 @@ const PerfilView = () => {
                     </AlertDialog>
                   </>
                 )}
-              </div>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
               </div>
             </div>
 
