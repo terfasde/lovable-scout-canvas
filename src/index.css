@@ -102,10 +102,10 @@ All colors MUST be HSL.
     --muted: 0 0% 14%;
     --muted-foreground: 0 0% 68%;
 
-    --accent: 45 85% 55%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 45 95% 65%;
+    --accent-foreground: 0 0% 95%;
   /* Hover accent (tono amarillo más discreto para hover) */
-  --accent-hover: 45 80% 50%;
+  --accent-hover: 45 90% 60%;
   
   /* Nav hover - subtle and discrete */
   --nav-hover: 0 0% 16%;

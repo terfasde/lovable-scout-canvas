@@ -372,11 +372,11 @@ const PerfilView = () => {
                 </span>
               </div>
               <div className="text-center sm:text-left">
-                <span className="font-semibold text-sm sm:text-base">
-                  {getRamaActual(profile.edad)}
-                </span>
-                <span className="text-muted-foreground ml-1 text-xs sm:text-sm">
+                <span className="font-semibold text-xs sm:text-sm mr-1">
                   Rama
+                </span>
+                <span className="text-muted-foreground text-sm sm:text-base">
+                  {getRamaActual(profile.edad)}
                 </span>
               </div>
               <button

@@ -7,7 +7,7 @@ const Bauen = () => {
   const pruebas = [
     {
       icon: Target,
-      nombre: "Pruebas de Habilidad",
+      nombre: "Desarrollo de Habilidades",
       descripcion:
         "Desafíos que ponen a prueba las destrezas scouts individuales y grupales.",
     },
@@ -21,7 +21,7 @@ const Bauen = () => {
       icon: Users,
       nombre: "Trabajo en Equipo",
       descripcion:
-        "Actividades que requieren coordinación y cooperación entre patrullas poniendo a prueba distintas habilidades.",
+        "Actividades que requieren coordinación y cooperación entre equipos scouts, poniendo a prueba distintas habilidades.",
     },
     {
       icon: Award,
@@ -40,16 +40,16 @@ const Bauen = () => {
             <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
               <Flag className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
-                Competencia Nacional
+                Competencia entre Grupos Scouts
               </span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6">
               BAUEN
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
-              La competencia scout más prestigiosa de Uruguay, creada por
+              La competencia scout, creada por
               nuestro grupo en 2004. Un desafío que reúne distintos grupos
-              scouts cada año.
+              scouts cada año. El termino Competencia suele ser una excusa para reunir diferentes grupos scouts y crear lazos de amistad entre ellos.
             </p>
             <Button
               size="lg"
@@ -76,13 +76,12 @@ const Bauen = () => {
                     En 2004, el Grupo Scout Séptimo de Montevideo decidió crear
                     algo único: una competencia que pondría a prueba todas las
                     habilidades scouts en un evento de 2 días lleno de desafíos,
-                    camaradería y espíritu scout.
+                    pionerismo y espíritu scout.
                   </p>
                   <p>
-                    Desde entonces, BAUEN se ha convertido en el evento más
-                    esperado del calendario scout uruguayo. Cada año, grupos de
-                    todo el país se preparan intensamente para competir por el
-                    trofeo de la competencia.
+                    Desde entonces, el BAUEN se ha convertido en el evento más
+                    esperado del calendario scout. Cada año, grupos de
+                    Montevideo/Canelones se preparan intensamente, para tener un buen BAUEN.
                   </p>
                   <p>
                     El nombre BAUEN significa "construir" en alemán, reflejando
@@ -102,11 +101,11 @@ const Bauen = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-              Las Pruebas
+              Desarrollo de Habilidades
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               BAUEN desafía a los scouts en múltiples disciplinas, poniendo a
-              prueba su preparación integral.
+              prueba su preparación.
             </p>
           </div>
 
@@ -145,8 +144,7 @@ const Bauen = () => {
                 Nuestras Ramas
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Conoce brevemente qué hace cada rama dentro de nuestro grupo
-                scout.
+                Conoce brevemente qué hace cada rama dentro del BAUEN.
               </p>
             </div>
 
@@ -160,9 +158,7 @@ const Bauen = () => {
                     Manada
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Para los más pequeños: juegos, actividades de descubrimiento
-                    y aprendizaje en un entorno seguro y lúdico que fomenta
-                    valores y trabajo en equipo.
+                    Los lobatos en el BAUEN hacen cubiles: pequeños refugios hechos de cañas, paja, hojas, entre otros recursos naturales. Desarrollan el trabajo en equipo y la habilidad de hacer amarres y nudos desde chiquitos para tener una buena base para su futuro en el pionerismo scout.
                   </p>
                 </CardContent>
               </Card>
@@ -176,9 +172,7 @@ const Bauen = () => {
                     Tropa
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Centrada en el desarrollo de habilidades prácticas y
-                    sociales: actividades al aire libre, campamentos y desafíos
-                    que fortalecen la autonomía y la cooperación.
+                    Tropa está conformada por patrullas, las cuales tienen que presentar a los jueces un menú especial con una ambientación. Además de la comida ellos diseñan el estilo de su "box", armando mesas, portadas, bancos, entre otros. Desarrolla la creatividad, trabajo en equipo, la sinergia de la patrulla, entre otras áreas.
                   </p>
                 </CardContent>
               </Card>
@@ -192,9 +186,7 @@ const Bauen = () => {
                     Pioneros
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Rama orientada a proyectos y liderazgo: planificación de
-                    actividades, proyectos de servicio y formación para asumir
-                    mayores responsabilidades.
+                    En pioneros ya son más grandes por lo tanto les toca hacer construcciones más grandes. La rama Pioneros está ambientada en la edad medieval por lo tanto, los pioneros en el BAUEN tendrán que construir "trebuchets". Estos se puntúan por mayor distancia, mejor puntería, mejores amarres entre otros. Construir estos desarrolla creatividad de diseño porque antes del BAUEN es necesario pensar en cada ínfimo detalle del armado.
                   </p>
                 </CardContent>
               </Card>
@@ -208,9 +200,7 @@ const Bauen = () => {
                     Rovers
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Jóvenes adultos comprometidos con el servicio comunitario,
-                    el desarrollo personal y el apoyo a las ramas más jóvenes
-                    mediante proyectos y mentoría.
+                    Los rovers ya son bastante grandes por lo cual hacen construcciones a su medida. Normalmente hacían torres, pero ahora se cambia la temática cada año, hubo barcos, campamentos elevados y juegos mecánicos. Si quieres saber cuál es la temática del próximo año, no dudes en venir al BAUEN 2026!! El armado de torres y otros en rovers desarrolla muchas áreas como es el trabajo en equipo, la buena comunicación entre rovers y el alto agotamiento físico que esto implica.
                   </p>
                 </CardContent>
               </Card>

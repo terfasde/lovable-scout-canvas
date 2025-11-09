@@ -65,7 +65,7 @@ const Usuarios = () => {
   const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [ramaFilter, setRamaFilter] = useState<string>("all");
-  const [visibilityFilter, setVisibilityFilter] = useState<string>("public");
+  const [visibilityFilter, setVisibilityFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string>("");

@@ -43,7 +43,7 @@ const Events = () => {
               title: "BAUEN - Competencia Nacional",
               date: "Próximamente Anunciado",
               location: "Parque Barofio, Montevideo",
-              participants: "+200 scouts",
+              participants: "+300 scouts",
               type: "Competencia, Construcción, Hermandad",
               status: "Próximamente",
               color: "primary",
@@ -141,24 +141,21 @@ const Events = () => {
                   <div className="flex items-center">
                     <Flag className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary mr-3 sm:mr-4 transition-transform duration-300 group-hover:-translate-y-0.5 flex-shrink-0" />
                     <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">
-                      BAUEN — Competencia Nacional
+                      BAUEN — Evento Scout Nacional
                     </h3>
                   </div>
                   <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-                    La competencia más importante del escultismo uruguayo. El
-                    Grupo Séptimo ha sido campeón en múltiples ocasiones,
-                    demostrando excelencia en habilidades scout, trabajo en
-                    equipo y liderazgo.
+                    El evento más importante del escultismo uruguayo, creado por el Grupo Séptimo en 2004. Un desafío que reúne a grupos scouts de todo el país para compartir experiencias, desarrollar habilidades y fortalecer la hermandad scout.
                   </p>
                   <div className="flex flex-wrap gap-2 sm:gap-3">
                     <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/20 text-primary rounded-full text-xs sm:text-sm md:text-base font-semibold border border-primary/30 transition-transform duration-300 hover:scale-105">
-                      5x Campeones
+                      Creado en 2004
                     </span>
                     <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-accent/20 text-accent-foreground rounded-full text-xs sm:text-sm md:text-base font-semibold border border-accent/30 transition-transform duration-300 hover:scale-105">
-                      10+ Medallas
+                      +300 Participantes
                     </span>
                     <span className="px-3 py-1.5 sm:px-4 sm:py-2 bg-muted text-muted-foreground rounded-full text-xs sm:text-sm md:text-base font-semibold border border-muted-foreground/20 transition-transform duration-300 hover:scale-105">
-                      Tradición desde 2004
+                      Tradición Nacional
                     </span>
                   </div>
                 </div>
@@ -168,7 +165,7 @@ const Events = () => {
                     variant="hero"
                     className="w-full whitespace-nowrap text-sm sm:text-base md:text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105"
                   >
-                    Ver Historial BAUEN
+                    Conoce más sobre BAUEN
                     <Flag className="ml-2 w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
                   </Button>
                 </Link>

@@ -28,6 +28,9 @@ import {
   Images,
   Trash2,
   FolderX,
+  ChevronLeft,
+  ChevronRight,
+  X,
 } from "lucide-react";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { getAuthUser } from "@/lib/backend";
@@ -69,6 +72,8 @@ const Galeria = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
   const [newAlbumName, setNewAlbumName] = useState("");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { toast } = useToast();
 
@@ -245,6 +250,31 @@ const Galeria = () => {
     }
   };
 
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const nextImage = () => {
+    setLightboxIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    setLightboxIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return;
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "Escape") setLightboxOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxOpen, images.length]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
@@ -363,7 +393,8 @@ const Galeria = () => {
               {images.map((img, idx) => (
                 <Card
                   key={idx}
-                  className="rounded-none overflow-hidden group relative"
+                  className="rounded-none overflow-hidden group relative cursor-pointer"
+                  onClick={() => openLightbox(idx)}
                 >
                   <div className="relative aspect-square">
                     <OptimizedImage
@@ -379,7 +410,10 @@ const Galeria = () => {
                         <Button
                           variant="destructive"
                           size="icon"
-                          onClick={() => handleDelete(img.path)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(img.path);
+                          }}
                           className="rounded-full w-8 h-8 sm:w-10 sm:h-10"
                         >
                           <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -463,6 +497,63 @@ const Galeria = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Lightbox Dialog */}
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-7xl w-full h-[90vh] p-0 bg-black/95 border-none">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Imagen principal */}
+            {images.length > 0 && lightboxIndex < images.length && (
+              <img
+                src={images[lightboxIndex].url}
+                alt={`Imagen ${lightboxIndex + 1}`}
+                className="max-w-full max-h-full object-contain"
+              />
+            )}
+
+            {/* Botón cerrar */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4 text-white hover:bg-white/20"
+              onClick={() => setLightboxOpen(false)}
+            >
+              <X className="w-6 h-6" />
+            </Button>
+
+            {/* Botón anterior */}
+            {images.length > 1 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20"
+                onClick={prevImage}
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </Button>
+            )}
+
+            {/* Botón siguiente */}
+            {images.length > 1 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20"
+                onClick={nextImage}
+              >
+                <ChevronRight className="w-8 h-8" />
+              </Button>
+            )}
+
+            {/* Contador */}
+            {images.length > 0 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
+                {lightboxIndex + 1} / {images.length}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Footer global en App.tsx */}
     </div>
