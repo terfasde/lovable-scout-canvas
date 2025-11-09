@@ -1,10 +1,9 @@
 # ============================================
-# Docker Compose - Solo Frontend (Sin Backend)
+# Docker Compose - Frontend con Supabase
 # ============================================
 #
-# Este archivo levanta ÚNICAMENTE el frontend web
-# El proyecto funciona con mocks locales (localStorage)
-# No requiere Supabase ni servidor backend
+# Este archivo levanta ÚNICAMENTE el frontend Vite
+# conectado a Supabase en la nube
 #
 # Uso:
 #   docker compose up -d              # Iniciar frontend
@@ -13,37 +12,36 @@
 #
 # Acceso:
 #   Frontend: http://localhost:5173
-#
-# Usuario por defecto:
-#   Email: admin@scout.com
-#   Password: cualquiera
 # ============================================
 
 services:
   # ============================================
-  # FRONTEND - Vite + React (Mock Mode)
+  # FRONTEND - Vite + React + Supabase
   # ============================================
   web:
     image: node:20-alpine
     container_name: scout-web
     restart: unless-stopped
     working_dir: /app
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm install && npm run dev -- --host"
     ports:
       - "5173:5173"
     environment:
-      # Backend DESHABILITADO - Todo funciona con mocks locales
-      - VITE_BACKEND=disabled
+      # Backend: Solo Supabase (sin servidor local)
+      - VITE_BACKEND=supabase
 
-      # Configuración de galería (solo visual)
+      # Supabase Cloud
+      - VITE_SUPABASE_URL=https://lndqeaspuwwgdwbggayd.supabase.co
+      - VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuZHFlYXNwdXd3Z2R3YmdnYXlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3NDI3NTcsImV4cCI6MjA3NzMxODc1N30.FLkW5mgkgcZCiUglXCFvXu4ZhHDgtKsbZxt6vxadrHM
+
+      # Google Maps
+      - VITE_GOOGLE_MAPS_API_KEY=AIzaSyCdG8MYDQuZmbEDypnEMlokDCY2t9B8560
+
+      # Galería admin
       - VITE_GALLERY_ADMIN_EMAILS=franciscolorenzo2406@gmail.com
 
-      # Hot reload para desarrollo
+      # Hot reload
       - CHOKIDAR_USEPOLLING=true
-
-      # Supabase DESHABILITADO
-      # - VITE_SUPABASE_URL=
-      # - VITE_SUPABASE_ANON_KEY=
     volumes:
       - ./:/app
       - /app/node_modules
