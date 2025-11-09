@@ -124,9 +124,10 @@ const Navigation = () => {
           .from("profiles")
           .select("nombre_completo, avatar_url")
           .eq("user_id", user.id)
-          .single();
+          .maybeSingle();
         if (profile) {
-          setUserName((profile as any).nombre_completo || null);
+          const emailFallback = user.email || null;
+          setUserName(((profile as any).nombre_completo || emailFallback) ?? null);
           setAvatarUrl((profile as any).avatar_url || null);
         }
       } catch (err) {

@@ -29,22 +29,20 @@ const Auth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Verificar sesión en Supabase (mock o real según configuración)
+    // Verificar usuario real en Supabase (evita falsos positivos de sesión)
     const checkSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
+        const { data, error } = await supabase.auth.getUser();
         if (error) {
-          console.error("Error al obtener sesión:", error);
+          console.error("Error al obtener usuario:", error);
           return;
         }
-        
-        if (session) {
-          console.log("Sesión activa detectada, redirigiendo a /");
+        if (data?.user) {
+          console.log("Usuario autenticado detectado, redirigiendo a /");
           navigate("/");
         }
       } catch (error) {
-        console.error("Error inesperado al verificar sesión:", error);
+        console.error("Error inesperado al verificar usuario:", error);
       }
     };
 
