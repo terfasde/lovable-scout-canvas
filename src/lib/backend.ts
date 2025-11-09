@@ -4,7 +4,9 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
 const MODE = (import.meta.env.VITE_BACKEND || "supabase").toLowerCase();
 
 export function isLocalBackend() {
-  return MODE === "local";
+  // IMPORTANTE: Solo retornar true si EXPLÍCITAMENTE está en modo "local"
+  // En producción (Netlify) siempre será false
+  return MODE === "local" && typeof window !== "undefined" && window.location.hostname === "localhost";
 }
 
 function getStoredToken() {

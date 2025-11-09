@@ -20,6 +20,9 @@ if (!url || !key) {
 // Crear y exportar el cliente de Supabase
 export const supabase = createClient<Database>(url, key);
 
-console.log("✅ Cliente de Supabase inicializado correctamente");
+// Solo log en desarrollo
+if (import.meta.env.DEV) {
+  console.log("✅ Cliente de Supabase inicializado correctamente");
+}
 
 export type { Database };

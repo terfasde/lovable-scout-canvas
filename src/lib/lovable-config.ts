@@ -16,10 +16,13 @@ export function getSupabaseConfig() {
   const url = import.meta.env.VITE_SUPABASE_URL || LOVABLE_CONFIG.supabaseUrl;
   const key = import.meta.env.VITE_SUPABASE_ANON_KEY || LOVABLE_CONFIG.supabaseAnonKey;
   
-  console.log("📦 Configuración de Supabase:");
-  console.log("  URL:", url ? "✓" : "✗");
-  console.log("  Key:", key ? "✓" : "✗");
-  console.log("  Source:", import.meta.env.VITE_SUPABASE_URL ? "env vars" : "fallback hardcoded");
+  // Solo log en desarrollo
+  if (import.meta.env.DEV) {
+    console.log("📦 Configuración de Supabase:");
+    console.log("  URL:", url ? "✓" : "✗");
+    console.log("  Key:", key ? "✓" : "✗");
+    console.log("  Source:", import.meta.env.VITE_SUPABASE_URL ? "env vars" : "fallback hardcoded");
+  }
   
   return { url, key };
 }
