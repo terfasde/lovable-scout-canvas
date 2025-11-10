@@ -8,6 +8,7 @@ import {
   Share2,
   Settings,
   ChevronDown,
+  ChevronUp,
   Home,
   Calendar,
   History,
@@ -355,18 +356,81 @@ function MobileMenu({
   handleSignOut,
   onLinkClick,
 }: MobileMenuProps) {
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+
   return (
     <div className="flex flex-col gap-6 mt-6">
       {/* User Section */}
       {isLoggedIn ? (
-        <div className="flex items-center gap-3 p-4 rounded-lg bg-accent">
-          <UserAvatar userName={userName} avatarUrl={avatarUrl} size="md" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">
-              {userName || "Usuario"}
-            </p>
-            <p className="text-xs text-muted-foreground">Mi Cuenta</p>
-          </div>
+        <div className="space-y-2">
+          {/* Tarjeta de usuario con dropdown */}
+          <button
+            onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+            className="w-full flex items-center gap-3 p-4 rounded-lg bg-accent hover:bg-accent/80 transition-colors"
+          >
+            <UserAvatar userName={userName} avatarUrl={avatarUrl} size="md" />
+            <div className="flex-1 min-w-0 text-left">
+              <p className="text-sm font-medium truncate">
+                {userName || "Usuario"}
+              </p>
+              <p className="text-xs text-muted-foreground">Mi Cuenta</p>
+            </div>
+            {accountMenuOpen ? (
+              <ChevronUp className="h-5 w-5 text-muted-foreground shrink-0" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-muted-foreground shrink-0" />
+            )}
+          </button>
+          
+          {/* Opciones de cuenta (collapsible) */}
+          {accountMenuOpen && (
+            <div className="space-y-1 px-2 animate-in slide-in-from-top-2 duration-200">
+              <Link
+                to="/perfil"
+                onClick={() => {
+                  setAccountMenuOpen(false);
+                  onLinkClick();
+                }}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-accent transition-colors text-sm"
+              >
+                <User className="h-4 w-4" />
+                <span>Ver mi perfil</span>
+              </Link>
+              <Link
+                to="/perfil/editar"
+                onClick={() => {
+                  setAccountMenuOpen(false);
+                  onLinkClick();
+                }}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-accent transition-colors text-sm"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Editar perfil</span>
+              </Link>
+              <Link
+                to="/perfil/compartir"
+                onClick={() => {
+                  setAccountMenuOpen(false);
+                  onLinkClick();
+                }}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-accent transition-colors text-sm"
+              >
+                <Share2 className="h-4 w-4" />
+                <span>Compartir perfil</span>
+              </Link>
+              <button
+                onClick={() => {
+                  handleSignOut();
+                  setAccountMenuOpen(false);
+                  onLinkClick();
+                }}
+                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-destructive/10 text-destructive transition-colors w-full text-sm"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Cerrar sesión</span>
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <Button asChild variant="default" className="w-full">
@@ -403,44 +467,6 @@ function MobileMenu({
           </div>
         </div>
       ))}
-
-      {/* User Options */}
-      {isLoggedIn && (
-        <div className="space-y-2 pt-4 border-t">
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
-            Mi Cuenta
-          </h3>
-          <div className="space-y-1">
-            <Link
-              to="/perfil"
-              onClick={onLinkClick}
-              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-nav-hover hover:text-nav-hover-foreground transition-colors"
-            >
-              <User className="h-5 w-5" />
-              <span className="text-sm font-medium">Mi Perfil</span>
-            </Link>
-            <Link
-              to="/perfil/compartir"
-              onClick={onLinkClick}
-              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-nav-hover hover:text-nav-hover-foreground transition-colors"
-            >
-              <Share2 className="h-5 w-5" />
-              <span className="text-sm font-medium">Compartir Perfil</span>
-            </Link>
-            {/* Comunidad y Mensajes ya están en la sección Principal del menú */}
-            <button
-              onClick={() => {
-                handleSignOut();
-                onLinkClick();
-              }}
-              className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-destructive/10 text-destructive transition-colors w-full"
-            >
-              <LogOut className="h-5 w-5" />
-              <span className="text-sm font-medium">Cerrar Sesión</span>
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

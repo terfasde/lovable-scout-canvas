@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useBlocker } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,16 @@ import UserAvatar from "@/components/UserAvatar";
 import AvatarCropDialog from "@/components/AvatarCropDialog";
 import { ArrowLeft, Eye, EyeOff, Save, Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
 import { isLocalBackend, uploadImage, getAuthUser } from "@/lib/backend";
 import {
@@ -65,9 +75,37 @@ const Perfil = () => {
     null,
   );
   const [ramaActual, setRamaActual] = useState("");
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
 
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Bloquear navegación si hay cambios sin guardar
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      hasChanges() && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      setShowUnsavedDialog(true);
+      setPendingNavigation(blocker.location?.pathname || null);
+    }
+  }, [blocker]);
+
+  // Prevenir cierre/recarga del navegador con cambios sin guardar
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasChanges()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, originalData]);
 
   // Fecha máxima para el datepicker (hoy) evitando desfases UTC
   const today = new Date();
@@ -570,7 +608,15 @@ const Perfil = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/perfil")}
+            onClick={() => {
+              if (hasChanges()) {
+                setShowUnsavedDialog(true);
+                setPendingNavigation("/perfil");
+              } else {
+                navigate("/perfil");
+              }
+            }}
+            className="shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -925,50 +971,92 @@ const Perfil = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="submit"
-              className="flex-1 gap-2"
-              disabled={saving || !hasChanges()}
-            >
-              {saving ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  {hasChanges() ? "Guardar cambios" : "Sin cambios"}
-                </>
-              )}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                if (hasChanges()) {
-                  if (confirm("¿Descartar los cambios sin guardar?")) {
+          {/* Botones de acción - Sticky en móvil */}
+          <div className="sticky bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t p-4 -mx-4 sm:mx-0 sm:relative sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:p-0 z-10 mt-4">
+            <div className="flex gap-3">
+              <Button
+                type="submit"
+                className="flex-1 gap-2 h-12 text-base font-semibold shadow-lg sm:shadow-none"
+                disabled={saving || !hasChanges()}
+                size="lg"
+              >
+                {saving ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5" />
+                    {hasChanges() ? "Guardar cambios" : "Sin cambios"}
+                  </>
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className="h-12"
+                onClick={() => {
+                  if (hasChanges()) {
+                    setShowUnsavedDialog(true);
+                    setPendingNavigation("/perfil");
+                  } else {
                     navigate("/perfil");
                   }
-                } else {
-                  navigate("/perfil");
-                }
-              }}
-            >
-              Cancelar
-            </Button>
-          </div>
-
-          {hasChanges() && (
-            <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-md">
-              <p className="text-sm text-primary font-medium">
-                ⚠️ Tienes cambios sin guardar
-              </p>
+                }}
+              >
+                Cancelar
+              </Button>
             </div>
-          )}
+
+            {hasChanges() && (
+              <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-md animate-pulse">
+                <p className="text-sm text-primary font-medium text-center">
+                  ⚠️ Tienes cambios sin guardar
+                </p>
+              </div>
+            )}
+          </div>
         </form>
       </div>
+
+      {/* Diálogo de confirmación para cambios sin guardar */}
+      <AlertDialog open={showUnsavedDialog} onOpenChange={setShowUnsavedDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Descartar cambios?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tienes cambios sin guardar en tu perfil. Si continúas, se perderán todos los cambios.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowUnsavedDialog(false);
+              setPendingNavigation(null);
+              if (blocker.state === "blocked") {
+                blocker.reset?.();
+              }
+            }}>
+              Seguir editando
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowUnsavedDialog(false);
+                if (pendingNavigation) {
+                  navigate(pendingNavigation);
+                  setPendingNavigation(null);
+                } else if (blocker.state === "blocked") {
+                  blocker.proceed?.();
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Descartar cambios
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Avatar Crop Dialog */}
       <AvatarCropDialog
