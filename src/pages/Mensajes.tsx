@@ -361,181 +361,222 @@ export default function Mensajes() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Navigation global en App.tsx */}
       <div className="h-16 sm:h-20"></div>
 
-      <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>Inicia una conversación</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Solo con personas que se siguen mutuamente
-            </p>
-          </CardHeader>
-          <CardContent>
-            <Input
-              placeholder="Buscar por nombre o @usuario"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <div className="mt-3 space-y-2 max-h-64 overflow-auto">
-              {filtered.length === 0 ? (
-                <div className="text-sm text-muted-foreground text-center py-4">
-                  No hay contactos mutuos disponibles
+      <div className="max-w-5xl mx-auto px-2 sm:px-4 py-4 sm:py-6 lg:py-8">
+        {/* Layout responsive: stack en móvil, grid en desktop */}
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-4 lg:gap-6">
+          
+          {/* Panel de contactos - Solo visible si no hay conversación abierta en móvil */}
+          <Card className={`lg:col-span-1 ${conversationId && 'hidden lg:block'}`}>
+            <CardHeader className="pb-3 sm:pb-6">
+              <CardTitle className="text-lg sm:text-xl">Conversaciones</CardTitle>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Solo con personas que se siguen mutuamente
+              </p>
+            </CardHeader>
+            <CardContent className="px-3 sm:px-6">
+              <Input
+                placeholder="Buscar por nombre o @usuario"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-9 sm:h-10"
+              />
+              <div className="mt-3 space-y-2 max-h-[300px] sm:max-h-[400px] lg:max-h-64 overflow-auto">
+                {filtered.length === 0 ? (
+                  <div className="text-xs sm:text-sm text-muted-foreground text-center py-8">
+                    {mutualFollows.size === 0 
+                      ? "Aún no sigues a nadie mutuamente. Ve a 'Usuarios' para comenzar a seguir a otros scouts."
+                      : "No hay contactos disponibles con ese nombre"}
+                  </div>
+                ) : (
+                  filtered.map((u) => (
+                    <button
+                      key={u.user_id}
+                      className={`w-full text-left p-2.5 sm:p-3 rounded-lg border transition-colors ${
+                        selectedUser?.user_id === u.user_id
+                          ? "bg-primary/10 border-primary/50 shadow-sm"
+                          : "hover:bg-muted/50 border-border"
+                      }`}
+                      onClick={() => setSelectedUser(u)}
+                    >
+                      <div className="font-medium text-sm sm:text-base">
+                        {u.nombre_completo || "Scout"}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {u.username ? `@${u.username}` : "Sin username"}
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+              <Button
+                className="w-full mt-3 h-9 sm:h-10"
+                disabled={!selectedUser}
+                onClick={startConversation}
+              >
+                Abrir chat
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Panel de chat */}
+          <Card className={`lg:col-span-2 ${!conversationId && 'hidden lg:block'}`}>
+            <CardHeader className="pb-3 sm:pb-6">
+              <div className="flex items-center gap-2">
+                {conversationId && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="lg:hidden -ml-2"
+                    onClick={() => {
+                      setConversationId(null);
+                      setMessages([]);
+                      setSelectedUser(null);
+                    }}
+                  >
+                    ← Volver
+                  </Button>
+                )}
+                <CardTitle className="text-lg sm:text-xl">
+                  {selectedUser 
+                    ? `Chat con ${selectedUser.nombre_completo || selectedUser.username || 'Scout'}`
+                    : 'Chat'}
+                </CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="px-2 sm:px-6">
+              {!conversationId ? (
+                <div className="text-muted-foreground text-sm sm:text-base text-center py-12 sm:py-16">
+                  👈 Selecciona un usuario de la lista para comenzar a chatear
                 </div>
               ) : (
-                filtered.map((u) => (
-                  <button
-                    key={u.user_id}
-                    className={`w-full text-left p-2 rounded border transition-colors ${
-                      selectedUser?.user_id === u.user_id
-                        ? "bg-primary/10 border-primary/50"
-                        : "hover:bg-muted/50 border-border"
-                    }`}
-                    onClick={() => setSelectedUser(u)}
-                  >
-                    <div className="font-medium">
-                      {u.nombre_completo || "Scout"}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {u.username ? `@${u.username}` : ""}
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
-            <Button
-              className="w-full mt-3"
-              disabled={!selectedUser}
-              onClick={startConversation}
-            >
-              Abrir chat
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Chat</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!conversationId ? (
-              <div className="text-muted-foreground">
-                Selecciona un usuario y abre el chat.
-              </div>
-            ) : (
-              <div className="flex flex-col h-[60vh]">
-                <div className="flex-1 overflow-auto space-y-3 p-4 border rounded mb-2">
-                  {messages.length === 0 ? (
-                    <div className="text-muted-foreground text-sm text-center py-8">
-                      Sin mensajes aún
-                    </div>
-                  ) : (
-                    <>
-                      {messages.map((m) => {
-                        const isMine = m.sender_id === currentUserId;
-                        return (
-                          <div
-                            key={m.id}
-                            className={`flex ${isMine ? "justify-end" : "justify-start"}`}
-                          >
+                <div className="flex flex-col">
+                  {/* Área de mensajes */}
+                  <div className="flex-1 overflow-auto space-y-2 sm:space-y-3 p-2 sm:p-4 border rounded-lg mb-3 sm:mb-4 h-[calc(100vh-400px)] sm:h-[60vh] bg-muted/20">
+                    {messages.length === 0 ? (
+                      <div className="text-muted-foreground text-xs sm:text-sm text-center py-12">
+                        Sin mensajes aún. ¡Envía el primero! 💬
+                      </div>
+                    ) : (
+                      <>
+                        {messages.map((m) => {
+                          const isMine = m.sender_id === currentUserId;
+                          return (
                             <div
-                              className={`max-w-[75%] rounded-lg px-3 py-2 ${isMine ? "bg-primary text-primary-foreground" : "bg-muted"}`}
+                              key={m.id}
+                              className={`flex ${isMine ? "justify-end" : "justify-start"}`}
                             >
-                              {!isMine && (
-                                <div className="text-xs opacity-70 mb-1">
-                                  {m.sender_username
-                                    ? `@${m.sender_username}`
-                                    : m.sender_name || "Scout"}
-                                </div>
-                              )}
-                              <div className="text-sm">{m.content}</div>
                               <div
-                                className={`text-xs mt-1 ${isMine ? "opacity-70" : "opacity-50"}`}
+                                className={`max-w-[85%] sm:max-w-[75%] rounded-2xl px-3 py-2 shadow-sm ${
+                                  isMine 
+                                    ? "bg-primary text-primary-foreground rounded-br-sm" 
+                                    : "bg-white dark:bg-muted rounded-bl-sm"
+                                }`}
                               >
-                                {new Date(m.created_at).toLocaleTimeString(
-                                  "es-ES",
-                                  { hour: "2-digit", minute: "2-digit" },
+                                {!isMine && (
+                                  <div className="text-xs opacity-70 mb-1 font-medium">
+                                    {m.sender_username
+                                      ? `@${m.sender_username}`
+                                      : m.sender_name || "Scout"}
+                                  </div>
                                 )}
+                                <div className="text-sm sm:text-base whitespace-pre-wrap break-words">
+                                  {m.content}
+                                </div>
+                                <div
+                                  className={`text-xs mt-1 ${isMine ? "opacity-70" : "opacity-50"}`}
+                                >
+                                  {new Date(m.created_at).toLocaleTimeString(
+                                    "es-ES",
+                                    { hour: "2-digit", minute: "2-digit" },
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                      <div ref={messagesEndRef} />
-                    </>
-                  )}
+                          );
+                        })}
+                        <div ref={messagesEndRef} />
+                      </>
+                    )}
+                  </div>
+
+                  {/* Área de input */}
+                  <div className="flex gap-1.5 sm:gap-2">
+                    <Input
+                      placeholder="Escribe un mensaje..."
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          send();
+                        }
+                      }}
+                      className="flex-1 h-9 sm:h-10 text-sm sm:text-base"
+                    />
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 shrink-0">
+                          <Smile className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[280px] sm:w-80" align="end">
+                        <Tabs defaultValue="emojis">
+                          <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="emojis" className="text-xs sm:text-sm">
+                              <Smile className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                              Emojis
+                            </TabsTrigger>
+                            <TabsTrigger value="stickers" className="text-xs sm:text-sm">
+                              <Sticker className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                              Stickers
+                            </TabsTrigger>
+                          </TabsList>
+
+                          <TabsContent value="emojis" className="mt-2">
+                            <div className="grid grid-cols-8 sm:grid-cols-10 gap-1">
+                              {EMOJIS.map((emoji, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => insertEmoji(emoji)}
+                                  className="text-xl sm:text-2xl hover:bg-muted rounded p-1 transition-colors"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                          </TabsContent>
+
+                          <TabsContent value="stickers" className="mt-2">
+                            <div className="grid grid-cols-1 gap-1 max-h-48 sm:max-h-64 overflow-auto">
+                              {STICKERS.map((sticker, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => sendSticker(sticker)}
+                                  className="text-left px-2 sm:px-3 py-1.5 sm:py-2 hover:bg-muted rounded transition-colors text-xs sm:text-sm"
+                                >
+                                  {sticker}
+                                </button>
+                              ))}
+                            </div>
+                          </TabsContent>
+                        </Tabs>
+                      </PopoverContent>
+                    </Popover>
+
+                    <Button onClick={send} disabled={!newMessage.trim()} className="h-9 sm:h-10 shrink-0">
+                      Enviar
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Escribe un mensaje..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        send();
-                      }
-                    }}
-                  />
-
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <Smile className="h-4 w-4" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80">
-                      <Tabs defaultValue="emojis">
-                        <TabsList className="grid w-full grid-cols-2">
-                          <TabsTrigger value="emojis">
-                            <Smile className="h-4 w-4 mr-2" />
-                            Emojis
-                          </TabsTrigger>
-                          <TabsTrigger value="stickers">
-                            <Sticker className="h-4 w-4 mr-2" />
-                            Stickers
-                          </TabsTrigger>
-                        </TabsList>
-
-                        <TabsContent value="emojis" className="mt-2">
-                          <div className="grid grid-cols-10 gap-1">
-                            {EMOJIS.map((emoji, i) => (
-                              <button
-                                key={i}
-                                onClick={() => insertEmoji(emoji)}
-                                className="text-2xl hover:bg-muted rounded p-1 transition-colors"
-                              >
-                                {emoji}
-                              </button>
-                            ))}
-                          </div>
-                        </TabsContent>
-
-                        <TabsContent value="stickers" className="mt-2">
-                          <div className="grid grid-cols-1 gap-1 max-h-64 overflow-auto">
-                            {STICKERS.map((sticker, i) => (
-                              <button
-                                key={i}
-                                onClick={() => sendSticker(sticker)}
-                                className="text-left px-3 py-2 hover:bg-muted rounded transition-colors text-sm"
-                              >
-                                {sticker}
-                              </button>
-                            ))}
-                          </div>
-                        </TabsContent>
-                      </Tabs>
-                    </PopoverContent>
-                  </Popover>
-
-                  <Button onClick={send}>Enviar</Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
