@@ -33,15 +33,9 @@ Stack de monitoreo completo para Scout Canvas.
 
 ## 🚀 Uso Rápido
 
-### Iniciar servicios de monitoreo
+### (Legacy) Inicio de servicios
 
-```powershell
-# Iniciar todo el stack (incluye Prometheus y Grafana)
-docker compose -f docker-compose.full.yml up -d
-
-# Solo servicios de monitoreo
-docker compose -f docker-compose.full.yml up -d prometheus grafana
-```
+Los ejemplos anteriores usaban Docker Compose y fueron removidos. Si deseas restaurarlos, recupera `docker-compose.full.yml` desde el historial de Git.
 
 ### Acceder a las interfaces
 

@@ -8,27 +8,7 @@ Aplicación web para gestión de grupos scout con perfil de usuarios, galería, 
 
 ## 🚀 Inicio Rápido
 
-### Opción 1: Docker (Recomendado - Solo Frontend)
-
-```bash
-# Iniciar frontend con mocks locales
-docker compose up -d
-
-# Ver logs
-docker compose logs -f web
-
-# Detener
-docker compose down
-```
-
-Accede a http://localhost:5173
-
-**Usuario por defecto:**
-
-- Email: `admin@scout.com`
-- Password: cualquiera (validación simplificada)
-
-### Opción 2: Desarrollo Local
+### Desarrollo Local
 
 ```bash
 # Instalar dependencias
@@ -40,16 +20,7 @@ npm run dev
 
 Accede a http://localhost:5173
 
-### ⚠️ Docker Legacy (Requiere Configuración)
-
-```powershell
-# ⚠️ DESACTUALIZADO: Arquitectura completa (PostgreSQL + Backend)
-# Requiere resolver dependencias del servidor primero
-docker compose -f docker-compose.full.yml up -d
-
-# Desarrollo con backend local (requiere Python instalado)
-docker compose -f docker-compose.dev.yml up -d
-```
+> Nota: Se eliminaron los scripts y configuraciones Docker. El flujo estándar es usar `npm run dev` y desplegar con Vercel.
 
 ---
 
@@ -57,14 +28,11 @@ docker compose -f docker-compose.dev.yml up -d
 
 ### 🏗️ Arquitectura
 
-- **[Arquitectura Local](docs/LOCAL_ARCHITECTURE.md)** - ⭐ Sistema sin Supabase (ACTUAL)
-- **[Arquitectura Docker](docs/docker/ARCHITECTURE.md)** - Legacy: PostgreSQL y monitoreo
+- **[Arquitectura Local](docs/LOCAL_ARCHITECTURE.md)** - Sistema actual sin dependencias externas pesadas
+  
+### (Legacy removido)
 
-### 🐳 Docker
-
-- **[Inicio Rápido](docs/docker/QUICK_START.md)** - ⚠️ Desactualizado
-- **[Desarrollo](docs/docker/DEV.md)** - ⚠️ Requiere backend opcional
-- **[Changelog](docs/docker/CHANGELOG.md)** - Historial de cambios
+Secciones Docker y arquitecturas completas con PostgreSQL fueron removidas del flujo principal.
 
 ### ⚙️ Configuración Inicial
 
@@ -125,11 +93,9 @@ Reemplazado por sistema de autenticación local en `src/lib/auth-mock.ts`.
 
 ### DevOps
 
-- **Docker** - Contenedores
-- **Docker Compose** - Orquestación
-- **Prometheus** - Métricas
-- **Grafana** - Dashboards
-- **PgAdmin** - Administración de BD
+- **Vercel** - Hosting y deploy
+- **ESLint / TypeScript** - Calidad de código
+- **Scripts PowerShell** - Tareas de build/deploy
 
 ---
 
@@ -149,31 +115,16 @@ lovable-scout-canvas/
 │   ├── data/               # SQLite databases
 │   └── uploads/            # Archivos subidos
 ├── docs/                   # Documentación
-│   ├── docker/             # Docs de Docker
 │   ├── setup/              # Guías de configuración
 │   ├── optimization/       # Optimización
 │   ├── features/           # Features específicas
 │   └── guides/             # Guías generales
 ├── scripts/                # Scripts de utilidad
-├── monitoring/             # Configuración de monitoreo
-│   ├── prometheus.yml
-│   └── grafana/
 ├── public/                 # Archivos estáticos
-└── docker-compose.*.yml    # Configuraciones Docker
+└── scripts/                # Scripts auxiliares
 ```
 
 ---
-
-## 🌐 Servicios (Docker Full)
-
-| Servicio        | Puerto | Credenciales                           |
-| --------------- | ------ | -------------------------------------- |
-| **Frontend**    | 5173   | -                                      |
-| **Backend API** | 8080   | -                                      |
-| **PostgreSQL**  | 5432   | scoutuser / scout_secure_password_2024 |
-| **PgAdmin**     | 5050   | admin@scout.local / admin123           |
-| **Prometheus**  | 9090   | -                                      |
-| **Grafana**     | 3000   | admin / admin123                       |
 
 ---
 
@@ -189,10 +140,8 @@ npm run preview          # Preview del build
 npm run type-check       # Verificar tipos TypeScript
 npm run lint             # Linter
 
-# Docker
-.\scripts\start.ps1 full # Iniciar arquitectura completa
-.\scripts\start.ps1 dev  # Iniciar modo desarrollo
-.\scripts\start.ps1 stop # Detener servicios
+# Deploy
+vercel --prod            # Desplegar a producción (requiere CLI y login)
 ```
 
 ---
@@ -216,8 +165,9 @@ Este proyecto está bajo la licencia MIT.
 ## 🔗 Links Útiles
 
 - **Lovable Project**: https://lovable.dev/projects/2419ba1f-39c6-4ef7-a98a-608160a4d0b8
-- **Documentación Docker**: [docs/docker/](docs/docker/)
 - **Backend README**: [server/README.md](server/README.md)
+  
+> Documentación Docker legacy removida. Usa Git histórico si necesitas esos archivos.
 
 ---
 

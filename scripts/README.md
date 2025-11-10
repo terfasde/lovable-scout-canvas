@@ -6,9 +6,9 @@ Scripts auxiliares para facilitar el desarrollo y operación del proyecto.
 
 ## 📜 Scripts Disponibles
 
-### `start.ps1` / `start.sh`
+### `start.ps1` / `start.sh` (LEGACY)
 
-**Script principal para gestionar Docker**
+Script legado para gestionar entornos Docker eliminados. Ya no se usa en el flujo estándar.
 
 **Uso en Windows (PowerShell)**:
 
@@ -25,22 +25,18 @@ chmod +x scripts/start.sh
 
 **Comandos**:
 
-| Comando | Descripción                                           |
+| Comando | Descripción (legacy)                                  |
 | ------- | ----------------------------------------------------- |
-| `full`  | Inicia arquitectura completa (PostgreSQL + Storage + Monitoreo) |
-| `dev`   | Inicia modo desarrollo simple (SQLite)                |
-| `stop`  | Detiene todos los servicios Docker                    |
+| `full`  | Levantaba arquitectura completa (removida)            |
+| `dev`   | Levantaba modo desarrollo con Docker (removido)       |
+| `stop`  | Detenía contenedores Docker                           |
 
 **Ejemplos**:
 
 ```powershell
-# Arquitectura completa con PostgreSQL, Prometheus y Grafana
+# Ejemplos legacy (ya no funcionales tras la limpieza Docker)
 .\scripts\start.ps1 full
-
-# Desarrollo rápido con SQLite
 .\scripts\start.ps1 dev
-
-# Detener todo
 .\scripts\start.ps1 stop
 ```
 
@@ -121,31 +117,15 @@ Copia el proyecto completo excluyendo archivos innecesarios (node_modules, dist,
 
 ---
 
-### `add-docker-to-path.ps1`
+### `add-docker-to-path.ps1` (LEGACY)
 
-**Agregar Docker al PATH de Windows**
-
-Útil si Docker no está en el PATH del sistema.
-
-**Uso**:
-
-```powershell
-.\scripts\add-docker-to-path.ps1
-```
+Script para agregar Docker al PATH (ya no requerido).
 
 ---
 
-### `run-docker-dev.cmd`
+### `run-docker-dev.cmd` (LEGACY)
 
-**Script batch para Windows CMD**
-
-Alternativa al start.ps1 para usuarios que no pueden ejecutar PowerShell.
-
-**Uso**:
-
-```cmd
-scripts\run-docker-dev.cmd
-```
+Script batch legacy para levantar Docker (removido).
 
 ---
 
@@ -191,8 +171,7 @@ echo "Ejecutando con opción: $OPCION"
 
 ## 📚 Documentación Relacionada
 
-- **[Docker Quick Start](../docs/docker/QUICK_START.md)** - Uso de Docker
-- **[Docker Architecture](../docs/docker/ARCHITECTURE.md)** - Arquitectura completa
+> Se eliminaron referencias a documentación Docker. Recuperable vía historial Git si fuera necesario.
 
 ---
 

@@ -66,21 +66,9 @@ npm start
 
 ---
 
-## 🐳 Docker
+## (Legacy) Docker
 
-### Desarrollo simple (SQLite)
-
-```bash
-docker compose -f ../docker-compose.dev.yml up -d
-```
-
-### Producción completa (PostgreSQL + Monitoreo)
-
-```bash
-docker compose -f ../docker-compose.full.yml up -d
-```
-
-Ver [docs/docker/ARCHITECTURE.md](../docs/docker/ARCHITECTURE.md) para detalles completos.
+Las instrucciones Docker fueron removidas del flujo activo. Si necesitas levantar contenedores, recupera los archivos desde el historial Git (commit anterior a la limpieza) o crea nuevos compose adaptados.
 
 ---
 

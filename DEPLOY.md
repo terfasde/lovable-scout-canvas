@@ -2,22 +2,19 @@
 
 ## 📦 Dos ambientes configurados
 
-### 1️⃣ LOCAL con Docker (http://localhost:5173)
+### 1️⃣ LOCAL (http://localhost:5173)
 
 ```bash
-# Iniciar
-docker compose up -d
+# Instalar dependencias
+npm install
 
-# Ver logs
-docker compose logs -f web
-
-# Detener
-docker compose down
+# Iniciar entorno de desarrollo
+npm run dev
 ```
 
-- ✅ Hot reload automático
-- ✅ Conectado a Supabase cloud
-- ✅ Sin backend local complicado
+- ✅ Hot reload automático (Vite)
+- ✅ Sin necesidad de Docker
+- ✅ Variables leídas desde .env.development
 
 ### 2️⃣ PÚBLICO con Netlify (URL pública)
 
@@ -84,7 +81,9 @@ netlify deploy --prod
 
 ## 📝 Resumen de archivos
 
-- `.env.development` → Docker local
-- `.env.production` → Netlify deploy
-- `docker-compose.yml` → Container Vite + Supabase
-- `netlify.toml` → Config de build y redirects
+- `.env.development` → Entorno local
+- `.env.production` → Entorno producción
+- `vercel.json` → Rewrites/headers para SPA
+- `scripts/` → Utilidades de build/deploy
+
+> Eliminado: docker-compose.* y netlify.toml (migrado a Vercel)
