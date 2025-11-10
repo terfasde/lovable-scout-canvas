@@ -52,6 +52,7 @@ const Perfil = () => {
     equipo_pioneros: string;
     comunidad_rovers: string;
     rol_adulto: string;
+    rama_que_educa: string | null;
     password: string;
     avatar_url: string | null;
     username: string;
@@ -66,6 +67,7 @@ const Perfil = () => {
     equipo_pioneros: "",
     comunidad_rovers: "",
     rol_adulto: "",
+    rama_que_educa: null,
     password: "",
     avatar_url: null,
     username: "",
@@ -75,6 +77,7 @@ const Perfil = () => {
     null,
   );
   const [ramaActual, setRamaActual] = useState("");
+  const [ramaEducador, setRamaEducador] = useState<"" | "manada" | "tropa" | "pioneros" | "rovers">("");
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
 
@@ -127,6 +130,21 @@ const Perfil = () => {
     else setRamaActual("");
   }, [formData.edad]);
 
+  // Detectar rama educador según datos
+  useEffect(() => {
+    // Si ya hay un valor explícito en rama_que_educa, usarlo
+    if (formData.rama_que_educa) {
+      setRamaEducador(formData.rama_que_educa as "" | "manada" | "tropa" | "pioneros" | "rovers");
+    } else {
+      // Fallback: detectar por campos legacy
+      if (formData.seisena) setRamaEducador("manada");
+      else if (formData.patrulla) setRamaEducador("tropa");
+      else if (formData.equipo_pioneros) setRamaEducador("pioneros");
+      else if (formData.comunidad_rovers) setRamaEducador("rovers");
+      else setRamaEducador("");
+    }
+  }, [formData.rama_que_educa, formData.seisena, formData.patrulla, formData.equipo_pioneros, formData.comunidad_rovers]);
+
   useEffect(() => {
     getProfile();
   }, []);
@@ -158,6 +176,7 @@ const Perfil = () => {
           equipo_pioneros: p?.equipo_pioneros || "",
           comunidad_rovers: p?.comunidad_rovers || "",
           rol_adulto: p?.rol_adulto || "",
+          rama_que_educa: p?.rama_que_educa || null,
           password: "",
           avatar_url: p?.avatar_url || null,
           username: (p as any)?.username || "",
@@ -199,6 +218,7 @@ const Perfil = () => {
           equipo_pioneros: (profile as any).equipo_pioneros || "",
           comunidad_rovers: (profile as any).comunidad_rovers || "",
           rol_adulto: (profile as any).rol_adulto || "",
+          rama_que_educa: (profile as any).rama_que_educa || null,
           password: "",
           avatar_url: (profile as any).avatar_url || null,
           username: (profile as any).username || "",
@@ -287,6 +307,7 @@ const Perfil = () => {
       formData.equipo_pioneros !== originalData.equipo_pioneros ||
       formData.comunidad_rovers !== originalData.comunidad_rovers ||
       formData.rol_adulto !== originalData.rol_adulto ||
+      formData.rama_que_educa !== originalData.rama_que_educa ||
       formData.username !== originalData.username
     );
   };
@@ -524,6 +545,7 @@ const Perfil = () => {
         profileData.patrulla = formData.patrulla || null;
         profileData.equipo_pioneros = formData.equipo_pioneros || null;
         profileData.comunidad_rovers = formData.comunidad_rovers || null;
+        profileData.rama_que_educa = formData.rama_que_educa || null;
       }
 
       if (isLocalBackend()) {
@@ -967,59 +989,109 @@ const Perfil = () => {
 
             {formData.edad >= 21 && formData.rol_adulto === "Educador/a" && (
               <div className="mt-6 space-y-4 p-4 border rounded-md bg-muted/30">
-                <h4 className="font-semibold text-base">Secciones que coordinas</h4>
+                <h4 className="font-semibold text-base">Información del Educador</h4>
                 <p className="text-xs text-muted-foreground">
-                  Como educador/a puedes indicar qué unidades apoyas para ayudar a la coordinación interna. (Opcional)
+                  Selecciona la rama que diriges y proporciona información de tu unidad.
                 </p>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-4">
+                  {/* Selector principal de rama */}
                   <div className="space-y-2">
-                    <Label htmlFor="seisena_educador">Manada (Seisena)</Label>
-                    <Input
-                      id="seisena_educador"
-                      name="seisena"
-                      value={formData.seisena}
-                      onChange={handleChange}
-                      placeholder="Ej: Seisena Roja"
-                      className="bg-background"
-                    />
+                    <Label htmlFor="rama_que_educa">¿Qué rama diriges?</Label>
+                    <select
+                      id="rama_que_educa"
+                      name="rama_que_educa"
+                      value={formData.rama_que_educa || ""}
+                      onChange={(e) => {
+                        const rama = e.target.value || null;
+                        setFormData(prev => ({
+                          ...prev,
+                          rama_que_educa: rama,
+                        }));
+                        // Actualizar ramaEducador state para UI
+                        setRamaEducador(rama as "" | "manada" | "tropa" | "pioneros" | "rovers");
+                      }}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="">Selecciona una rama</option>
+                      <option value="manada">🐺 Manada (7-10 años)</option>
+                      <option value="tropa">⚜️ Tropa (11-14 años)</option>
+                      <option value="pioneros">🏔️ Pioneros (15-17 años)</option>
+                      <option value="rovers">🚶 Rovers (18-20 años)</option>
+                    </select>
+                    <p className="text-xs text-muted-foreground">
+                      Selecciona la rama principal en la que trabajas como educador/a
+                    </p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="patrulla_educador">Tropa (Patrulla)</Label>
-                    <Input
-                      id="patrulla_educador"
-                      name="patrulla"
-                      value={formData.patrulla}
-                      onChange={handleChange}
-                      placeholder="Ej: Patrulla Halcón"
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="pioneros_educador">Pioneros (Equipo)</Label>
-                    <Input
-                      id="pioneros_educador"
-                      name="equipo_pioneros"
-                      value={formData.equipo_pioneros}
-                      onChange={handleChange}
-                      placeholder="Ej: Equipo Alpha"
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="rovers_educador">Rovers (Comunidad)</Label>
-                    <Input
-                      id="rovers_educador"
-                      name="comunidad_rovers"
-                      value={formData.comunidad_rovers}
-                      onChange={handleChange}
-                      placeholder="Ej: Comunidad Caminantes"
-                      className="bg-background"
-                    />
-                  </div>
+
+                  {/* Campos específicos según la rama */}
+                  {ramaEducador === "manada" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="seisena_educador">Seisena de Manada (opcional)</Label>
+                      <Input
+                        id="seisena_educador"
+                        name="seisena"
+                        value={formData.seisena}
+                        onChange={handleChange}
+                        placeholder="Ej: Seisena Roja, Seisena Azul..."
+                        className="bg-background"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Nombre de la seisena que coordinas en Manada
+                      </p>
+                    </div>
+                  )}
+
+                  {ramaEducador === "tropa" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="patrulla_educador">Patrulla de Tropa (opcional)</Label>
+                      <Input
+                        id="patrulla_educador"
+                        name="patrulla"
+                        value={formData.patrulla}
+                        onChange={handleChange}
+                        placeholder="Ej: Patrulla Halcón, Patrulla Águila..."
+                        className="bg-background"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Nombre de la patrulla que coordinas en Tropa
+                      </p>
+                    </div>
+                  )}
+
+                  {ramaEducador === "pioneros" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="pioneros_educador">Equipo de Pioneros (opcional)</Label>
+                      <Input
+                        id="pioneros_educador"
+                        name="equipo_pioneros"
+                        value={formData.equipo_pioneros}
+                        onChange={handleChange}
+                        placeholder="Ej: Equipo Alpha, Equipo Beta..."
+                        className="bg-background"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Nombre del equipo que coordinas en Pioneros
+                      </p>
+                    </div>
+                  )}
+
+                  {ramaEducador === "rovers" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="rovers_educador">Comunidad Rovers (opcional)</Label>
+                      <Input
+                        id="rovers_educador"
+                        name="comunidad_rovers"
+                        value={formData.comunidad_rovers}
+                        onChange={handleChange}
+                        placeholder="Ej: Comunidad Caminantes, Clan Rovers..."
+                        className="bg-background"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Nombre de la comunidad que coordinas en Rovers
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <p className="text-[11px] text-muted-foreground">
-                  Estos campos se guardan igual que los de jóvenes pero aquí se muestran siempre para facilitar la edición del educador/a.
-                </p>
               </div>
             )}
           </div>

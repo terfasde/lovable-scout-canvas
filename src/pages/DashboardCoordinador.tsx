@@ -5,18 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import UserAvatar from "@/components/UserAvatar";
 import { useToast } from "@/hooks/use-toast";
 import {
   Users,
-  Calendar,
   TrendingUp,
   Award,
   ArrowLeft,
-  UserCheck,
   Activity,
+  Send,
+  MessageSquare,
 } from "lucide-react";
 import { getAuthUser } from "@/lib/backend";
+import { createOrGetConversation, sendDM } from "@/lib/dms";
 import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
@@ -41,6 +51,9 @@ const DashboardCoordinador = () => {
     totalScouts: 0,
     porRama: { manada: 0, tropa: 0, pioneros: 0, rovers: 0 },
   });
+  const [showMessageDialog, setShowMessageDialog] = useState(false);
+  const [groupMessage, setGroupMessage] = useState("");
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   useEffect(() => {
     loadDashboard();
@@ -92,90 +105,66 @@ const DashboardCoordinador = () => {
 
   const loadScouts = async (coordinador: Profile) => {
     try {
-      const filters: string[] = [];
-
-      // Construir query según las unidades que coordina
-      if (coordinador.seisena) {
-        filters.push(`seisena.eq.${coordinador.seisena}`);
-      }
-      if (coordinador.patrulla) {
-        filters.push(`patrulla.eq.${coordinador.patrulla}`);
-      }
-      if (coordinador.equipo_pioneros) {
-        filters.push(`equipo_pioneros.eq.${coordinador.equipo_pioneros}`);
-      }
-      if (coordinador.comunidad_rovers) {
-        filters.push(`comunidad_rovers.eq.${coordinador.comunidad_rovers}`);
-      }
-
-      if (filters.length === 0) {
+      // Usar rama_que_educa para determinar qué scouts cargar
+      const ramaEducador = (coordinador as any).rama_que_educa;
+      
+      if (!ramaEducador) {
         setScouts([]);
+        toast({
+          title: "Configura tu rama",
+          description: "Ve a tu perfil y selecciona qué rama diriges",
+          variant: "default",
+        });
         return;
       }
 
-      // Obtener scouts de las unidades coordinadas
-      let query = supabase.from("profiles").select("*");
+      // Obtener scouts según la rama que educa
+      let scoutsData: Profile[] = [];
 
-      // Aplicar filtros OR para cada unidad
-      const scoutsData: Profile[] = [];
-      
-      if (coordinador.seisena) {
+      if (ramaEducador === "manada") {
         const { data } = await supabase
           .from("profiles")
           .select("*")
-          .eq("seisena", coordinador.seisena)
           .gte("edad", 7)
           .lte("edad", 10);
-        if (data) scoutsData.push(...data);
-      }
-
-      if (coordinador.patrulla) {
+        if (data) scoutsData = data;
+      } else if (ramaEducador === "tropa") {
         const { data } = await supabase
           .from("profiles")
           .select("*")
-          .eq("patrulla", coordinador.patrulla)
           .gte("edad", 11)
           .lte("edad", 14);
-        if (data) scoutsData.push(...data);
-      }
-
-      if (coordinador.equipo_pioneros) {
+        if (data) scoutsData = data;
+      } else if (ramaEducador === "pioneros") {
         const { data } = await supabase
           .from("profiles")
           .select("*")
-          .eq("equipo_pioneros", coordinador.equipo_pioneros)
           .gte("edad", 15)
           .lte("edad", 17);
-        if (data) scoutsData.push(...data);
-      }
-
-      if (coordinador.comunidad_rovers) {
+        if (data) scoutsData = data;
+      } else if (ramaEducador === "rovers") {
         const { data } = await supabase
           .from("profiles")
           .select("*")
-          .eq("comunidad_rovers", coordinador.comunidad_rovers)
           .gte("edad", 18)
           .lte("edad", 20);
-        if (data) scoutsData.push(...data);
+        if (data) scoutsData = data;
       }
 
-      // Eliminar duplicados por user_id
-      const uniqueScouts = Array.from(
-        new Map(scoutsData.map((s) => [s.user_id, s])).values()
-      );
-
-      setScouts(uniqueScouts);
+      // Filtrar scouts excluyendo educadores
+      const scoutsOnly = scoutsData.filter(s => s.edad < 21);
+      setScouts(scoutsOnly);
 
       // Calcular estadísticas
       const porRama = {
-        manada: uniqueScouts.filter((s) => s.edad >= 7 && s.edad <= 10).length,
-        tropa: uniqueScouts.filter((s) => s.edad >= 11 && s.edad <= 14).length,
-        pioneros: uniqueScouts.filter((s) => s.edad >= 15 && s.edad <= 17).length,
-        rovers: uniqueScouts.filter((s) => s.edad >= 18 && s.edad <= 20).length,
+        manada: scoutsOnly.filter((s) => s.edad >= 7 && s.edad <= 10).length,
+        tropa: scoutsOnly.filter((s) => s.edad >= 11 && s.edad <= 14).length,
+        pioneros: scoutsOnly.filter((s) => s.edad >= 15 && s.edad <= 17).length,
+        rovers: scoutsOnly.filter((s) => s.edad >= 18 && s.edad <= 20).length,
       };
 
       setStats({
-        totalScouts: uniqueScouts.length,
+        totalScouts: scoutsOnly.length,
         porRama,
       });
     } catch (error: any) {
@@ -197,13 +186,79 @@ const DashboardCoordinador = () => {
     return "Sin rama";
   };
 
-  const getRamaBadgeColor = (edad: number | null) => {
+  const getRamaBadgeColor = (edad: number | null): "default" | "secondary" | "destructive" | "outline" => {
     if (!edad) return "secondary";
     if (edad >= 18) return "default";
     if (edad >= 15) return "destructive";
     if (edad >= 11) return "outline";
     if (edad >= 7) return "secondary";
     return "secondary";
+  };
+
+  const handleSendGroupMessage = async () => {
+    if (!groupMessage.trim()) {
+      toast({
+        title: "Mensaje vacío",
+        description: "Escribe un mensaje para enviar",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (scouts.length === 0) {
+      toast({
+        title: "Sin destinatarios",
+        description: "No hay scouts en tus secciones",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setSendingMessage(true);
+      let successCount = 0;
+      let errorCount = 0;
+
+      // Enviar mensaje a cada scout
+      for (const scout of scouts) {
+        try {
+          // Crear conversación con el scout
+          const conversation = await createOrGetConversation(scout.user_id);
+          // Enviar mensaje
+          await sendDM(conversation.id, groupMessage);
+          successCount++;
+        } catch (error) {
+          console.error(`Error enviando a ${scout.nombre_completo}:`, error);
+          errorCount++;
+        }
+      }
+
+      // Mostrar resultado
+      if (errorCount === 0) {
+        toast({
+          title: "✅ Mensajes enviados",
+          description: `Se enviaron ${successCount} mensajes correctamente`,
+        });
+      } else {
+        toast({
+          title: "Mensajes enviados parcialmente",
+          description: `${successCount} exitosos, ${errorCount} fallidos`,
+          variant: "destructive",
+        });
+      }
+
+      // Limpiar y cerrar
+      setGroupMessage("");
+      setShowMessageDialog(false);
+    } catch (error: any) {
+      toast({
+        title: "Error al enviar mensajes",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setSendingMessage(false);
+    }
   };
 
   if (loading) {
@@ -238,6 +293,17 @@ const DashboardCoordinador = () => {
               Panel de gestión para educadores
             </p>
           </div>
+          {scouts.length > 0 && (
+            <Button
+              onClick={() => setShowMessageDialog(true)}
+              className="gap-2"
+              size="sm"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span className="hidden sm:inline">Mensaje grupal</span>
+              <span className="sm:hidden">Mensaje</span>
+            </Button>
+          )}
         </div>
 
         {/* Resumen de unidades coordinadas */}
@@ -246,67 +312,90 @@ const DashboardCoordinador = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Award className="w-5 h-5" />
-                Mis secciones
+                Mi sección
               </CardTitle>
               <CardDescription>
-                Unidades que coordinas actualmente
+                Rama y unidad que coordinas
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {coordinadorProfile.seisena && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Manada
-                    </p>
-                    <p className="font-semibold">{coordinadorProfile.seisena}</p>
+              {(coordinadorProfile as any).rama_que_educa === "manada" && (
+                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">🐺</span>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Rama Manada
+                      </p>
+                      {coordinadorProfile.seisena && (
+                        <p className="text-lg font-semibold">{coordinadorProfile.seisena}</p>
+                      )}
+                    </div>
                   </div>
-                )}
-                {coordinadorProfile.patrulla && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Tropa
-                    </p>
-                    <p className="font-semibold">{coordinadorProfile.patrulla}</p>
+                  <p className="text-xs text-muted-foreground">7-10 años</p>
+                </div>
+              )}
+              {(coordinadorProfile as any).rama_que_educa === "tropa" && (
+                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">⚜️</span>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Rama Tropa
+                      </p>
+                      {coordinadorProfile.patrulla && (
+                        <p className="text-lg font-semibold">{coordinadorProfile.patrulla}</p>
+                      )}
+                    </div>
                   </div>
-                )}
-                {coordinadorProfile.equipo_pioneros && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Pioneros
-                    </p>
-                    <p className="font-semibold">
-                      {coordinadorProfile.equipo_pioneros}
-                    </p>
+                  <p className="text-xs text-muted-foreground">11-14 años</p>
+                </div>
+              )}
+              {(coordinadorProfile as any).rama_que_educa === "pioneros" && (
+                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">🏔️</span>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Rama Pioneros
+                      </p>
+                      {coordinadorProfile.equipo_pioneros && (
+                        <p className="text-lg font-semibold">{coordinadorProfile.equipo_pioneros}</p>
+                      )}
+                    </div>
                   </div>
-                )}
-                {coordinadorProfile.comunidad_rovers && (
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      Rovers
-                    </p>
-                    <p className="font-semibold">
-                      {coordinadorProfile.comunidad_rovers}
-                    </p>
+                  <p className="text-xs text-muted-foreground">15-17 años</p>
+                </div>
+              )}
+              {(coordinadorProfile as any).rama_que_educa === "rovers" && (
+                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl">🚶</span>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Rama Rovers
+                      </p>
+                      {coordinadorProfile.comunidad_rovers && (
+                        <p className="text-lg font-semibold">{coordinadorProfile.comunidad_rovers}</p>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
-              {!coordinadorProfile.seisena &&
-                !coordinadorProfile.patrulla &&
-                !coordinadorProfile.equipo_pioneros &&
-                !coordinadorProfile.comunidad_rovers && (
-                  <p className="text-sm text-muted-foreground">
-                    No has asignado ninguna sección. Ve a{" "}
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto"
-                      onClick={() => navigate("/perfil/editar")}
-                    >
-                      editar tu perfil
-                    </Button>{" "}
-                    para agregar las unidades que coordinas.
-                  </p>
-                )}
+                  <p className="text-xs text-muted-foreground">18-20 años</p>
+                </div>
+              )}
+              {!(coordinadorProfile as any).rama_que_educa && (
+                <p className="text-sm text-muted-foreground">
+                  No has asignado ninguna rama. Ve a{" "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto"
+                    onClick={() => navigate("/perfil/editar")}
+                  >
+                    editar tu perfil
+                  </Button>{" "}
+                  para seleccionar la rama que diriges.
+                </p>
+              )}
             </CardContent>
           </Card>
         )}
@@ -527,6 +616,81 @@ const DashboardCoordinador = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Modal de mensaje grupal */}
+        <Dialog open={showMessageDialog} onOpenChange={setShowMessageDialog}>
+          <DialogContent className="sm:max-w-[525px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                Mensaje grupal a tu sección
+              </DialogTitle>
+              <DialogDescription>
+                Envía un mensaje a todos los scouts de tus secciones ({scouts.length} destinatarios)
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Mensaje</label>
+                <Textarea
+                  placeholder="Escribe tu mensaje aquí... Ej: Recordatorio: Reunión este sábado a las 15:00 en la sede."
+                  value={groupMessage}
+                  onChange={(e) => setGroupMessage(e.target.value)}
+                  rows={6}
+                  className="resize-none"
+                  disabled={sendingMessage}
+                />
+                <p className="text-xs text-muted-foreground">
+                  El mensaje se enviará como conversación individual a cada scout
+                </p>
+              </div>
+              <div className="bg-muted/50 p-3 rounded-lg">
+                <p className="text-sm font-medium mb-2">📨 Destinatarios:</p>
+                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                  {scouts.slice(0, 10).map((scout) => (
+                    <Badge key={scout.user_id} variant="secondary" className="text-xs">
+                      {scout.nombre_completo}
+                    </Badge>
+                  ))}
+                  {scouts.length > 10 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{scouts.length - 10} más
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowMessageDialog(false);
+                  setGroupMessage("");
+                }}
+                disabled={sendingMessage}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSendGroupMessage}
+                disabled={sendingMessage || !groupMessage.trim()}
+                className="gap-2"
+              >
+                {sendingMessage ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Enviar a {scouts.length} scout{scouts.length !== 1 ? "s" : ""}
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

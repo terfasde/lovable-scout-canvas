@@ -587,7 +587,17 @@ const PerfilView = () => {
                 </p>
               )}
               {profile.rol_adulto && profile.edad && profile.edad >= 21 && (
-                <p className="text-xs sm:text-sm">👤 {profile.rol_adulto}</p>
+                <>
+                  <p className="text-xs sm:text-sm">👤 {profile.rol_adulto}</p>
+                  {profile.rol_adulto === "Educador/a" && (profile as any).rama_que_educa && (
+                    <p className="text-xs sm:text-sm">
+                      {(profile as any).rama_que_educa === "manada" && "🐺 Rama Manada"}
+                      {(profile as any).rama_que_educa === "tropa" && "⚜️ Rama Tropa"}
+                      {(profile as any).rama_que_educa === "pioneros" && "🏔️ Rama Pioneros"}
+                      {(profile as any).rama_que_educa === "rovers" && "🚶 Rama Rovers"}
+                    </p>
+                  )}
+                </>
               )}
             </div>
           </div>
