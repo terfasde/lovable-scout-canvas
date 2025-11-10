@@ -121,7 +121,61 @@ const About = () => {
   return (
     <section id="historia" className="section-padding bg-background">
       <div className="container mx-auto px-4">
-        {/* Branches Grid */}
+        {/* Main Introduction - FIRST */}
+        <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+          <Reveal>
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                Quiénes Somos
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Somos un Grupo Scout, una comunidad que acompaña el crecimiento de niños, niñas, jóvenes y adolescentes a través del juego, la aventura, el servicio y la vida al aire libre.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Formamos parte del Movimiento Scout del Uruguay y del Movimiento Scout Mundial, un espacio presente en más de 170 países, que busca contribuir a la construcción de un mundo mejor, donde cada persona viva con sentido, compromiso y alegría.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                En nuestro grupo, las distintas unidades —Manada, Rama Scout, Pioneros y Rovers— comparten un mismo camino: aprender haciendo, desarrollar habilidades, fortalecer valores y descubrir el poder del trabajo en equipo.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                A través de campamentos, proyectos comunitarios, juegos, construcciones y desafíos personales, cada integrante aprende a ser responsable, solidario, respetuoso y activo en su entorno.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Detrás de todo esto hay un equipo de educadores voluntarios que guía, orienta y acompaña cada etapa, y un Comité de Padres que brinda su apoyo constante para hacer posible cada actividad.
+              </p>
+              <p className="text-lg text-primary font-semibold leading-relaxed">
+                Ser scout es vivir con una sonrisa, con la mochila llena de experiencias y con el corazón dispuesto a servir.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Somos un grupo que se enorgullece de sus tradiciones, respetando y tomando de la esencia del escultismo lo mejor, llevándolo a nuestros días. Somos un grupo donde la amistad, el respeto y el amor por la naturaleza nos unen en una gran familia que crece cada día, aprende y deja huella.
+              </p>
+              <div className="pt-6 flex gap-4">
+                <Button asChild size="lg">
+                  <Link to="/historia">Conoce nuestra historia</Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link to="/contacto">Únete al grupo</Link>
+                </Button>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <div className="relative">
+              <div className="relative z-10">
+                <img
+                  src={communityImage}
+                  alt="Comunidad Scout Séptimo"
+                  className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]"
+                />
+              </div>
+              <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
+              <div className="absolute -top-6 -right-6 w-40 h-40 bg-accent rounded-full opacity-20 blur-3xl -z-0"></div>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* Branches Grid - SECOND */}
         <div className="mb-20">
           <Reveal className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -203,57 +257,6 @@ const About = () => {
               </Reveal>
             ))}
           </div>
-        </div>
-
-        {/* Main Introduction */}
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-          <Reveal>
-            <div className="space-y-4">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Quiénes Somos
-              </h2>
-              <p className="text-base text-muted-foreground leading-relaxed">
-                Somos un Grupo Scout, una comunidad que acompaña el crecimiento de niños, niñas, jóvenes y adolescentes a través del juego, la aventura, el servicio y la vida al aire libre.
-              </p>
-              <p className="text-base text-muted-foreground leading-relaxed">
-                Formamos parte del Movimiento Scout del Uruguay y del Movimiento Scout Mundial, un espacio presente en más de 170 países, que busca contribuir a la construcción de un mundo mejor, donde cada persona viva con sentido, compromiso y alegría.
-              </p>
-              <p className="text-base text-muted-foreground leading-relaxed">
-                En nuestro grupo, las distintas unidades —Manada, Rama Scout, Pioneros y Rovers— comparten un mismo camino: aprender haciendo, desarrollar habilidades, fortalecer valores y descubrir el poder del trabajo en equipo.
-              </p>
-              <p className="text-base text-muted-foreground leading-relaxed">
-                A través de campamentos, proyectos comunitarios, juegos, construcciones y desafíos personales, cada integrante aprende a ser responsable, solidario, respetuoso y activo en su entorno.
-              </p>
-              <p className="text-base text-muted-foreground leading-relaxed">
-                Detrás de todo esto hay un equipo de educadores voluntarios que guía, orienta y acompaña cada etapa, y un Comité de Padres que brinda su apoyo constante para hacer posible cada actividad.
-              </p>
-              <p className="text-base text-muted-foreground leading-relaxed font-medium">
-                Ser scout es vivir con una sonrisa, con la mochila llena de experiencias y con el corazón dispuesto a servir.
-              </p>
-              <p className="text-base text-muted-foreground leading-relaxed">
-                Somos un grupo que se enorgullece de sus tradiciones, respetando y tomando de la esencia del escultismo lo mejor, llevándolo a nuestros días. Somos un grupo donde la amistad, el respeto y el amor por la naturaleza nos unen en una gran familia que crece cada día, aprende y deja huella.
-              </p>
-              <div className="pt-4">
-                <Button asChild size="lg">
-                  <Link to="/historia">Conoce nuestra historia</Link>
-                </Button>
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal>
-            <div className="relative">
-              <div className="relative z-10">
-                <img
-                  src={communityImage}
-                  alt="Comunidad Scout Séptimo"
-                  className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]"
-                />
-              </div>
-              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
-              <div className="absolute -top-6 -right-6 w-32 h-32 bg-accent rounded-full opacity-20 blur-3xl -z-0"></div>
-            </div>
-          </Reveal>
         </div>
 
         {/* Values Grid */}

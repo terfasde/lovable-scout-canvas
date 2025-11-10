@@ -87,19 +87,19 @@ const FooterNew = () => {
             {/* Social Links */}
             <div className="flex space-x-3 mb-6">
               <SocialLink
-                href="https://facebook.com/gruposcoutseptimomontevideo"
-                icon={<Facebook className="w-5 h-5" />}
-                label="Facebook"
-              />
-              <SocialLink
                 href="https://instagram.com/grupo_scout_septimo"
                 icon={<Instagram className="w-5 h-5" />}
                 label="Instagram"
               />
               <SocialLink
-                href="https://youtube.com/@gruposcoutseptimo"
+                href="https://www.youtube.com/@linceastuto"
                 icon={<Youtube className="w-5 h-5" />}
                 label="YouTube"
+              />
+              <SocialLink
+                href="https://facebook.com/gruposcoutseptimomontevideo"
+                icon={<Facebook className="w-5 h-5" />}
+                label="Facebook"
               />
             </div>
           </div>

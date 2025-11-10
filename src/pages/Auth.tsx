@@ -280,11 +280,13 @@ const Auth = () => {
         <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <img
-              src={logoImage}
-              alt="Grupo Scout Séptimo"
-              className="h-20 w-20"
-            />
+            <div className="relative w-24 h-24">
+              <img
+                src={logoImage}
+                alt="Grupo Scout Séptimo"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
           <CardTitle className="text-2xl font-bold">
             Grupo Scout Séptimo
