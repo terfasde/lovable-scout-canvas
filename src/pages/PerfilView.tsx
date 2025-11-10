@@ -111,15 +111,18 @@ const PerfilView = () => {
           return;
         }
         setUserId(auth.id);
-        
-        // Determinar si estamos viendo nuestro perfil o el de otro usuario
         const viewingId = targetUserId || auth.id;
         setViewingUserId(viewingId);
         const isOwn = viewingId === auth.id;
         setIsOwnProfile(isOwn);
-        
+
+        // Redirigir a la ruta pública unificada si estamos viendo a otro usuario con la antigua query.
+        if (!isOwn && targetUserId && !loading) {
+          // Nota: mantenemos la vista aquí pero podríamos hacer navigate(`/perfil-public/${viewingId}`)
+          // Si se decide unificar completamente en PerfilView, omitimos esta redirección.
+        }
+
         let p = await getProfile(viewingId).catch(() => null);
-        // Garantizar que exista perfil en modo local (auto-crear en /profiles/me)
         if (!p && isLocalBackend() && isOwn) {
           try {
             const ensured = (await apiFetch("/profiles/me")) as any;
@@ -128,36 +131,27 @@ const PerfilView = () => {
             p = null;
           }
         }
-        // Si no pudimos obtener el perfil (posible privado por RLS) y NO es el propio,
-        // intentar obtener un mínimo desde el directorio (SECURITY DEFINER)
         if (!p && !isOwn) {
           try {
             if (isLocalBackend()) {
               const data = (await apiFetch("/profiles/directory?q=&limit=200&offset=0")) as any[];
               const row = (data || []).find((r: any) => String(r.user_id) === String(viewingId));
               if (row) {
-                setMinimalProfile({
-                  nombre_completo: row.nombre_completo ?? null,
-                  username: row.username ?? null,
-                });
+                setMinimalProfile({ nombre_completo: row.nombre_completo ?? null, username: row.username ?? null });
               }
             } else {
               const { data: rpcData } = await supabase.rpc("list_profiles_directory");
               const list = (rpcData as any[]) || [];
               const row = list.find((r: any) => String(r.user_id) === String(viewingId));
               if (row) {
-                setMinimalProfile({
-                  nombre_completo: row.nombre_completo ?? null,
-                  username: row.username ?? null,
-                });
+                setMinimalProfile({ nombre_completo: row.nombre_completo ?? null, username: row.username ?? null });
               }
             }
           } catch {
-            // ignorar
+            // ignora
           }
         }
-        
-        // Solo cargar solicitudes pendientes si es mi propio perfil
+
         if (isOwn) {
           const { data: pend } = await getPendingRequestsForMe();
           setPending(
@@ -177,23 +171,18 @@ const PerfilView = () => {
               : [],
           );
         }
-        
-        // Load counts para el usuario que estamos viendo
+
         const [{ count: fCount }, { count: gCount }] = await Promise.all([
           getFollowersCount(viewingId),
           getFollowingCount(viewingId),
         ]);
         setFollowersCount(fCount || 0);
         setFollowingCount(gCount || 0);
-  setProfile(p ?? null);
-        
-        // Obtener el email del usuario que estamos viendo (solo para perfil propio)
-        if (isOwn) {
-          setViewedUserEmail(auth.email || "");
-        }
-        
-        // Verificar estado de seguimiento si no es nuestro perfil
-        if (!isOwn && userId) {
+        setProfile(p ?? null);
+
+        if (isOwn) setViewedUserEmail(auth.email || "");
+
+        if (!isOwn) {
           const { data: relation } = await getFollowRelation(viewingId);
           if (relation) {
             setFollowStatus(relation.status === "accepted" ? "following" : "pending");
@@ -926,7 +915,7 @@ const PerfilView = () => {
                       variant="outline"
                       size="sm"
                       onClick={() =>
-                        navigate(`/perfil-public/${item.follower_id}`)
+                        navigate(`/perfil?userId=${item.follower_id}`)
                       }
                     >
                       Ver perfil
@@ -991,7 +980,7 @@ const PerfilView = () => {
                       variant="outline"
                       size="sm"
                       onClick={() =>
-                        navigate(`/perfil-public/${item.followed_id}`)
+                        navigate(`/perfil?userId=${item.followed_id}`)
                       }
                     >
                       Ver perfil

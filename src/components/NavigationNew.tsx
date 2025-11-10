@@ -283,7 +283,7 @@ const Navigation = () => {
                               <div className="flex gap-2 mt-2">
                                 <Button size="sm" variant="outline" onClick={() => {
                                    removeNotification(n.id);
-                                   navigate(`/perfil-public/${n.data.follower_id}`);
+                                   navigate(`/perfil?userId=${n.data.follower_id}`);
                                  }}>Ver perfil</Button>
                               </div>
                             </div>
