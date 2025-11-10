@@ -434,6 +434,18 @@ const PerfilView = () => {
                 )}
                 {isOwnProfile && (
                   <>
+                    {profile?.edad && profile.edad >= 21 && profile.rol_adulto === "Educador/a" && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => navigate("/dashboard-coordinador")}
+                        className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
+                      >
+                        <Settings className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden xs:inline">Dashboard</span>
+                        <span className="xs:hidden">Dashboard</span>
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"

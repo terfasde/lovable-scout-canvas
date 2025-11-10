@@ -34,6 +34,7 @@ const VerificarEmail = lazy(() => import("./pages/VerificarEmail"));
 const Usuarios = lazy(() => import("./pages/Usuarios"));
 const Mensajes = lazy(() => import("./pages/Mensajes"));
 const GrupoDetail = lazy(() => import("@/pages/GrupoDetail"));
+const DashboardCoordinador = lazy(() => import("./pages/DashboardCoordinador"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Manada = lazy(() => import("./pages/ramas/manada"));
 const Tropa = lazy(() => import("./pages/ramas/tropa"));
@@ -180,6 +181,7 @@ const App = () => (
                     <Route path="/usuarios" element={<Usuarios />} />
                     <Route path="/mensajes" element={<Mensajes />} />
                     <Route path="/grupos/:id" element={<GrupoDetail />} />
+                    <Route path="/dashboard-coordinador" element={<DashboardCoordinador />} />
 
                     {/* Ramas */}
                     <Route path="/ramas/manada" element={<Manada />} />
