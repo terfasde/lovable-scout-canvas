@@ -32,6 +32,8 @@ const About = () => {
       route: "manada",
       hoverClass: "hover:bg-[#FEB21A] hover:text-white",
       hoverIconClass: "group-hover:text-white",
+      detailText:
+        "En la Manada los niños descubren el mundo a través del juego, canciones, exploraciones y desafíos simples. Inspirados en El Libro de la Selva, cada encuentro despierta su curiosidad y amor por la naturaleza, aprendiendo valores como la amistad, el respeto y la ayuda mutua en un ambiente divertido y seguro.",
     },
     {
       icon: Compass,
@@ -41,6 +43,8 @@ const About = () => {
       route: "tropa",
       hoverClass: "hover:bg-[#344F1F] hover:text-white",
       hoverIconClass: "group-hover:text-white",
+      detailText:
+        "La Tropa es pura aventura: patrullas, construcciones, campamentos y proyectos donde aprenden a trabajar en equipo, tomar decisiones y asumir responsabilidades. Cada actividad es una oportunidad para vivir la Ley y la Promesa Scout, construyendo carácter y compromiso bajo las estrellas.",
     },
     {
       icon: Tent,
@@ -50,32 +54,40 @@ const About = () => {
       route: "pioneros",
       hoverClass: "hover:bg-[#134686] hover:text-white",
       hoverIconClass: "group-hover:text-white",
+      detailText:
+        "Los Pioneros ponen manos a la obra organizando actividades solidarias, proyectos comunitarios y campamentos de servicio. Con espíritu crítico y creativo, transforman su entorno y dejan huella positiva en su grupo y comunidad, comprometiéndose con un mundo más justo y sostenible.",
     },
     {
       icon: Flame,
       title: "Rovers",
       description:
-        "Jóvenes adultos de 18 a 20 años, servicio a la comunidad y liderazgo",
+        "Jóvenes adultos de 18 a 21 años, servicio a la comunidad y liderazgo",
       route: "rovers",
       hoverClass: "hover:bg-[#DD0303] hover:text-white",
       hoverIconClass: "group-hover:text-white",
+      detailText:
+        "Los Rovers emprenden su propio camino de crecimiento personal a través de proyectos de servicio, viajes y experiencias que consolidan su identidad como ciudadanos activos. Aprenden a vivir con sentido, con los valores scouts como brújula y el corazón dispuesto a servir donde haga falta.",
     },
     {
       icon: Users,
-      title: "Staff",
+      title: "Educadores",
       description:
         "Educadores scouts que guían y acompañan el desarrollo de las ramas",
       route: "staff",
       hoverClass: "hover:bg-violet-700 hover:text-white",
       hoverIconClass: "group-hover:text-white",
+      detailText:
+        "Los Educadores Scouts son voluntarios que dedican su tiempo a planificar actividades, capacitarse y acompañar el crecimiento de cada niño y joven. Desde la vocación y el compromiso, son testimonio vivo de los valores scouts, formando personas libres, responsables y felices.",
     },
     {
       icon: Shield,
-      title: "Comité",
+      title: "Comité de Padres",
       description: "Padres y colaboradores que apoyan la gestión del grupo",
       route: "comite",
       hoverClass: "hover:bg-orange-600 hover:text-white",
       hoverIconClass: "group-hover:text-white",
+      detailText:
+        "El Comité de Padres organiza eventos, gestiona recursos, mantiene el local y colabora en cada campamento y actividad importante. Su participación fortalece la comunidad scout y demuestra que cuando las familias se comprometen, los sueños de los chicos se hacen realidad.",
     },
   ];
 
@@ -153,13 +165,7 @@ const About = () => {
                         </DialogTitle>
                         <DialogDescription className="space-y-4">
                           <p className="text-base">{branch.description}</p>
-                          <p>
-                            En esta rama desarrollamos actividades específicas
-                            diseñadas para la edad y etapa de desarrollo de
-                            nuestros scouts. Cada encuentro está pensado para
-                            fomentar el crecimiento personal, el compañerismo y
-                            el aprendizaje de habilidades prácticas.
-                          </p>
+                          <p>{branch.detailText}</p>
                           <div className="pt-4 border-t">
                             <h4 className="font-semibold mb-2">
                               ¿Cuándo nos reunimos?
@@ -207,15 +213,25 @@ const About = () => {
                 Quiénes Somos
               </h2>
               <p className="text-base text-muted-foreground leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+                Somos un Grupo Scout, una comunidad que acompaña el crecimiento de niños, niñas, jóvenes y adolescentes a través del juego, la aventura, el servicio y la vida al aire libre.
               </p>
               <p className="text-base text-muted-foreground leading-relaxed">
-                Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt
-                mollit anim id est laborum.
+                Formamos parte del Movimiento Scout del Uruguay y del Movimiento Scout Mundial, un espacio presente en más de 170 países, que busca contribuir a la construcción de un mundo mejor, donde cada persona viva con sentido, compromiso y alegría.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                En nuestro grupo, las distintas unidades —Manada, Rama Scout, Pioneros y Rovers— comparten un mismo camino: aprender haciendo, desarrollar habilidades, fortalecer valores y descubrir el poder del trabajo en equipo.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                A través de campamentos, proyectos comunitarios, juegos, construcciones y desafíos personales, cada integrante aprende a ser responsable, solidario, respetuoso y activo en su entorno.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                Detrás de todo esto hay un equipo de educadores voluntarios que guía, orienta y acompaña cada etapa, y un Comité de Padres que brinda su apoyo constante para hacer posible cada actividad.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed font-medium">
+                Ser scout es vivir con una sonrisa, con la mochila llena de experiencias y con el corazón dispuesto a servir.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                Somos un grupo que se enorgullece de sus tradiciones, respetando y tomando de la esencia del escultismo lo mejor, llevándolo a nuestros días. Somos un grupo donde la amistad, el respeto y el amor por la naturaleza nos unen en una gran familia que crece cada día, aprende y deja huella.
               </p>
               <div className="pt-4">
                 <Button asChild size="lg">
