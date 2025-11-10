@@ -55,26 +55,12 @@ const navSections: NavSection[] = [
   {
     label: "Principal",
     links: [
-  { name: "Inicio", path: "/", icon: Home },
-  // Visibles en el nav principal (ya no en dropdown de usuario)
-  { name: "Comuni 7", path: "/usuarios", icon: Users },
-      { name: "Mensajes", path: "/mensajes", icon: MessageSquare },
-      { name: "Galería", path: "/galeria", icon: BookOpen },
-      { name: "Contacto", path: "/contacto", icon: Mail },
-    ],
-  },
-  {
-    label: "Historia",
-    links: [
+      { name: "Inicio", path: "/", icon: Home },
+      { name: "Comuni 7", path: "/usuarios", icon: Users },
       { name: "Historia", path: "/historia", icon: History },
-      { name: "Línea Temporal", path: "/linea-temporal", icon: Calendar },
-    ],
-  },
-  {
-    label: "Eventos",
-    links: [
       { name: "Eventos", path: "/eventos", icon: Calendar },
-      { name: "BAUEN", path: "/bauen", icon: Calendar },
+      { name: "Movimiento Scout", path: "/movimiento-scout", icon: BookOpen },
+      { name: "Contacto", path: "/contacto", icon: Mail },
     ],
   },
 ];
@@ -233,7 +219,9 @@ const Navigation = () => {
                     className={cn(
                       "px-4 py-2 rounded-md text-sm font-medium transition-all",
                       "hover:bg-nav-hover hover:text-nav-hover-foreground",
-                      isActive(link.path)
+                      isActive(link.path) || 
+                      (link.path === "/historia" && isActive("/linea-temporal")) ||
+                      (link.path === "/eventos" && isActive("/bauen"))
                         ? "bg-primary text-primary-foreground"
                         : "text-foreground/80",
                     )}
@@ -242,58 +230,6 @@ const Navigation = () => {
                   </Link>
                 ))}
               </div>
-
-              {/* Historia Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className={cn(
-                      "gap-1",
-                      isSectionActive(navSections[1].links) && "bg-accent",
-                    )}
-                  >
-                    Historia
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {navSections[1].links.map((link) => (
-                    <DropdownMenuItem key={link.path} asChild>
-                      <Link to={link.path} className="cursor-pointer">
-                        {link.icon && <link.icon className="h-4 w-4 mr-2" />}
-                        {link.name}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Eventos Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className={cn(
-                      "gap-1",
-                      isSectionActive(navSections[2].links) && "bg-accent",
-                    )}
-                  >
-                    Eventos
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  {navSections[2].links.map((link) => (
-                    <DropdownMenuItem key={link.path} asChild>
-                      <Link to={link.path} className="cursor-pointer">
-                        {link.icon && <link.icon className="h-4 w-4 mr-2" />}
-                        {link.name}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
 
               {/* Theme Toggle */}
               <ThemeToggle />
