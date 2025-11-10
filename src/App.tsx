@@ -29,19 +29,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const Perfil = lazy(() => import("./pages/Perfil"));
 const PerfilView = lazy(() => import("./pages/PerfilView"));
 const PerfilCompartir = lazy(() => import("./pages/PerfilCompartir"));
-// Ruta antigua de perfil público será redirigida al nuevo esquema unificado
-const PerfilPublicRedirect = () => {
-  const { useParams, useNavigate } = require("react-router-dom");
-  const params = useParams();
-  const navigate = useNavigate();
-  const id = (params as any)?.id;
-  useEffect(() => {
-    if (id) navigate(`/perfil?userId=${id}`, { replace: true });
-  }, [id]);
-  return (
-    <div className="p-8 text-center text-muted-foreground">Redirigiendo…</div>
-  );
-};
+const PerfilPublic = lazy(() => import("./pages/PerfilPublic"));
 const VerificarEmail = lazy(() => import("./pages/VerificarEmail"));
 const Usuarios = lazy(() => import("./pages/Usuarios"));
 const Mensajes = lazy(() => import("./pages/Mensajes"));
@@ -187,7 +175,7 @@ const App = () => (
                     />
                     <Route
                       path="/perfil-public/:id"
-                      element={<PerfilPublicRedirect />}
+                      element={<PerfilPublic />}
                     />
                     <Route path="/usuarios" element={<Usuarios />} />
                     <Route path="/mensajes" element={<Mensajes />} />

@@ -71,8 +71,8 @@ const PerfilCompartir = () => {
 
   const copyLink = async () => {
     if (!profile) return;
-    // Migrado al nuevo esquema: la vista unificada maneja perfiles ajenos con query param
-    const link = `${window.location.origin}/perfil?userId=${profile.user_id}`;
+    // Enlace público: ruta dedicada para acceso sin login
+    const link = `${window.location.origin}/perfil-public/${profile.user_id}`;
     try {
       await navigator.clipboard.writeText(link);
       toast({
@@ -194,7 +194,7 @@ const PerfilCompartir = () => {
               <div className="hidden sm:flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
                 <Share2 className="w-4 h-4 text-muted-foreground shrink-0" />
                 <code className="flex-1 text-sm truncate">
-                  {`${window.location.origin}/perfil?userId=${profile?.user_id}`}
+                  {`${window.location.origin}/perfil-public/${profile?.user_id}`}
                 </code>
                 <Button
                   size="sm"
@@ -216,7 +216,7 @@ const PerfilCompartir = () => {
                   </span>
                 </div>
                 <code className="block text-xs break-all bg-background p-2 rounded border">
-                  {`${window.location.origin}/perfil?userId=${profile?.user_id}`}
+                  {`${window.location.origin}/perfil-public/${profile?.user_id}`}
                 </code>
                 <Button
                   size="sm"
