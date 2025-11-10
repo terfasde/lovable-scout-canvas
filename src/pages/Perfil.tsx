@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useBlocker } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,19 +80,6 @@ const Perfil = () => {
 
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  // Bloquear navegación si hay cambios sin guardar
-  const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) =>
-      hasChanges() && currentLocation.pathname !== nextLocation.pathname
-  );
-
-  useEffect(() => {
-    if (blocker.state === "blocked") {
-      setShowUnsavedDialog(true);
-      setPendingNavigation(blocker.location?.pathname || null);
-    }
-  }, [blocker]);
 
   // Prevenir cierre/recarga del navegador con cambios sin guardar
   useEffect(() => {
@@ -1034,9 +1021,6 @@ const Perfil = () => {
             <AlertDialogCancel onClick={() => {
               setShowUnsavedDialog(false);
               setPendingNavigation(null);
-              if (blocker.state === "blocked") {
-                blocker.reset?.();
-              }
             }}>
               Seguir editando
             </AlertDialogCancel>
@@ -1046,8 +1030,6 @@ const Perfil = () => {
                 if (pendingNavigation) {
                   navigate(pendingNavigation);
                   setPendingNavigation(null);
-                } else if (blocker.state === "blocked") {
-                  blocker.proceed?.();
                 }
               }}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
