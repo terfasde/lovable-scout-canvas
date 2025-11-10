@@ -29,9 +29,24 @@ const Auth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Verificar usuario real en Supabase (evita falsos positivos de sesión)
+    // Verificar sesión actual y manejar callback de OAuth
     const checkSession = async () => {
       try {
+        // Obtener la sesión actual (importante para callback de OAuth)
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Error al obtener sesión:", sessionError);
+          return;
+        }
+
+        if (session?.user) {
+          console.log("Usuario autenticado detectado, redirigiendo a /");
+          navigate("/");
+          return;
+        }
+
+        // Si no hay sesión, verificar usuario por si acaso
         const { data, error } = await supabase.auth.getUser();
         if (error) {
           console.error("Error al obtener usuario:", error);
@@ -42,7 +57,7 @@ const Auth = () => {
           navigate("/");
         }
       } catch (error) {
-        console.error("Error inesperado al verificar usuario:", error);
+        console.error("Error inesperado al verificar sesión:", error);
       }
     };
 
@@ -53,9 +68,11 @@ const Auth = () => {
     try {
       const {
         data: { subscription: sub },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session) {
-          console.log("Cambio de sesión detectado, redirigiendo a /");
+      } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log("Auth state change:", event, session?.user?.email);
+        
+        if (session?.user) {
+          console.log("Sesión activa detectada, redirigiendo a /");
           navigate("/");
         }
       });
