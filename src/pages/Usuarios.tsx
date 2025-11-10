@@ -814,7 +814,7 @@ const Usuarios = () => {
                                 size="sm"
                                 className="w-full"
                                 onClick={() =>
-                                  navigate(`/perfil?userId=${profile.user_id}`)
+                                  navigate(`/perfil-public/${profile.user_id}`)
                                 }
                               >
                                 Ver perfil

@@ -31,6 +31,10 @@ const PerfilPublic = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [profile, setProfile] = useState<any | null>(null);
   const [relation, setRelation] = useState<any | null>(null);
+  const [minimalProfile, setMinimalProfile] = useState<{
+    nombre_completo: string | null;
+    username?: string | null;
+  } | null>(null);
   const [showUnfollowDialog, setShowUnfollowDialog] = useState(false);
   const { toast } = useToast();
 
@@ -39,16 +43,33 @@ const PerfilPublic = () => {
       try {
         if (!id) return;
         if (isLocalBackend()) {
-          const data = await apiFetch(`/profiles/${encodeURIComponent(id)}`);
-          setProfile(data);
+          try {
+            const data = await apiFetch(`/profiles/${encodeURIComponent(id)}`);
+            setProfile(data);
+          } catch {
+            // Fallback: directorio mínimo
+            const directory = (await apiFetch(
+              "/profiles/directory?q=&limit=200&offset=0",
+            )) as any[];
+            const row = (directory || []).find((r) => String(r.user_id) === String(id));
+            if (row) setMinimalProfile({ nombre_completo: row.nombre_completo ?? null, username: row.username ?? null });
+          }
         } else {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("user_id", id)
-            .single();
-          if (error) throw error;
-          setProfile(data);
+          try {
+            const { data, error } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("user_id", id)
+              .single();
+            if (error) throw error;
+            setProfile(data);
+          } catch {
+            // Fallback mediante RPC de directorio (SECURITY DEFINER)
+            const { data: rpcData } = await supabase.rpc("list_profiles_directory");
+            const list = (rpcData as any[]) || [];
+            const row = list.find((r: any) => String(r.user_id) === String(id));
+            if (row) setMinimalProfile({ nombre_completo: row.nombre_completo ?? null, username: row.username ?? null });
+          }
         }
         // try to fetch relation status (if authenticated)
         const rel = await getFollowRelation(id);
@@ -140,19 +161,12 @@ const PerfilPublic = () => {
       </div>
     );
 
-  if (!profile)
-    return (
-      <div className="min-h-screen flex items-center justify-center px-4 text-center">
-        <div>
-          <p className="mb-3">Este perfil es privado o no tienes acceso.</p>
-          {id && (
-            <Button onClick={handleFollow} className="gap-2">
-              Solicitar seguir
-            </Button>
-          )}
-        </div>
-      </div>
-    );
+  const isAccessible = Boolean(
+    profile && ((profile as any).is_public || (relation?.status === "accepted"))
+  );
+
+  const displayName = (profile?.nombre_completo ?? minimalProfile?.nombre_completo) || "Usuario Scout";
+  const displayUsername = (profile as any)?.username || minimalProfile?.username || null;
 
   return (
     <div className="min-h-screen bg-background py-12 px-4">
@@ -160,14 +174,14 @@ const PerfilPublic = () => {
         <CardHeader>
           <div className="flex items-center gap-4">
             <UserAvatar
-              avatarUrl={profile.avatar_url}
-              userName={profile.nombre_completo}
+              avatarUrl={profile?.avatar_url}
+              userName={displayName}
               size="lg"
             />
             <div>
-              <CardTitle>{profile.nombre_completo}</CardTitle>
+              <CardTitle>{displayName}</CardTitle>
               <div className="flex items-center gap-2 mt-1">
-                {(profile as any).is_public ? (
+                {(profile as any)?.is_public ? (
                   <p className="text-sm text-muted-foreground">
                     Perfil público
                   </p>
@@ -175,6 +189,9 @@ const PerfilPublic = () => {
                   <p className="text-sm text-muted-foreground">
                     Perfil privado
                   </p>
+                )}
+                {displayUsername && (
+                  <span className="text-xs text-muted-foreground">@{displayUsername}</span>
                 )}
                 {status === "accepted" && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
@@ -265,20 +282,26 @@ const PerfilPublic = () => {
               </Button>
             )}
           </div>
-          <div className="space-y-3">
-            <p>
-              <strong>Teléfono:</strong> {profile.telefono || "-"}
-            </p>
-            <p>
-              <strong>Edad:</strong> {profile.edad ?? "-"}
-            </p>
-            <p>
-              <strong>Seisena:</strong> {profile.seisena || "-"}
-            </p>
-            <p>
-              <strong>Patrulla:</strong> {profile.patrulla || "-"}
-            </p>
-          </div>
+          {isAccessible ? (
+            <div className="space-y-3">
+              <p>
+                <strong>Teléfono:</strong> {profile?.telefono || "-"}
+              </p>
+              <p>
+                <strong>Edad:</strong> {profile?.edad ?? "-"}
+              </p>
+              <p>
+                <strong>Seisena:</strong> {profile?.seisena || "-"}
+              </p>
+              <p>
+                <strong>Patrulla:</strong> {profile?.patrulla || "-"}
+              </p>
+            </div>
+          ) : (
+            <div className="text-sm text-muted-foreground">
+              Solo puedes ver el nombre y el usuario. Envía una solicitud para ver más información.
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

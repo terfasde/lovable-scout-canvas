@@ -45,6 +45,11 @@ type Profile = Tables["profiles"]["Row"];
 const PerfilView = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
+  // Perfil mínimo para casos de privacidad (nombre/username)
+  const [minimalProfile, setMinimalProfile] = useState<{
+    nombre_completo: string | null;
+    username?: string | null;
+  } | null>(null);
   const [viewedUserEmail, setViewedUserEmail] = useState(""); // Email del usuario que estamos viendo
   const [pending, setPending] = useState<
     {
@@ -123,6 +128,34 @@ const PerfilView = () => {
             p = null;
           }
         }
+        // Si no pudimos obtener el perfil (posible privado por RLS) y NO es el propio,
+        // intentar obtener un mínimo desde el directorio (SECURITY DEFINER)
+        if (!p && !isOwn) {
+          try {
+            if (isLocalBackend()) {
+              const data = (await apiFetch("/profiles/directory?q=&limit=200&offset=0")) as any[];
+              const row = (data || []).find((r: any) => String(r.user_id) === String(viewingId));
+              if (row) {
+                setMinimalProfile({
+                  nombre_completo: row.nombre_completo ?? null,
+                  username: row.username ?? null,
+                });
+              }
+            } else {
+              const { data: rpcData } = await supabase.rpc("list_profiles_directory");
+              const list = (rpcData as any[]) || [];
+              const row = list.find((r: any) => String(r.user_id) === String(viewingId));
+              if (row) {
+                setMinimalProfile({
+                  nombre_completo: row.nombre_completo ?? null,
+                  username: row.username ?? null,
+                });
+              }
+            }
+          } catch {
+            // ignorar
+          }
+        }
         
         // Solo cargar solicitudes pendientes si es mi propio perfil
         if (isOwn) {
@@ -152,7 +185,7 @@ const PerfilView = () => {
         ]);
         setFollowersCount(fCount || 0);
         setFollowingCount(gCount || 0);
-        setProfile(p ?? null);
+  setProfile(p ?? null);
         
         // Obtener el email del usuario que estamos viendo (solo para perfil propio)
         if (isOwn) {
@@ -300,10 +333,68 @@ const PerfilView = () => {
     );
   }
 
-  if (!profile) {
-    // Si por alguna razón no hay perfil, redirigir a edición para completarlo
-    navigate("/perfil/editar");
-    return null;
+  // Construir bandera de vista restringida: perfil ajeno, no siguiendo y perfil no público
+  const isRestrictedView = !isOwnProfile && (
+    // si no hay perfil cargado, asumir privado (no accesible)
+    !profile || !(profile as any).is_public
+  ) && followStatus !== "following";
+
+  // Vista restringida temprana: solo nombre/usuario y botón de seguir
+  if (!loading && isRestrictedView) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="h-16 sm:h-20"></div>
+        <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b">
+            <UserAvatar
+              avatarUrl={profile?.avatar_url}
+              userName={profile?.nombre_completo || minimalProfile?.nombre_completo || null}
+              size="xl"
+              className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 text-3xl sm:text-4xl"
+            />
+            <div className="flex-1 min-w-0 w-full">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 mb-4 flex-wrap">
+                <div className="flex flex-col items-center sm:items-start">
+                  <h1 className="text-xl sm:text-2xl font-normal">
+                    {(profile?.nombre_completo ?? minimalProfile?.nombre_completo) || "Usuario Scout"}
+                  </h1>
+                  {((profile as any)?.username || minimalProfile?.username) && (
+                    <p className="text-sm text-muted-foreground">
+                      @{(profile as any)?.username || minimalProfile?.username}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  {!isOwnProfile && (
+                    <Button
+                      variant={followStatus === "pending" ? "outline" : "default"}
+                      size="sm"
+                      onClick={handleFollowToggle}
+                      disabled={followLoading}
+                      className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
+                    >
+                      {followLoading
+                        ? "Cargando..."
+                        : followStatus === "pending"
+                        ? "Solicitud enviada"
+                        : "Seguir"}
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <div className="rounded-lg border bg-muted/30 p-4 text-center sm:text-left">
+                <p className="text-sm sm:text-base">
+                  🔒 Este perfil es privado. Solo puedes ver el nombre y el usuario.
+                </p>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                  Envía una solicitud de seguimiento para ver más información.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -312,12 +403,12 @@ const PerfilView = () => {
       <div className="h-16 sm:h-20"></div>
 
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
-        {/* Header estilo Instagram */}
+        {/* Header estilo Instagram (o vista restringida) */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 mb-6 sm:mb-8 pb-6 sm:pb-8 border-b">
           {/* Avatar */}
           <UserAvatar
-            avatarUrl={profile.avatar_url}
-            userName={profile.nombre_completo}
+            avatarUrl={profile?.avatar_url}
+            userName={profile?.nombre_completo || minimalProfile?.nombre_completo || null}
             size="xl"
             className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 text-3xl sm:text-4xl"
           />
@@ -328,11 +419,11 @@ const PerfilView = () => {
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 mb-4 flex-wrap">
               <div className="flex flex-col items-center sm:items-start">
                 <h1 className="text-xl sm:text-2xl font-normal">
-                  {profile.nombre_completo || "Usuario Scout"}
+                  {(profile?.nombre_completo ?? minimalProfile?.nombre_completo) || "Usuario Scout"}
                 </h1>
-                {(profile as any).username && (
+                {((profile as any)?.username || minimalProfile?.username) && (
                   <p className="text-sm text-muted-foreground">
-                    @{(profile as any).username}
+                    @{(profile as any)?.username || minimalProfile?.username}
                   </p>
                 )}
               </div>
@@ -421,8 +512,7 @@ const PerfilView = () => {
                               } catch (err: any) {
                                 toast({
                                   title: "Error",
-                                  description:
-                                    err?.message || "No se pudo eliminar la cuenta",
+                                  description: err?.message || "No se pudo eliminar la cuenta",
                                   variant: "destructive",
                                 });
                               } finally {
@@ -514,49 +604,49 @@ const PerfilView = () => {
             </h2>
 
             {(profile.seisena ||
-              (profile.edad && profile.edad >= 7 && profile.edad <= 20)) && (
+              (profile?.edad && profile?.edad >= 7 && profile?.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Manada
                 </h3>
                 <p className="text-sm sm:text-base">
-                  {profile.seisena || "No especificada"}
+                  {profile?.seisena || "No especificada"}
                 </p>
               </div>
             )}
 
             {(profile.patrulla ||
-              (profile.edad && profile.edad >= 11 && profile.edad <= 20)) && (
+              (profile?.edad && profile?.edad >= 11 && profile?.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Tropa
                 </h3>
                 <p className="text-sm sm:text-base">
-                  {profile.patrulla || "No especificada"}
+                  {profile?.patrulla || "No especificada"}
                 </p>
               </div>
             )}
 
             {(profile.equipo_pioneros ||
-              (profile.edad && profile.edad >= 15 && profile.edad <= 20)) && (
+              (profile?.edad && profile?.edad >= 15 && profile?.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Pioneros
                 </h3>
                 <p className="text-sm sm:text-base">
-                  {profile.equipo_pioneros || "No especificado"}
+                  {profile?.equipo_pioneros || "No especificado"}
                 </p>
               </div>
             )}
 
             {(profile.comunidad_rovers ||
-              (profile.edad && profile.edad >= 18 && profile.edad <= 20)) && (
+              (profile?.edad && profile?.edad >= 18 && profile?.edad <= 20)) && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Rovers
                 </h3>
                 <p className="text-sm sm:text-base">
-                  {profile.comunidad_rovers || "No especificada"}
+                  {profile?.comunidad_rovers || "No especificada"}
                 </p>
               </div>
             )}
@@ -565,14 +655,14 @@ const PerfilView = () => {
           <div className="space-y-3 sm:space-y-4">
             <h2 className="text-base sm:text-lg font-semibold">Detalles</h2>
 
-            {profile.fecha_nacimiento && (
+            {profile?.fecha_nacimiento && (
               <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
                 <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
                   Fecha de nacimiento
                 </h3>
                 <p className="text-sm sm:text-base">
                   {(() => {
-                    const s = String(profile.fecha_nacimiento);
+                    const s = String(profile?.fecha_nacimiento);
                     const [y, m, d] = s.split("-");
                     return `${d}/${m}/${y}`;
                   })()}
@@ -585,7 +675,7 @@ const PerfilView = () => {
                 Rama actual
               </h3>
               <p className="text-sm sm:text-base font-medium">
-                {getRamaActual(profile.edad)}
+                {getRamaActual(profile?.edad)}
               </p>
             </div>
 
@@ -594,7 +684,7 @@ const PerfilView = () => {
                 Perfil
               </h3>
               <p className="text-sm sm:text-base">
-                {(profile as any).is_public ? "🌍 Público" : "🔒 Privado"}
+                {(profile as any)?.is_public ? "🌍 Público" : "🔒 Privado"}
               </p>
             </div>
 
