@@ -600,92 +600,180 @@ const PerfilView = () => {
 
             {/* Solicitudes de seguimiento pendientes */}
             <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
-              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2">
-                Solicitudes de seguimiento
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm sm:text-base font-semibold">
+                  Solicitudes de seguimiento
+                </h3>
+                {pending.length > 0 && (
+                  <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
+                    {pending.length}
+                  </span>
+                )}
+              </div>
               {pending.length === 0 ? (
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  No tienes solicitudes.
-                </p>
+                <div className="text-center py-6 sm:py-8">
+                  <div className="text-4xl sm:text-5xl mb-2">📭</div>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    No tienes solicitudes pendientes
+                  </p>
+                </div>
               ) : (
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {pending.map((req) => (
                     <li
                       key={req.follower_id}
-                      className="flex items-center justify-between gap-2"
+                      className="bg-background rounded-lg p-3 border shadow-sm"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <UserAvatar
-                          avatarUrl={req.follower?.avatar_url}
-                          userName={req.follower?.nombre_completo}
-                          size="sm"
-                          className="w-8 h-8 flex-shrink-0"
-                        />
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-sm font-medium truncate">
-                            {req.follower?.nombre_completo || "Usuario"}
-                          </span>
-                          {req.follower?.username && (
-                            <span className="text-xs text-muted-foreground truncate">
-                              @{req.follower.username}
+                      {/* Móvil: Layout vertical */}
+                      <div className="flex flex-col gap-3 sm:hidden">
+                        <div className="flex items-center gap-3">
+                          <UserAvatar
+                            avatarUrl={req.follower?.avatar_url}
+                            userName={req.follower?.nombre_completo}
+                            size="md"
+                          />
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <span className="text-sm font-semibold truncate">
+                              {req.follower?.nombre_completo || "Usuario"}
                             </span>
-                          )}
+                            {req.follower?.username && (
+                              <span className="text-xs text-muted-foreground truncate">
+                                @{req.follower.username}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="w-full gap-1.5"
+                            onClick={async () => {
+                              const { error } = await acceptFollow(
+                                req.follower_id,
+                              );
+                              if (error)
+                                return toast({
+                                  title: "Error",
+                                  description:
+                                    (error as any).message ||
+                                    "No se pudo aceptar",
+                                  variant: "destructive",
+                                });
+                              setPending((p) =>
+                                p.filter(
+                                  (x) => x.follower_id !== req.follower_id,
+                                ),
+                              );
+                              setFollowersCount((c) => c + 1);
+                              toast({ title: "Solicitud aceptada" });
+                            }}
+                          >
+                            <Check className="w-4 h-4" /> Aceptar
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="w-full gap-1.5"
+                            onClick={async () => {
+                              const { error } = await rejectFollow(
+                                req.follower_id,
+                              );
+                              if (error)
+                                return toast({
+                                  title: "Error",
+                                  description:
+                                    (error as any).message ||
+                                    "No se pudo rechazar",
+                                  variant: "destructive",
+                                });
+                              setPending((p) =>
+                                p.filter(
+                                  (x) => x.follower_id !== req.follower_id,
+                                ),
+                              );
+                              toast({ title: "Solicitud rechazada" });
+                            }}
+                          >
+                            <X className="w-4 h-4" /> Rechazar
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex gap-2 flex-shrink-0">
-                        <Button
-                          size="sm"
-                          variant="default"
-                          className="gap-1"
-                          onClick={async () => {
-                            const { error } = await acceptFollow(
-                              req.follower_id,
-                            );
-                            if (error)
-                              return toast({
-                                title: "Error",
-                                description:
-                                  (error as any).message ||
-                                  "No se pudo aceptar",
-                                variant: "destructive",
-                              });
-                            setPending((p) =>
-                              p.filter(
-                                (x) => x.follower_id !== req.follower_id,
-                              ),
-                            );
-                            setFollowersCount((c) => c + 1);
-                            toast({ title: "Solicitud aceptada" });
-                          }}
-                        >
-                          <Check className="w-4 h-4" /> Aceptar
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="gap-1"
-                          onClick={async () => {
-                            const { error } = await rejectFollow(
-                              req.follower_id,
-                            );
-                            if (error)
-                              return toast({
-                                title: "Error",
-                                description:
-                                  (error as any).message ||
-                                  "No se pudo rechazar",
-                                variant: "destructive",
-                              });
-                            setPending((p) =>
-                              p.filter(
-                                (x) => x.follower_id !== req.follower_id,
-                              ),
-                            );
-                            toast({ title: "Solicitud rechazada" });
-                          }}
-                        >
-                          <X className="w-4 h-4" /> Rechazar
-                        </Button>
+
+                      {/* Desktop: Layout horizontal */}
+                      <div className="hidden sm:flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <UserAvatar
+                            avatarUrl={req.follower?.avatar_url}
+                            userName={req.follower?.nombre_completo}
+                            size="md"
+                          />
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-sm font-semibold truncate">
+                              {req.follower?.nombre_completo || "Usuario"}
+                            </span>
+                            {req.follower?.username && (
+                              <span className="text-xs text-muted-foreground truncate">
+                                @{req.follower.username}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2 flex-shrink-0">
+                          <Button
+                            size="sm"
+                            variant="default"
+                            className="gap-1.5"
+                            onClick={async () => {
+                              const { error } = await acceptFollow(
+                                req.follower_id,
+                              );
+                              if (error)
+                                return toast({
+                                  title: "Error",
+                                  description:
+                                    (error as any).message ||
+                                    "No se pudo aceptar",
+                                  variant: "destructive",
+                                });
+                              setPending((p) =>
+                                p.filter(
+                                  (x) => x.follower_id !== req.follower_id,
+                                ),
+                              );
+                              setFollowersCount((c) => c + 1);
+                              toast({ title: "Solicitud aceptada" });
+                            }}
+                          >
+                            <Check className="w-4 h-4" /> Aceptar
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="gap-1.5"
+                            onClick={async () => {
+                              const { error } = await rejectFollow(
+                                req.follower_id,
+                              );
+                              if (error)
+                                return toast({
+                                  title: "Error",
+                                  description:
+                                    (error as any).message ||
+                                    "No se pudo rechazar",
+                                  variant: "destructive",
+                                });
+                              setPending((p) =>
+                                p.filter(
+                                  (x) => x.follower_id !== req.follower_id,
+                                ),
+                              );
+                              toast({ title: "Solicitud rechazada" });
+                            }}
+                          >
+                            <X className="w-4 h-4" /> Rechazar
+                          </Button>
+                        </div>
                       </div>
                     </li>
                   ))}
