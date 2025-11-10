@@ -8,18 +8,23 @@ const Staff = () => {
     <div className="min-h-screen">
       <section className="section-padding">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-6">Staff</h1>
+          <h1 className="text-4xl font-bold mb-6">Educadores</h1>
           <div className="grid md:grid-cols-2 gap-8">
             <Card>
               <CardContent className="p-8">
-                <p className="text-lg text-muted-foreground">
-                  Información sobre el Staff: formación de educadores, roles y
-                  apoyo pedagógico.
+                <p className="text-lg text-muted-foreground mb-4">
+                  Los Educadores Scouts son voluntarios que acompañan, guían y sostienen el crecimiento de cada niño, niña y joven del grupo.
                 </p>
-                <ul className="list-disc pl-5 mt-4 text-muted-foreground space-y-2">
-                  <li>Formación de guías</li>
-                  <li>Apoyo logístico y pedagógico</li>
-                  <li>Coordinación de actividades</li>
+                <p className="text-lg text-muted-foreground mb-4">
+                  Desde la vocación y el compromiso, dedican su tiempo a planificar actividades, capacitarse, formar equipos y vivir el escultismo con alegría y coherencia.
+                </p>
+                <p className="text-lg text-muted-foreground">
+                  Su misión es formar personas libres, responsables y felices, siendo testimonio vivo de los valores que inspiran el Movimiento Scout.
+                </p>
+                <ul className="list-disc pl-5 mt-6 text-muted-foreground space-y-2">
+                  <li>Formación continua de educadores</li>
+                  <li>Planificación y coordinación de actividades</li>
+                  <li>Acompañamiento personalizado de cada joven</li>
                 </ul>
                 <div className="mt-6">
                   <Button asChild>
@@ -32,7 +37,7 @@ const Staff = () => {
             <div>
               <img
                 src={communityImage}
-                alt="Staff"
+                alt="Educadores"
                 className="rounded-2xl w-full object-cover shadow-lg"
               />
             </div>

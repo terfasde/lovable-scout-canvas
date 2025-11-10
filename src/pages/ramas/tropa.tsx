@@ -8,18 +8,24 @@ const Tropa = () => {
     <div className="min-h-screen">
       <section className="section-padding">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-6">Tropa</h1>
+          <h1 className="text-4xl font-bold mb-2">Rama Scout</h1>
+          <p className="text-xl text-primary font-semibold mb-6">Lema: "Siempre Listos"</p>
           <div className="grid md:grid-cols-2 gap-8">
             <Card>
               <CardContent className="p-8">
-                <p className="text-lg text-muted-foreground">
-                  Información amplia sobre la Tropa: formación en habilidades,
-                  trabajo en equipo, patrullas y proyectos.
+                <p className="text-lg text-muted-foreground mb-4">
+                  La Rama Scout reúne a adolescentes de 11 a 14 años, en una etapa llena de energía, descubrimientos y búsqueda de independencia.
                 </p>
-                <ul className="list-disc pl-5 mt-4 text-muted-foreground space-y-2">
+                <p className="text-lg text-muted-foreground mb-4">
+                  A través de patrullas, construcciones, campamentos, juegos y proyectos, aprenden a trabajar en equipo, a tomar decisiones y a asumir responsabilidades.
+                </p>
+                <p className="text-lg text-muted-foreground">
+                  La vida de Tropa es pura aventura: noches bajo las estrellas, desafíos personales y la emoción de aprender haciendo. Cada scout vive la Ley y la Promesa, construyendo día a día su carácter y su compromiso con los demás scouts de la unidad.
+                </p>
+                <ul className="list-disc pl-5 mt-6 text-muted-foreground space-y-2">
                   <li>Edades: 11–14 años</li>
                   <li>Actividades al aire libre y campamentos</li>
-                  <li>Desarrollo de habilidades prácticas</li>
+                  <li>Desarrollo de habilidades prácticas y trabajo en equipo</li>
                 </ul>
                 <div className="mt-6">
                   <Button asChild>
@@ -32,7 +38,7 @@ const Tropa = () => {
             <div>
               <img
                 src={communityImage}
-                alt="Tropa"
+                alt="Rama Scout"
                 className="rounded-2xl w-full object-cover shadow-lg"
               />
             </div>
