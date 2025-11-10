@@ -76,14 +76,16 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
     // Obtener sesión actual
     supabase.auth.getSession().then(({ data: { session } }) => {
       const u = session?.user ?? null;
+      console.log("App.tsx - Sesión inicial:", u?.email || "sin usuario");
       setUser(u);
       if (u) ensureProfileExists(u).catch(() => {});
     });
 
     // Escuchar cambios en la sesión
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         const u = session?.user ?? null;
+        console.log("App.tsx - Auth change:", event, "usuario:", u?.email || "sin usuario");
         setUser(u);
         if (u) ensureProfileExists(u).catch(() => {});
       },

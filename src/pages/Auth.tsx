@@ -25,8 +25,21 @@ const Auth = () => {
   const [showPasswordLogin, setShowPasswordLogin] = useState(false);
   const [showPasswordSignup, setShowPasswordSignup] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [processingOAuth, setProcessingOAuth] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Detectar si venimos de un callback de OAuth (tiene hash fragment)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get('access_token');
+    
+    if (accessToken) {
+      console.log("Detectado callback de OAuth con access_token");
+      setProcessingOAuth(true);
+      setLoading(true);
+    }
+  }, []);
 
   useEffect(() => {
     // Verificar sesión actual y manejar callback de OAuth
@@ -41,8 +54,11 @@ const Auth = () => {
         }
 
         if (session?.user) {
-          console.log("Usuario autenticado detectado, redirigiendo a /");
-          navigate("/");
+          console.log("Usuario autenticado detectado en checkSession:", session.user.email);
+          // Pequeño delay para asegurar que la sesión se persiste
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 100);
           return;
         }
 
@@ -53,8 +69,10 @@ const Auth = () => {
           return;
         }
         if (data?.user) {
-          console.log("Usuario autenticado detectado, redirigiendo a /");
-          navigate("/");
+          console.log("Usuario autenticado detectado en getUser:", data.user.email);
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 100);
         }
       } catch (error) {
         console.error("Error inesperado al verificar sesión:", error);
@@ -69,11 +87,18 @@ const Auth = () => {
       const {
         data: { subscription: sub },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log("Auth state change:", event, session?.user?.email);
+        console.log("Auth state change evento:", event, "email:", session?.user?.email);
         
-        if (session?.user) {
-          console.log("Sesión activa detectada, redirigiendo a /");
-          navigate("/");
+        // Solo redirigir en eventos específicos de login exitoso
+        if (event === "SIGNED_IN" && session?.user) {
+          console.log("SIGNED_IN detectado, redirigiendo a /");
+          setTimeout(() => {
+            navigate("/", { replace: true });
+          }, 200);
+        } else if (event === "TOKEN_REFRESHED" && session?.user) {
+          console.log("TOKEN_REFRESHED con usuario activo");
+        } else if (event === "USER_UPDATED" && session?.user) {
+          console.log("USER_UPDATED con usuario activo");
         }
       });
       subscription = sub;
@@ -202,34 +227,57 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      // Usar la URL actual completa para el redirect
+      const redirectUrl = window.location.origin + "/auth";
+      console.log("Iniciando OAuth con redirect a:", redirectUrl);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         },
       });
 
       if (error) {
+        console.error("Error en signInWithOAuth:", error);
         toast({
           title: "Error",
           description: error.message,
           variant: "destructive",
         });
+        setLoading(false);
+      } else {
+        console.log("OAuth iniciado correctamente:", data);
+        // No desactivar loading aquí porque la página se redirigirá
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Error inesperado en Google Sign In:", error);
       toast({
         title: "Error",
         description: "Ocurrió un error inesperado",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-scout-black via-scout-red to-scout-yellow flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      {processingOAuth ? (
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center justify-center py-8 space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+              <p className="text-sm text-muted-foreground">Procesando inicio de sesión con Google...</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <img
@@ -476,6 +524,7 @@ const Auth = () => {
           </Tabs>
         </CardContent>
       </Card>
+      )}
     </div>
   );
 };

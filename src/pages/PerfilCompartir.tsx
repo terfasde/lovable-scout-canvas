@@ -108,67 +108,68 @@ const PerfilCompartir = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       {/* Navigation global en App.tsx */}
-      <div className="h-20"></div>
+      <div className="h-16 sm:h-20"></div>
 
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/perfil")}
+            className="h-9 w-9 sm:h-10 sm:w-10"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-semibold">Compartir perfil</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="text-xl sm:text-2xl font-semibold">Compartir perfil</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Controla quién puede ver tu información
             </p>
           </div>
         </div>
 
         {/* Preview Card */}
-        <div className="bg-card border rounded-xl p-6 mb-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Avatar className="w-20 h-20">
-              <AvatarFallback className="text-2xl font-semibold bg-primary text-primary-foreground">
+        <div className="bg-card border rounded-xl p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <Avatar className="w-16 h-16 sm:w-20 sm:h-20">
+              <AvatarFallback className="text-xl sm:text-2xl font-semibold bg-primary text-primary-foreground">
                 {profile?.nombre_completo ? (
                   getInitials(profile.nombre_completo)
                 ) : (
-                  <User className="w-10 h-10" />
+                  <User className="w-8 h-8 sm:w-10 sm:h-10" />
                 )}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg sm:text-xl font-semibold truncate">
                 {profile?.nombre_completo || "Usuario Scout"}
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">
                 {profile?.telefono || "Sin teléfono"}
               </p>
             </div>
           </div>
 
           {/* Public/Private Toggle */}
-          <div className="bg-muted/50 rounded-lg p-4 mb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+          <div className="bg-muted/50 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+            <div className="flex items-start sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
                 {isPublic ? (
-                  <Globe className="w-5 h-5 text-primary" />
+                  <Globe className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 ) : (
-                  <Lock className="w-5 h-5 text-muted-foreground" />
+                  <Lock className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
                 )}
-                <div>
+                <div className="flex-1 min-w-0">
                   <Label
                     htmlFor="public-toggle"
-                    className="text-base font-medium cursor-pointer"
+                    className="text-sm sm:text-base font-medium cursor-pointer block"
                   >
                     {isPublic ? "Perfil público" : "Perfil privado"}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                     {isPublic
                       ? "Cualquiera con el enlace puede ver tu perfil"
                       : "Solo tú puedes ver tu perfil"}
@@ -180,6 +181,7 @@ const PerfilCompartir = () => {
                 checked={isPublic}
                 onCheckedChange={togglePublic}
                 disabled={updating}
+                className="shrink-0"
               />
             </div>
           </div>
@@ -187,8 +189,9 @@ const PerfilCompartir = () => {
           {/* Share Link */}
           {isPublic && (
             <div className="space-y-3">
-              <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
-                <Share2 className="w-4 h-4 text-muted-foreground" />
+              {/* Desktop: Horizontal layout */}
+              <div className="hidden sm:flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                <Share2 className="w-4 h-4 text-muted-foreground shrink-0" />
                 <code className="flex-1 text-sm truncate">
                   {`${window.location.origin}/perfil/public/${profile?.user_id}`}
                 </code>
@@ -202,6 +205,29 @@ const PerfilCompartir = () => {
                   Copiar
                 </Button>
               </div>
+
+              {/* Móvil: Vertical layout */}
+              <div className="sm:hidden space-y-2 p-3 bg-muted/50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Share2 className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Enlace para compartir
+                  </span>
+                </div>
+                <code className="block text-xs break-all bg-background p-2 rounded border">
+                  {`${window.location.origin}/perfil/public/${profile?.user_id}`}
+                </code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={copyLink}
+                  className="w-full gap-2"
+                >
+                  <Copy className="w-4 h-4" />
+                  Copiar enlace
+                </Button>
+              </div>
+
               <p className="text-xs text-muted-foreground text-center">
                 Comparte este enlace con otros scouts
               </p>
@@ -210,12 +236,12 @@ const PerfilCompartir = () => {
         </div>
 
         {/* Info Section */}
-        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg p-4">
-          <h3 className="font-medium mb-2 flex items-center gap-2">
-            <Globe className="w-4 h-4" />
+        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded-lg p-3 sm:p-4">
+          <h3 className="font-medium text-sm sm:text-base mb-2 flex items-center gap-2">
+            <Globe className="w-4 h-4 shrink-0" />
             Acerca de los perfiles públicos
           </h3>
-          <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc">
+          <ul className="text-xs sm:text-sm text-muted-foreground space-y-1.5 ml-6 list-disc">
             <li>
               Los perfiles públicos pueden ser vistos por cualquier persona con
               el enlace
