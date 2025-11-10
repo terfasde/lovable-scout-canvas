@@ -91,3 +91,4 @@ grafana_data/
 *.dump
 backup-*
 
+.vercel

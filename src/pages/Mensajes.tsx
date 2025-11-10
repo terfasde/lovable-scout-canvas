@@ -88,6 +88,7 @@ export default function Mensajes() {
   const [newMessage, setNewMessage] = useState("");
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -229,7 +230,8 @@ export default function Mensajes() {
         );
         setMessages(messagesWithSender);
         setTimeout(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          const el = messagesContainerRef.current;
+          if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
         }, 100);
       } catch (error: any) {
         toast({
@@ -265,7 +267,8 @@ export default function Mensajes() {
     );
     setMessages(messagesWithSender);
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      const el = messagesContainerRef.current;
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
     }, 100);
   };
 
@@ -301,7 +304,8 @@ export default function Mensajes() {
             return [...prev, enriched];
           });
           setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            const el = messagesContainerRef.current;
+            if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
           }, 100);
         },
       )
@@ -318,18 +322,18 @@ export default function Mensajes() {
     setNewMessage(""); // Limpiar inmediatamente para mejor UX
 
     try {
-      if (isLocalBackend()) {
-        await sendDM(conversationId, tempMessage);
-      } else {
-        const { data: userData } = await supabase.auth.getUser();
-        const sender_id = userData.user?.id;
-        const { error } = await supabase.from("messages").insert({
-          conversation_id: conversationId,
-          sender_id,
-          content: tempMessage,
-        });
-        if (error) throw error;
-      }
+      const inserted = await sendDM(conversationId, tempMessage);
+      const sender = directory.find((u) => u.user_id === inserted.sender_id);
+      const enriched: MessageWithSender = {
+        ...inserted,
+        sender_username: sender?.username,
+        sender_name: sender?.nombre_completo,
+      };
+      setMessages((prev) => [...prev, enriched]);
+      setTimeout(() => {
+        const el = messagesContainerRef.current;
+        if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      }, 50);
     } catch (e: any) {
       setNewMessage(tempMessage); // Restaurar mensaje si falla
       toast({ title: "Error", description: e.message, variant: "destructive" });
@@ -455,7 +459,7 @@ export default function Mensajes() {
               ) : (
                 <div className="flex flex-col">
                   {/* Área de mensajes */}
-                  <div className="flex-1 overflow-auto space-y-2 sm:space-y-3 p-2 sm:p-4 border rounded-lg mb-3 sm:mb-4 h-[calc(100vh-400px)] sm:h-[60vh] bg-muted/20">
+                  <div ref={messagesContainerRef} className="flex-1 overflow-auto space-y-2 sm:space-y-3 p-2 sm:p-4 border rounded-lg mb-3 sm:mb-4 h-[calc(100vh-400px)] sm:h-[60vh] bg-muted/20">
                     {messages.length === 0 ? (
                       <div className="text-muted-foreground text-xs sm:text-sm text-center py-12">
                         Sin mensajes aún. ¡Envía el primero! 💬
@@ -498,7 +502,7 @@ export default function Mensajes() {
                             </div>
                           );
                         })}
-                        <div ref={messagesEndRef} />
+                        {/* sentinel removido; se usa scroll del contenedor */}
                       </>
                     )}
                   </div>

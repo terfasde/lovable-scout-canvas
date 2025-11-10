@@ -43,6 +43,7 @@ const Staff = lazy(() => import("./pages/ramas/staff"));
 const Comite = lazy(() => import("./pages/ramas/comite"));
 import { supabase } from "@/integrations/supabase/client";
 import BackgroundFX from "@/components/BackgroundFX";
+import { NotificationsProvider } from "@/context/Notifications";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient({
@@ -142,6 +143,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <SupabaseUserProvider>
+              <NotificationsProvider>
               <BackgroundFX />
               <NavigationNew />
               <ScrollToTop />
@@ -193,6 +195,7 @@ const App = () => (
                 </RouteTransition>
               </Suspense>
               <FooterNew />
+              </NotificationsProvider>
             </SupabaseUserProvider>
           </BrowserRouter>
         </TooltipProvider>
