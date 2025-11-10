@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
 import UserAvatar from "@/components/UserAvatar";
@@ -14,6 +14,8 @@ import {
   Settings,
   Crown,
   Shield,
+  MessageCircle,
+  Image as ImageIconGallery,
 } from "lucide-react";
 import {
   Select,
@@ -531,12 +533,47 @@ const Usuarios = () => {
       <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
         <div className="flex items-center gap-3 mb-4">
           <UsersIcon className="w-8 h-8 text-primary" />
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold">Comuni 7</h1>
             <p className="text-sm text-muted-foreground">
               Personas y hilos de la comunidad
             </p>
           </div>
+        </div>
+
+        {/* Botones de acceso a Galería y Mensajes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <Link to="/galeria">
+            <Card className="card-hover cursor-pointer h-full">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <ImageIconGallery className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Galería</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Explorá las fotos del grupo
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+          
+          <Link to="/mensajes">
+            <Card className="card-hover cursor-pointer h-full">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <MessageCircle className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Mensajes</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Conversá con otros scouts
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

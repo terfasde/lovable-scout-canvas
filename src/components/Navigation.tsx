@@ -59,23 +59,7 @@ const Navigation = () => {
     }
   }, [isMobileMenuOpen]);
 
-  const historiaLinks = [
-    { name: "Historia", path: "/historia" },
-    { name: "Línea Temporal", path: "/linea-temporal" },
-  ];
-
-  const eventosLinks = [
-    { name: "Eventos", path: "/eventos" },
-    { name: "BAUEN", path: "/bauen" },
-  ];
-
   const isActive = (path: string) => location.pathname === path;
-  const isHistoriaActive = historiaLinks.some(
-    (link) => location.pathname === link.path,
-  );
-  const isEventosActive = eventosLinks.some(
-    (link) => location.pathname === link.path,
-  );
 
   useEffect(() => {
     // Load profile for current user (if logged in)
@@ -166,75 +150,37 @@ const Navigation = () => {
               </Link>
 
               <Link
-                to="/mensajes"
+                to="/historia"
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                  isActive("/mensajes")
+                  isActive("/historia") || isActive("/linea-temporal")
                     ? "bg-primary text-primary-foreground"
                     : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                 }`}
               >
-                Mensajes
+                Historia
               </Link>
 
-              {/* Historia Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={`px-4 py-2 rounded-md font-medium transition-colors inline-flex items-center gap-1 ${
-                      isHistoriaActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
-                    }`}
-                  >
-                    Historia
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  {historiaLinks.map((link) => (
-                    <DropdownMenuItem key={link.path} asChild>
-                      <Link to={link.path} className="cursor-pointer">
-                        {link.name}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Eventos Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className={`px-4 py-2 rounded-md font-medium transition-colors inline-flex items-center gap-1 ${
-                      isEventosActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
-                    }`}
-                  >
-                    Eventos
-                    <ChevronDown className="w-4 h-4" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  {eventosLinks.map((link) => (
-                    <DropdownMenuItem key={link.path} asChild>
-                      <Link to={link.path} className="cursor-pointer">
-                        {link.name}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
+              {/* Eventos Link */}
               <Link
-                to="/galeria"
+                to="/eventos"
                 className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                  isActive("/galeria")
+                  isActive("/eventos") || isActive("/bauen")
                     ? "bg-primary text-primary-foreground"
                     : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
                 }`}
               >
-                Galería
+                Eventos
+              </Link>
+
+              <Link
+                to="/movimiento-scout"
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  isActive("/movimiento-scout")
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-nav-hover hover:text-nav-hover-foreground"
+                }`}
+              >
+                Movimiento Scout
               </Link>
 
               <Link
@@ -465,74 +411,43 @@ const Navigation = () => {
                     Comuni 7
                   </Link>
 
-                  {/* Mensajes */}
+                  {/* Historia */}
                   <Link
-                    to="/mensajes"
+                    to="/historia"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
-                      isActive("/mensajes")
+                      isActive("/historia") || isActive("/linea-temporal")
                         ? "bg-primary text-primary-foreground"
                         : "text-foreground hover:bg-muted"
-                    } ${isActive("/mensajes") ? "border-l-4 border-primary" : ""}`}
+                    } ${isActive("/historia") || isActive("/linea-temporal") ? "border-l-4 border-primary" : ""}`}
                   >
-                    Mensajes
+                    Historia
                   </Link>
 
-                  {/* Historia submenu en mobile */}
-                  <div className={`${isHistoriaActive ? "bg-primary/10" : ""}`}>
-                    <div className="px-6 py-3 text-sm font-semibold text-muted-foreground">
-                      Historia
-                    </div>
-                    {historiaLinks.map((link) => (
-                      <Link
-                        key={link.path}
-                        to={link.path}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`px-8 py-3 text-base font-medium transition-colors focus:outline-none focus:bg-muted block ${
-                          isActive(link.path)
-                            ? "bg-primary text-primary-foreground"
-                            : "text-foreground hover:bg-muted"
-                        } ${isActive(link.path) ? "border-l-4 border-primary" : ""}`}
-                      >
-                        {link.name}
-                      </Link>
-                    ))}
-                  </div>
-
-                  {/* Eventos submenu en mobile */}
-                  <div className={`${isEventosActive ? "bg-primary/10" : ""}`}>
-                    <div className="px-6 py-3 text-sm font-semibold text-muted-foreground">
-                      Eventos
-                    </div>
-                    {eventosLinks.map((link) => (
-                      <Link
-                        key={link.path}
-                        to={link.path}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={`px-8 py-3 text-base font-medium transition-colors focus:outline-none focus:bg-muted block ${
-                          isActive(link.path)
-                            ? "bg-primary text-primary-foreground"
-                            : "text-foreground hover:bg-muted"
-                        } ${isActive(link.path) ? "border-l-4 border-primary" : ""}`}
-                      >
-                        {link.name}
-                      </Link>
-                    ))}
-                  </div>
-
-                  
-
-                  {/* Galería */}
+                  {/* Eventos */}
                   <Link
-                    to="/galeria"
+                    to="/eventos"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
-                      isActive("/galeria")
+                      isActive("/eventos") || isActive("/bauen")
                         ? "bg-primary text-primary-foreground"
                         : "text-foreground hover:bg-muted"
-                    } ${isActive("/galeria") ? "border-l-4 border-primary" : ""}`}
+                    } ${isActive("/eventos") || isActive("/bauen") ? "border-l-4 border-primary" : ""}`}
                   >
-                    Galería
+                    Eventos
+                  </Link>
+
+                  {/* Movimiento Scout */}
+                  <Link
+                    to="/movimiento-scout"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-6 py-4 text-lg font-medium transition-colors focus:outline-none focus:bg-muted ${
+                      isActive("/movimiento-scout")
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-muted"
+                    } ${isActive("/movimiento-scout") ? "border-l-4 border-primary" : ""}`}
+                  >
+                    Movimiento Scout
                   </Link>
 
                   {/* Contacto */}

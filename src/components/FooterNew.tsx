@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { Facebook, Instagram, Mail, Phone, MapPin, Heart, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import logoImage from "@/assets/grupo-scout-logo.png";
@@ -80,7 +80,7 @@ const FooterNew = () => {
             </div>
 
             <p className="text-base text-gray-400 mb-6 leading-relaxed max-w-md">
-              Formando líderes comprometidos desde 1964. Una comunidad de
+              Formando personas comprometidas con nuestra sociedad desde 1964. Una comunidad de
               aventura, valores y crecimiento personal.
             </p>
 
@@ -95,6 +95,11 @@ const FooterNew = () => {
                 href="https://instagram.com/grupo_scout_septimo"
                 icon={<Instagram className="w-5 h-5" />}
                 label="Instagram"
+              />
+              <SocialLink
+                href="https://youtube.com/@gruposcoutseptimo"
+                icon={<Youtube className="w-5 h-5" />}
+                label="YouTube"
               />
             </div>
           </div>

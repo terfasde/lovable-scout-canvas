@@ -279,6 +279,32 @@ const Historia = () => {
                 </CardContent>
               </Card>
             </Reveal>
+
+            {/* Línea del Tiempo */}
+            <Reveal>
+              <Card className="card-hover">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    </div>
+                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+                      Línea del Tiempo
+                    </h2>
+                  </div>
+                  <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
+                    Explorá nuestra historia cronológica desde 1964 hasta hoy.
+                    Un recorrido visual por los momentos más importantes del grupo.
+                  </p>
+                  <Link to="/linea-temporal">
+                    <Button className="w-full sm:w-auto gap-2">
+                      <Calendar className="w-4 h-4" />
+                      Ver Línea del Tiempo
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            </Reveal>
           </div>
         </div>
       </section>

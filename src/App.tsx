@@ -21,6 +21,7 @@ const LineaTemporal = lazy(() => import("./pages/LineaTemporal"));
 const Historia = lazy(() => import("./pages/Historia"));
 const Bauen = lazy(() => import("./pages/Bauen"));
 const AmLagerfeuer = lazy(() => import("./pages/AmLagerfeuer"));
+const MovimientoScout = lazy(() => import("./pages/MovimientoScout"));
 const Galeria = lazy(() => import("./pages/Galeria"));
 const Contacto = lazy(() => import("./pages/Contacto"));
 const Eventos = lazy(() => import("./pages/Eventos"));
@@ -156,6 +157,7 @@ const App = () => (
                     <Route path="/historia" element={<Historia />} />
                     <Route path="/bauen" element={<Bauen />} />
                     <Route path="/am-lagerfeuer" element={<AmLagerfeuer />} />
+                    <Route path="/movimiento-scout" element={<MovimientoScout />} />
                     <Route path="/galeria" element={<Galeria />} />
                     <Route path="/contacto" element={<Contacto />} />
                     <Route path="/eventos" element={<Eventos />} />

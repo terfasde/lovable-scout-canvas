@@ -113,7 +113,7 @@ const About = () => {
         <div className="mb-20">
           <Reveal className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Nuestras Ramas
+              Nuestras Unidades
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Cada etapa del escultismo está diseñada para acompañar el

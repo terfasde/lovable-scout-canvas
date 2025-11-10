@@ -34,6 +34,9 @@ import {
   getFollowingCount,
   getFollowersWithProfiles,
   getFollowingWithProfiles,
+  followUser,
+  unfollowUser,
+  getFollowRelation,
 } from "@/lib/follows";
 
 type Tables = Database["public"]["Tables"];
@@ -42,7 +45,7 @@ type Profile = Tables["profiles"]["Row"];
 const PerfilView = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [userEmail, setUserEmail] = useState("");
+  const [viewedUserEmail, setViewedUserEmail] = useState(""); // Email del usuario que estamos viendo
   const [pending, setPending] = useState<
     {
       follower_id: string;
@@ -89,6 +92,8 @@ const PerfilView = () => {
     }>
   >([]);
   const [deleting, setDeleting] = useState(false);
+  const [followStatus, setFollowStatus] = useState<"none" | "following" | "pending">("none");
+  const [followLoading, setFollowLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -101,7 +106,6 @@ const PerfilView = () => {
           return;
         }
         setUserId(auth.id);
-        setUserEmail(auth.email || "");
         
         // Determinar si estamos viendo nuestro perfil o el de otro usuario
         const viewingId = targetUserId || auth.id;
@@ -149,6 +153,21 @@ const PerfilView = () => {
         setFollowersCount(fCount || 0);
         setFollowingCount(gCount || 0);
         setProfile(p ?? null);
+        
+        // Obtener el email del usuario que estamos viendo (solo para perfil propio)
+        if (isOwn) {
+          setViewedUserEmail(auth.email || "");
+        }
+        
+        // Verificar estado de seguimiento si no es nuestro perfil
+        if (!isOwn && userId) {
+          const { data: relation } = await getFollowRelation(viewingId);
+          if (relation) {
+            setFollowStatus(relation.status === "accepted" ? "following" : "pending");
+          } else {
+            setFollowStatus("none");
+          }
+        }
       } catch (err: any) {
         toast({
           title: "Error",
@@ -228,6 +247,47 @@ const PerfilView = () => {
     return "No especificada";
   };
 
+  const handleFollowToggle = async () => {
+    if (!userId || !viewingUserId || followLoading) return;
+    
+    try {
+      setFollowLoading(true);
+      
+      if (followStatus === "following") {
+        // Dejar de seguir
+        await unfollowUser(viewingUserId);
+        setFollowStatus("none");
+        setFollowersCount(prev => Math.max(0, prev - 1));
+        toast({
+          title: "Dejaste de seguir",
+          description: `Ya no sigues a ${profile?.nombre_completo || "este usuario"}`,
+        });
+      } else if (followStatus === "pending") {
+        // Solicitud pendiente
+        toast({
+          title: "Solicitud pendiente",
+          description: "Tu solicitud aún está pendiente de aprobación",
+        });
+      } else {
+        // Enviar solicitud de seguimiento
+        await followUser(viewingUserId);
+        setFollowStatus("pending");
+        toast({
+          title: "Solicitud enviada",
+          description: `Se envió la solicitud de seguimiento a ${profile?.nombre_completo || "este usuario"}`,
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error?.message || "No se pudo procesar la acción",
+        variant: "destructive",
+      });
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -277,6 +337,25 @@ const PerfilView = () => {
                 )}
               </div>
               <div className="flex gap-2 w-full sm:w-auto">
+                {!isOwnProfile && (
+                  <Button
+                    variant={followStatus === "following" ? "outline" : "default"}
+                    size="sm"
+                    onClick={handleFollowToggle}
+                    disabled={followLoading}
+                    className="gap-1 flex-1 sm:flex-none text-xs sm:text-sm"
+                  >
+                    {followLoading ? (
+                      "Cargando..."
+                    ) : followStatus === "following" ? (
+                      "Siguiendo"
+                    ) : followStatus === "pending" ? (
+                      "Solicitud enviada"
+                    ) : (
+                      "Seguir"
+                    )}
+                  </Button>
+                )}
                 {isOwnProfile && (
                   <>
                     <Button
@@ -410,9 +489,9 @@ const PerfilView = () => {
               <p className="font-semibold text-sm sm:text-base">
                 {profile.nombre_completo}
               </p>
-              {userEmail && (
+              {viewedUserEmail && isOwnProfile && (
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  {userEmail}
+                  {viewedUserEmail}
                 </p>
               )}
               {profile.telefono && (
