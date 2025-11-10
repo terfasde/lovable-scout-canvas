@@ -116,11 +116,7 @@ const PerfilView = () => {
         const isOwn = viewingId === auth.id;
         setIsOwnProfile(isOwn);
 
-        // Redirigir a la ruta pública unificada si estamos viendo a otro usuario con la antigua query.
-        if (!isOwn && targetUserId && !loading) {
-          // Nota: mantenemos la vista aquí pero podríamos hacer navigate(`/perfil-public/${viewingId}`)
-          // Si se decide unificar completamente en PerfilView, omitimos esta redirección.
-        }
+        // Vista unificada: nos quedamos en /perfil?userId=..., sin redirecciones
 
         let p = await getProfile(viewingId).catch(() => null);
         if (!p && isLocalBackend() && isOwn) {
