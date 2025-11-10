@@ -25,7 +25,8 @@
   "exclude": [
     "server",
     "node_modules",
-    "dist"
+    "dist",
+    "src/integrations/supabase/client-BACKUP.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
