@@ -30,7 +30,7 @@ export async function listThreads(limit = 50): Promise<Thread[]> {
     );
     return data as Thread[];
   } else {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("threads")
       .select("*")
       .order("created_at", { ascending: false })
@@ -113,7 +113,7 @@ export async function createThread(
       imageUrl = pub.publicUrl;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("threads")
       .insert({ author_id: userId, content, image_url: imageUrl })
       .select("*")
@@ -130,7 +130,7 @@ export async function listComments(threadId: string): Promise<ThreadComment[]> {
     );
     return data as ThreadComment[];
   } else {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("thread_comments")
       .select("*")
       .eq("thread_id", threadId)
@@ -158,7 +158,7 @@ export async function addComment(
     const userId = userData.user?.id;
     if (!userId) throw new Error("No autenticado");
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("thread_comments")
       .insert({ thread_id: threadId, author_id: userId, content })
       .select("*")
@@ -174,7 +174,7 @@ export async function deleteThread(threadId: string): Promise<void> {
       method: "DELETE",
     });
   } else {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("threads")
       .delete()
       .eq("id", threadId);
