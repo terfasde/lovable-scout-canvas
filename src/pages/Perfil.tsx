@@ -518,6 +518,14 @@ const Perfil = () => {
         profileData.rol_adulto = formData.rol_adulto;
       }
 
+      // Permitir a Adultos Educadores guardar sus unidades a cargo
+      if (formData.edad >= 21 && formData.rol_adulto === "Educador/a") {
+        profileData.seisena = formData.seisena || null;
+        profileData.patrulla = formData.patrulla || null;
+        profileData.equipo_pioneros = formData.equipo_pioneros || null;
+        profileData.comunidad_rovers = formData.comunidad_rovers || null;
+      }
+
       if (isLocalBackend()) {
         const updated = (await updateLocalProfile(profileData as any)) as any;
         if (updated) {
@@ -956,6 +964,64 @@ const Perfil = () => {
                 </div>
               )}
             </div>
+
+            {formData.edad >= 21 && formData.rol_adulto === "Educador/a" && (
+              <div className="mt-6 space-y-4 p-4 border rounded-md bg-muted/30">
+                <h4 className="font-semibold text-base">Secciones que coordinas</h4>
+                <p className="text-xs text-muted-foreground">
+                  Como educador/a puedes indicar qué unidades apoyas para ayudar a la coordinación interna. (Opcional)
+                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="seisena_educador">Manada (Seisena)</Label>
+                    <Input
+                      id="seisena_educador"
+                      name="seisena"
+                      value={formData.seisena}
+                      onChange={handleChange}
+                      placeholder="Ej: Seisena Roja"
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="patrulla_educador">Tropa (Patrulla)</Label>
+                    <Input
+                      id="patrulla_educador"
+                      name="patrulla"
+                      value={formData.patrulla}
+                      onChange={handleChange}
+                      placeholder="Ej: Patrulla Halcón"
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="pioneros_educador">Pioneros (Equipo)</Label>
+                    <Input
+                      id="pioneros_educador"
+                      name="equipo_pioneros"
+                      value={formData.equipo_pioneros}
+                      onChange={handleChange}
+                      placeholder="Ej: Equipo Alpha"
+                      className="bg-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rovers_educador">Rovers (Comunidad)</Label>
+                    <Input
+                      id="rovers_educador"
+                      name="comunidad_rovers"
+                      value={formData.comunidad_rovers}
+                      onChange={handleChange}
+                      placeholder="Ej: Comunidad Caminantes"
+                      className="bg-background"
+                    />
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Estos campos se guardan igual que los de jóvenes pero aquí se muestran siempre para facilitar la edición del educador/a.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Botones de acción - Sticky en móvil */}
