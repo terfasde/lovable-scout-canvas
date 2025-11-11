@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export type AppNotification = {
   id: string;
-  type: "message" | "follow_request";
+  type: "message" | "follow_request" | "thread_comment" | "mention";
   created_at: string;
   read: boolean;
   data: Record<string, any>;
@@ -36,9 +36,16 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     setNotifications(prev => [n, ...prev]);
   }, []);
 
-  const markAllRead = useCallback(() => {
+  const markAllRead = useCallback(async () => {
+    if (!user) return;
+    const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+    if (unreadIds.length === 0) return;
+    await (supabase as any)
+      .from("notifications")
+      .update({ read_at: new Date().toISOString() })
+      .in("id", unreadIds);
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-  }, []);
+  }, [notifications, user]);
 
   const removeNotification = useCallback((id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
@@ -103,6 +110,61 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
       )
       .subscribe();
     return () => { supabase.removeChannel(channelMessages); };
+  }, [user, addNotification, toast]);
+
+  // Cargar notificaciones persistentes (thread_comment, mention) y suscribirse a nuevas
+  useEffect(() => {
+    if (!user) return;
+    let channel: any;
+    (async () => {
+      const { data, error } = await (supabase as any)
+        .from("notifications")
+        .select("id, type, created_at, read_at, data, recipient_id")
+        .eq("recipient_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (!error && data) {
+        setNotifications(prev => {
+          // Mantener existentes (mensajes, follows en memoria) y combinar con persistentes evitando duplicados por id
+          const map = new Map(prev.map(n => [n.id, n] as const));
+          for (const r of data as any[]) {
+            map.set(r.id, {
+              id: r.id,
+              type: r.type,
+              created_at: r.created_at,
+              read: !!r.read_at,
+              data: r.data || {}
+            });
+          }
+          return Array.from(map.values()).sort((a,b) => (a.created_at < b.created_at ? 1 : -1));
+        });
+      }
+      channel = supabase
+        .channel(`notifications:ins:${user.id}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "notifications", filter: `recipient_id=eq.${user.id}` },
+          (payload) => {
+            const row: any = payload.new;
+            const notif: AppNotification = {
+              id: row.id,
+              type: row.type,
+              created_at: row.created_at,
+              read: false,
+              data: row.data || {}
+            };
+            addNotification(notif);
+            if (row.type === "thread_comment") {
+              toast({ title: "Nuevo comentario en tu hilo", description: (row.data?.content || "").slice(0,80) });
+            } else if (row.type === "mention") {
+              const uname = row.data?.username ? `@${row.data.username}` : "";
+              toast({ title: "Te mencionaron", description: `${uname} ${(row.data?.content || "").slice(0,70)}`.trim() });
+            }
+          }
+        )
+        .subscribe();
+    })();
+    return () => { if (channel) supabase.removeChannel(channel); };
   }, [user, addNotification, toast]);
 
   const unreadCount = notifications.filter(n => !n.read).length;

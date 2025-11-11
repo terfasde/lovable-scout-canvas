@@ -537,14 +537,39 @@ const PerfilView = () => {
                   años
                 </span>
               </div>
-              <div className="text-center sm:text-left">
-                <span className="font-semibold text-xs sm:text-sm mr-1">
-                  Rama
-                </span>
-                <span className="text-muted-foreground text-sm sm:text-base">
-                  {getRamaActual(profile.edad)}
-                </span>
-              </div>
+              {profile.edad && profile.edad < 21 && (
+                <div className="text-center sm:text-left">
+                  <span className="font-semibold text-xs sm:text-sm mr-1">
+                    Rama
+                  </span>
+                  <span className="text-muted-foreground text-sm sm:text-base">
+                    {getRamaActual(profile.edad)}
+                  </span>
+                </div>
+              )}
+              {profile.edad && profile.edad >= 21 && profile.rol_adulto && (
+                <div className="text-center sm:text-left">
+                  <span className="font-semibold text-xs sm:text-sm mr-1">
+                    {profile.rol_adulto === "Educador/a" ? "Educador/a" : "Rol"}
+                  </span>
+                  <span className="text-muted-foreground text-sm sm:text-base">
+                    {profile.rol_adulto === "Educador/a" && (profile as any).rama_que_educa
+                      ? (() => {
+                          const r = (profile as any).rama_que_educa;
+                          const texto = r === "manada" ? "de Manada" :
+                                        r === "tropa" ? "de Tropa" :
+                                        r === "pioneros" ? "de Pioneros" :
+                                        r === "rovers" ? "de Rovers" : "";
+                          const emoji = r === "manada" ? "🐺" :
+                                        r === "tropa" ? "⚜️" :
+                                        r === "pioneros" ? "🏔️" :
+                                        r === "rovers" ? "🚶" : "";
+                          return `${emoji} Educador/a ${texto}`;
+                        })()
+                      : profile.rol_adulto}
+                  </span>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() => setFollowersOpen(true)}
@@ -586,41 +611,7 @@ const PerfilView = () => {
                   📞 {profile.telefono}
                 </p>
               )}
-              {profile.rol_adulto && profile.edad && profile.edad >= 21 && (
-                <>
-                  <p className="text-xs sm:text-sm">👤 {profile.rol_adulto}</p>
-                  {profile.rol_adulto === "Educador/a" && (profile as any).rama_que_educa && (
-                    <p className="text-xs sm:text-sm">
-                      {(profile as any).rama_que_educa === "manada" && "🐺 Rama Manada"}
-                      {(profile as any).rama_que_educa === "tropa" && "⚜️ Rama Tropa"}
-                      {(profile as any).rama_que_educa === "pioneros" && "🏔️ Rama Pioneros"}
-                      {(profile as any).rama_que_educa === "rovers" && "🚶 Rama Rovers"}
-                    </p>
-                  )}
-                  {(profile as any)?.rama_que_educa && profile.edad && profile.edad >= 21 && (
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      {((r) => (
-                        r === "manada" ? "🐺 Rama Manada" :
-                        r === "tropa" ? "⚜️ Rama Tropa" :
-                        r === "pioneros" ? "🏔️ Rama Pioneros" :
-                        r === "rovers" ? "🚶 Rama Rovers" : "Rama"
-                      ))((profile as any).rama_que_educa)}
-                      {profile.seisena && (profile as any).rama_que_educa === "manada" && (
-                        <> • {profile.seisena}</>
-                      )}
-                      {profile.patrulla && (profile as any).rama_que_educa === "tropa" && (
-                        <> • {profile.patrulla}</>
-                      )}
-                      {profile.equipo_pioneros && (profile as any).rama_que_educa === "pioneros" && (
-                        <> • {profile.equipo_pioneros}</>
-                      )}
-                      {profile.comunidad_rovers && (profile as any).rama_que_educa === "rovers" && (
-                        <> • {profile.comunidad_rovers}</>
-                      )}
-                    </p>
-                  )}
-                </>
-              )}
+              {/* Para adultos ya mostramos Rol y Rama que educa arriba; no repetir aquí */}
             </div>
           </div>
         </div>
@@ -712,14 +703,41 @@ const PerfilView = () => {
               </div>
             )}
 
-            <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
-              <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
-                Rama actual
-              </h3>
-              <p className="text-sm sm:text-base font-medium">
-                {getRamaActual(profile?.edad)}
-              </p>
-            </div>
+            {profile?.edad && profile?.edad < 21 && (
+              <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
+                <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
+                  Rama actual
+                </h3>
+                <p className="text-sm sm:text-base font-medium">
+                  {getRamaActual(profile?.edad)}
+                </p>
+              </div>
+            )}
+            {profile?.edad && profile?.edad >= 21 && profile?.rol_adulto === "Educador/a" && (profile as any).rama_que_educa && (
+              <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
+                <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">
+                  Labor educativa
+                </h3>
+                <p className="text-sm sm:text-base font-medium">
+                  {(() => {
+                    const r = (profile as any).rama_que_educa;
+                    const unidad = r === "manada" ? profile.seisena :
+                                   r === "tropa" ? profile.patrulla :
+                                   r === "pioneros" ? profile.equipo_pioneros :
+                                   r === "rovers" ? profile.comunidad_rovers : "";
+                    const nombreRama = r === "manada" ? "Manada" :
+                                      r === "tropa" ? "Tropa" :
+                                      r === "pioneros" ? "Pioneros" :
+                                      r === "rovers" ? "Rovers" : "";
+                    const emoji = r === "manada" ? "🐺" :
+                                  r === "tropa" ? "⚜️" :
+                                  r === "pioneros" ? "🏔️" :
+                                  r === "rovers" ? "🚶" : "";
+                    return `${emoji} Educador/a de ${nombreRama}${unidad ? ` • ${unidad}` : ""}`;
+                  })()}
+                </p>
+              </div>
+            )}
 
             <div className="bg-muted/50 rounded-lg p-3 sm:p-4">
               <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">

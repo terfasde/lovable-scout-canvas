@@ -263,33 +263,41 @@ const Navigation = () => {
                     <div className="text-sm text-muted-foreground py-4 text-center">Sin notificaciones</div>
                   ) : (
                     <ul className="space-y-2 max-h-80 overflow-auto pr-1">
-                      {notifications.map(n => (
-                        <li key={n.id} className={`p-2 rounded border ${n.read ? 'opacity-70' : 'bg-muted/40'}`}>
-                          {n.type === 'message' ? (
+                      {notifications.map(n => {
+                        let title = '';
+                        let description = '';
+                        let action: (() => void) | null = null;
+                        if (n.type === 'message') {
+                          title = 'Nuevo mensaje';
+                          description = n.data.content || '';
+                          action = () => navigate('/mensajes');
+                        } else if (n.type === 'follow_request') {
+                          title = 'Solicitud de seguimiento';
+                          description = `${n.data.display} quiere seguirte`;
+                          action = () => navigate(`/perfil?userId=${n.data.follower_id}`);
+                        } else if (n.type === 'thread_comment') {
+                          title = 'Nuevo comentario en tu hilo';
+                          description = (n.data.content || '').slice(0, 100);
+                          action = () => navigate('/usuarios');
+                        } else if (n.type === 'mention') {
+                          title = 'Te mencionaron';
+                          description = (n.data.content || '').slice(0, 100);
+                          action = () => navigate('/usuarios');
+                        }
+                        return (
+                          <li key={n.id} className={`p-2 rounded border ${n.read ? 'opacity-70' : 'bg-muted/40'}`}>
                             <div>
-                              <div className="text-sm font-medium">Nuevo mensaje</div>
-                              <div className="text-xs text-muted-foreground truncate">{n.data.content}</div>
-                              <div className="flex gap-2 mt-2">
-                                <Button size="sm" variant="outline" onClick={() => {
-                                   removeNotification(n.id);
-                                   navigate('/mensajes');
-                                 }}>Abrir chat</Button>
-                              </div>
+                              <div className="text-sm font-medium">{title}</div>
+                              <div className="text-xs text-muted-foreground truncate">{description}</div>
+                              {action && (
+                                <div className="flex gap-2 mt-2">
+                                  <Button size="sm" variant="outline" onClick={() => { removeNotification(n.id); action(); }}>Abrir</Button>
+                                </div>
+                              )}
                             </div>
-                          ) : (
-                            <div>
-                              <div className="text-sm font-medium">Solicitud de seguimiento</div>
-                              <div className="text-xs text-muted-foreground">{n.data.display} quiere seguirte</div>
-                              <div className="flex gap-2 mt-2">
-                                <Button size="sm" variant="outline" onClick={() => {
-                                   removeNotification(n.id);
-                                   navigate(`/perfil?userId=${n.data.follower_id}`);
-                                 }}>Ver perfil</Button>
-                              </div>
-                            </div>
-                          )}
-                        </li>
-                      ))}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </PopoverContent>
