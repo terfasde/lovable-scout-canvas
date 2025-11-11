@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
@@ -525,6 +525,29 @@ const Usuarios = () => {
     );
   }
 
+  // Renderizado con resaltado de menciones @usuario
+  const renderWithMentions = (text: string): ReactNode[] => {
+    const parts: ReactNode[] = [];
+    const regex = /@([A-Za-z0-9_]{3,32})/g;
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(<span key={"t" + match.index}>{text.slice(lastIndex, match.index)}</span>);
+      }
+      parts.push(
+        <span key={"m" + match.index} className="text-primary font-semibold">
+          @{match[1]}
+        </span>
+      );
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < text.length) {
+      parts.push(<span key="end">{text.slice(lastIndex)}</span>);
+    }
+    return parts;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation global en App.tsx */}
@@ -970,7 +993,7 @@ const Usuarios = () => {
                           </div>
 
                           <div className="text-base whitespace-pre-wrap mb-3">
-                            {t.content}
+                            {renderWithMentions(t.content)}
                           </div>
 
                           {t.image_url && (
@@ -1047,8 +1070,8 @@ const Usuarios = () => {
                                               })}
                                             </span>
                                           </div>
-                                          <div className="text-sm">
-                                            {c.content}
+                                          <div className="text-sm whitespace-pre-wrap">
+                                            {renderWithMentions(c.content)}
                                           </div>
                                         </div>
                                       </div>

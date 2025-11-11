@@ -16,7 +16,11 @@ interface NotificationsContextType {
   unreadCount: number;
   addNotification: (n: AppNotification) => void;
   markAllRead: () => void;
+  markRead: (id: string) => void;
   removeNotification: (id: string) => void;
+  loadMore: () => Promise<void>;
+  hasMore: boolean;
+  loadingMore: boolean;
 }
 
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
@@ -30,6 +34,9 @@ export const useNotifications = () => {
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useSupabaseUser();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [oldestPersistedTimestamp, setOldestPersistedTimestamp] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const { toast } = useToast();
 
   const addNotification = useCallback((n: AppNotification) => {
@@ -38,14 +45,26 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const markAllRead = useCallback(async () => {
     if (!user) return;
-    const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
-    if (unreadIds.length === 0) return;
-    await (supabase as any)
-      .from("notifications")
-      .update({ read_at: new Date().toISOString() })
-      .in("id", unreadIds);
+    const unread = notifications.filter(n => !n.read);
+    if (unread.length === 0) return;
+    const persistentIds = unread.filter(n => n.type === 'thread_comment' || n.type === 'mention').map(n => n.id);
+    if (persistentIds.length > 0) {
+      await supabase
+        .from("notifications")
+        .update({ read_at: new Date().toISOString() })
+        .in("id", persistentIds);
+    }
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   }, [notifications, user]);
+
+  const markRead = useCallback(async (id: string) => {
+    const target = notifications.find(n => n.id === id);
+    if (!target) return;
+    if (!target.read && (target.type === 'thread_comment' || target.type === 'mention')) {
+      await supabase.from('notifications').update({ read_at: new Date().toISOString() }).eq('id', id);
+    }
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  }, [notifications]);
 
   const removeNotification = useCallback((id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
@@ -117,9 +136,9 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!user) return;
     let channel: any;
     (async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("notifications")
-        .select("id, type, created_at, read_at, data, recipient_id")
+        .select("id, type, created_at, read_at, data")
         .eq("recipient_id", user.id)
         .order("created_at", { ascending: false })
         .limit(50);
@@ -138,6 +157,13 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
           }
           return Array.from(map.values()).sort((a,b) => (a.created_at < b.created_at ? 1 : -1));
         });
+        if (data.length === 50) {
+          setHasMore(true);
+          const oldest = data[data.length - 1];
+          setOldestPersistedTimestamp(oldest.created_at);
+        } else {
+          setHasMore(false);
+        }
       }
       channel = supabase
         .channel(`notifications:ins:${user.id}`)
@@ -167,10 +193,50 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => { if (channel) supabase.removeChannel(channel); };
   }, [user, addNotification, toast]);
 
+  const loadMore = useCallback(async () => {
+    if (!user || !hasMore || loadingMore || !oldestPersistedTimestamp) return;
+    setLoadingMore(true);
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('id, type, created_at, read_at, data')
+        .eq('recipient_id', user.id)
+        .lt('created_at', oldestPersistedTimestamp)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (!error && data && data.length > 0) {
+        setNotifications(prev => {
+          const map = new Map(prev.map(n => [n.id, n] as const));
+          for (const r of data as any[]) {
+            map.set(r.id, {
+              id: r.id,
+              type: r.type,
+              created_at: r.created_at,
+              read: !!r.read_at,
+              data: r.data || {}
+            });
+          }
+          return Array.from(map.values()).sort((a,b) => (a.created_at < b.created_at ? 1 : -1));
+        });
+        if (data.length === 50) {
+          const oldest = data[data.length - 1];
+          setOldestPersistedTimestamp(oldest.created_at);
+          setHasMore(true);
+        } else {
+          setHasMore(false);
+        }
+      } else if (!error && data && data.length === 0) {
+        setHasMore(false);
+      }
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [user, hasMore, loadingMore, oldestPersistedTimestamp]);
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <NotificationsContext.Provider value={{ notifications, unreadCount, addNotification, markAllRead, removeNotification }}>
+    <NotificationsContext.Provider value={{ notifications, unreadCount, addNotification, markAllRead, markRead, removeNotification, loadMore, hasMore, loadingMore }}>
       {children}
     </NotificationsContext.Provider>
   );

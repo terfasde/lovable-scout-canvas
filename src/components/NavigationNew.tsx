@@ -74,7 +74,7 @@ const navSections: NavSection[] = [
 ];
 
 const Navigation = () => {
-  const { notifications, unreadCount, markAllRead, removeNotification } = useNotifications();
+  const { notifications, unreadCount, markAllRead, removeNotification, markRead, loadMore, hasMore, loadingMore } = useNotifications();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
@@ -285,19 +285,30 @@ const Navigation = () => {
                           action = () => navigate('/usuarios');
                         }
                         return (
-                          <li key={n.id} className={`p-2 rounded border ${n.read ? 'opacity-70' : 'bg-muted/40'}`}>
-                            <div>
-                              <div className="text-sm font-medium">{title}</div>
-                              <div className="text-xs text-muted-foreground truncate">{description}</div>
-                              {action && (
-                                <div className="flex gap-2 mt-2">
-                                  <Button size="sm" variant="outline" onClick={() => { removeNotification(n.id); action(); }}>Abrir</Button>
-                                </div>
+                          <li key={n.id} className={`p-2 rounded border space-y-1 ${n.read ? 'opacity-70' : 'bg-muted/40'}`}>
+                            <div className="flex justify-between items-start gap-2">
+                              <div>
+                                <div className="text-sm font-medium">{title}</div>
+                                <div className="text-xs text-muted-foreground truncate" title={description}>{description}</div>
+                              </div>
+                              {!n.read && (
+                                <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => markRead(n.id)}>Leer</Button>
                               )}
                             </div>
+                            {action && (
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="outline" onClick={() => { markRead(n.id); action(); }}>Abrir</Button>
+                                <Button size="sm" variant="ghost" onClick={() => removeNotification(n.id)}>Ocultar</Button>
+                              </div>
+                            )}
                           </li>
                         );
                       })}
+                      {hasMore && (
+                        <div className="pt-2 border-t">
+                          <Button size="sm" className="w-full" onClick={loadMore} disabled={loadingMore}>{loadingMore ? 'Cargando...' : 'Cargar más'}</Button>
+                        </div>
+                      )}
                     </ul>
                   )}
                 </PopoverContent>
