@@ -1,11 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -54,6 +57,29 @@ const DashboardCoordinador = () => {
   const [showMessageDialog, setShowMessageDialog] = useState(false);
   const [groupMessage, setGroupMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showOnlyUnit, setShowOnlyUnit] = useState(false);
+
+  const filteredScouts = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    let list = scouts;
+    if (term) {
+      list = list.filter((s) => (s.nombre_completo || "").toLowerCase().includes(term));
+    }
+    if (showOnlyUnit && coordinadorProfile) {
+      const rama = getEffectiveRama(coordinadorProfile as any);
+      if (rama === "manada" && coordinadorProfile.seisena) {
+        list = list.filter((s) => s.seisena === coordinadorProfile.seisena);
+      } else if (rama === "tropa" && coordinadorProfile.patrulla) {
+        list = list.filter((s) => s.patrulla === coordinadorProfile.patrulla);
+      } else if (rama === "pioneros" && coordinadorProfile.equipo_pioneros) {
+        list = list.filter((s) => s.equipo_pioneros === coordinadorProfile.equipo_pioneros);
+      } else if (rama === "rovers" && coordinadorProfile.comunidad_rovers) {
+        list = list.filter((s) => s.comunidad_rovers === coordinadorProfile.comunidad_rovers);
+      }
+    }
+    return list;
+  }, [scouts, searchTerm, showOnlyUnit, coordinadorProfile]);
 
   useEffect(() => {
     loadDashboard();
@@ -105,8 +131,8 @@ const DashboardCoordinador = () => {
 
   const loadScouts = async (coordinador: Profile) => {
     try {
-      // Usar rama_que_educa para determinar qué scouts cargar
-      const ramaEducador = (coordinador as any).rama_que_educa;
+  // Usar rama_que_educa o deducir por unidades
+  const ramaEducador = getEffectiveRama(coordinador as any);
       
       if (!ramaEducador) {
         setScouts([]);
@@ -195,6 +221,18 @@ const DashboardCoordinador = () => {
     return "secondary";
   };
 
+  // Fallback: determina la rama efectiva del educador
+  const getEffectiveRama = (
+    p: any
+  ): "manada" | "tropa" | "pioneros" | "rovers" | null => {
+    if (p?.rama_que_educa) return p.rama_que_educa as any;
+    if (p?.seisena) return "manada";
+    if (p?.patrulla) return "tropa";
+    if (p?.equipo_pioneros) return "pioneros";
+    if (p?.comunidad_rovers) return "rovers";
+    return null;
+  };
+
   const handleSendGroupMessage = async () => {
     if (!groupMessage.trim()) {
       toast({
@@ -205,10 +243,10 @@ const DashboardCoordinador = () => {
       return;
     }
 
-    if (scouts.length === 0) {
+    if (filteredScouts.length === 0) {
       toast({
         title: "Sin destinatarios",
-        description: "No hay scouts en tus secciones",
+        description: "No hay scouts que coincidan con el filtro actual",
         variant: "destructive",
       });
       return;
@@ -220,7 +258,7 @@ const DashboardCoordinador = () => {
       let errorCount = 0;
 
       // Enviar mensaje a cada scout
-      for (const scout of scouts) {
+      for (const scout of filteredScouts) {
         try {
           // Crear conversación con el scout
           const conversation = await createOrGetConversation(scout.user_id);
@@ -265,8 +303,51 @@ const DashboardCoordinador = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="h-20"></div>
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="container mx-auto px-4 py-8 space-y-6">
+          {/* Header skeleton */}
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 rounded-md" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-6 w-48" />
+              <Skeleton className="h-4 w-72" />
+            </div>
+            <Skeleton className="h-9 w-32" />
+          </div>
+
+          {/* Stats skeleton */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i}>
+                <CardHeader className="space-y-2">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-6 w-16" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-3 w-24" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* List skeleton */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-4 w-64 mt-2" />
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 p-3 rounded-lg border">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                  <Skeleton className="h-6 w-16" />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -293,7 +374,7 @@ const DashboardCoordinador = () => {
               Panel de gestión para educadores
             </p>
           </div>
-          {scouts.length > 0 && (
+          {filteredScouts.length > 0 && (
             <Button
               onClick={() => setShowMessageDialog(true)}
               className="gap-2"
@@ -306,7 +387,45 @@ const DashboardCoordinador = () => {
           )}
         </div>
 
-        {/* Resumen de unidades coordinadas */}
+        {/* Controles de filtro */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <div className="flex-1">
+            <Input
+              placeholder="Buscar scout por nombre..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="solo-unidad"
+              checked={showOnlyUnit}
+              onCheckedChange={(v) => setShowOnlyUnit(Boolean(v))}
+            />
+            <label htmlFor="solo-unidad" className="text-sm text-muted-foreground select-none">
+              Solo mi unidad
+            </label>
+          </div>
+        </div>
+
+        {/* Banner estado configuración / datos */}
+        {coordinadorProfile && !getEffectiveRama(coordinadorProfile as any) && (
+          <div className="mb-6 p-4 rounded-md border bg-amber-50 text-amber-900 dark:bg-amber-950/30 dark:text-amber-200 dark:border-amber-900 flex items-start gap-3">
+            <span className="text-xl">⚠️</span>
+            <div className="flex-1">
+              <p className="font-medium">Configura tu rama</p>
+              <p className="text-sm">Selecciona en tu perfil qué rama diriges para ver tus scouts.</p>
+            </div>
+            <Button variant="outline" onClick={() => navigate("/perfil/editar")}>Editar perfil</Button>
+          </div>
+        )}
+        {coordinadorProfile && getEffectiveRama(coordinadorProfile as any) && scouts.length === 0 && (
+          <div className="mb-6 p-4 rounded-md border bg-blue-50 text-blue-900 dark:bg-blue-950/30 dark:text-blue-200 dark:border-blue-900">
+            No hay scouts con edades dentro de la rama seleccionada aún.
+          </div>
+        )}
+
+        {/* Resumen de unidad coordinada */}
         {coordinadorProfile && (
           <Card className="mb-6">
             <CardHeader>
@@ -319,7 +438,7 @@ const DashboardCoordinador = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {(coordinadorProfile as any).rama_que_educa === "manada" && (
+              {getEffectiveRama(coordinadorProfile as any) === "manada" && (
                 <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">🐺</span>
@@ -335,7 +454,7 @@ const DashboardCoordinador = () => {
                   <p className="text-xs text-muted-foreground">7-10 años</p>
                 </div>
               )}
-              {(coordinadorProfile as any).rama_que_educa === "tropa" && (
+              {getEffectiveRama(coordinadorProfile as any) === "tropa" && (
                 <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">⚜️</span>
@@ -351,7 +470,7 @@ const DashboardCoordinador = () => {
                   <p className="text-xs text-muted-foreground">11-14 años</p>
                 </div>
               )}
-              {(coordinadorProfile as any).rama_que_educa === "pioneros" && (
+              {getEffectiveRama(coordinadorProfile as any) === "pioneros" && (
                 <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">🏔️</span>
@@ -367,7 +486,7 @@ const DashboardCoordinador = () => {
                   <p className="text-xs text-muted-foreground">15-17 años</p>
                 </div>
               )}
-              {(coordinadorProfile as any).rama_que_educa === "rovers" && (
+              {getEffectiveRama(coordinadorProfile as any) === "rovers" && (
                 <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">🚶</span>
@@ -383,7 +502,7 @@ const DashboardCoordinador = () => {
                   <p className="text-xs text-muted-foreground">18-20 años</p>
                 </div>
               )}
-              {!(coordinadorProfile as any).rama_que_educa && (
+              {!getEffectiveRama(coordinadorProfile as any) && (
                 <p className="text-sm text-muted-foreground">
                   No has asignado ninguna rama. Ve a{" "}
                   <Button
@@ -477,7 +596,7 @@ const DashboardCoordinador = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {scouts.length === 0 ? (
+                {filteredScouts.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                     <p className="text-muted-foreground">
@@ -486,10 +605,10 @@ const DashboardCoordinador = () => {
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {scouts.map((scout) => (
+                    {filteredScouts.map((scout) => (
                       <div
                         key={scout.user_id}
-                        className="flex items-center gap-4 p-3 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
+                        className="flex items-center gap-4 p-3 rounded-lg border hover:bg-muted/50 transition-colors animate-fade-in cursor-pointer"
                         onClick={() =>
                           navigate(`/perfil?userId=${scout.user_id}`)
                         }
