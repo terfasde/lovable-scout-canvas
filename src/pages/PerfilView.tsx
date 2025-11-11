@@ -597,6 +597,28 @@ const PerfilView = () => {
                       {(profile as any).rama_que_educa === "rovers" && "🚶 Rama Rovers"}
                     </p>
                   )}
+                  {(profile as any)?.rama_que_educa && profile.edad && profile.edad >= 21 && (
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      {((r) => (
+                        r === "manada" ? "🐺 Rama Manada" :
+                        r === "tropa" ? "⚜️ Rama Tropa" :
+                        r === "pioneros" ? "🏔️ Rama Pioneros" :
+                        r === "rovers" ? "🚶 Rama Rovers" : "Rama"
+                      ))((profile as any).rama_que_educa)}
+                      {profile.seisena && (profile as any).rama_que_educa === "manada" && (
+                        <> • {profile.seisena}</>
+                      )}
+                      {profile.patrulla && (profile as any).rama_que_educa === "tropa" && (
+                        <> • {profile.patrulla}</>
+                      )}
+                      {profile.equipo_pioneros && (profile as any).rama_que_educa === "pioneros" && (
+                        <> • {profile.equipo_pioneros}</>
+                      )}
+                      {profile.comunidad_rovers && (profile as any).rama_que_educa === "rovers" && (
+                        <> • {profile.comunidad_rovers}</>
+                      )}
+                    </p>
+                  )}
                 </>
               )}
             </div>
