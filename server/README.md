@@ -45,7 +45,17 @@ DB_PASSWORD=tu_password_seguro
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 ADMIN_EMAILS=tu-email@ejemplo.com
 ADMIN_SECRET=admin-secret-key
+
+# Email Service (Verificación de correo)
+SMTP_HOST=mailhog                    # Desarrollo: mailhog | Producción: smtp.gmail.com
+SMTP_PORT=1025                       # Desarrollo: 1025 | Producción: 587
+FROM_EMAIL=noreply@scout-local.dev   # Email remitente
+APP_URL=http://localhost:5173        # URL de tu frontend
+# SMTP_USER=                         # Solo si tu SMTP requiere autenticación
+# SMTP_PASS=                         # Solo si tu SMTP requiere autenticación
 ```
+
+**Nota:** Para desarrollo local con emails, consulta [EMAIL_SERVICE_GUIDE.md](../EMAIL_SERVICE_GUIDE.md)
 
 ---
 

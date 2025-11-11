@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { isLocalBackend, apiFetch } from "@/lib/backend";
+import { verifyEmailToken } from "@/lib/email-verification";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, XCircle, Loader2, Mail } from "lucide-react";
 
@@ -21,31 +21,36 @@ const VerificarEmail = () => {
       return;
     }
 
-    if (!isLocalBackend()) {
-      setStatus("error");
-      setMessage("La verificación de email solo está disponible en modo local");
-      return;
-    }
-
     verifyEmail(token);
   }, [searchParams]);
 
   const verifyEmail = async (token: string) => {
     try {
-      const response = await apiFetch(`/auth/verify?token=${token}`);
-      setStatus("success");
-      setMessage(response.message || "Email verificado correctamente");
+      console.log('🔍 Verificando email con token:', token);
       
-      toast({
-        title: "✅ Email verificado",
-        description: "Tu cuenta ha sido verificada exitosamente",
-      });
+      const result = await verifyEmailToken(token);
+      
+      console.log('✅ Resultado:', result);
+      
+      if (result.success) {
+        setStatus("success");
+        setMessage(result.message || "Email verificado correctamente");
+        
+        toast({
+          title: "✅ Email verificado",
+          description: "Tu cuenta ha sido verificada exitosamente. Ahora podés acceder a todas las funcionalidades!",
+        });
 
-      // Redirigir al perfil después de 3 segundos
-      setTimeout(() => {
-        navigate("/perfil");
-      }, 3000);
+        // Redirigir a Comuni 7 después de 3 segundos
+        setTimeout(() => {
+          navigate("/usuarios");
+        }, 3000);
+      } else {
+        setStatus("error");
+        setMessage(result.message || "No se pudo verificar el email");
+      }
     } catch (error: any) {
+      console.error('❌ Error verificando:', error);
       setStatus("error");
       setMessage(error.message || "No se pudo verificar el email");
       

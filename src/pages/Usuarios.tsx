@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
 import UserAvatar from "@/components/UserAvatar";
+import EmailVerificationGuard from "@/components/EmailVerificationGuard";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -513,18 +514,6 @@ const Usuarios = () => {
     return "Scout";
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Navigation global en App.tsx */}
-        <div className="h-20"></div>
-        <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      </div>
-    );
-  }
-
   // Renderizado con resaltado de menciones @usuario
   const renderWithMentions = (text: string): ReactNode[] => {
     const parts: ReactNode[] = [];
@@ -549,6 +538,16 @@ const Usuarios = () => {
   };
 
   return (
+    <EmailVerificationGuard featureName="Comuni 7">
+    {loading ? (
+      <div className="min-h-screen bg-background">
+        {/* Navigation global en App.tsx */}
+        <div className="h-20"></div>
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </div>
+    ) : (
     <div className="min-h-screen bg-background">
       {/* Navigation global en App.tsx */}
       <div className="h-16 sm:h-20"></div>
@@ -1335,6 +1334,8 @@ const Usuarios = () => {
         </Tabs>
       </div>
     </div>
+    )}
+    </EmailVerificationGuard>
   );
 };
 

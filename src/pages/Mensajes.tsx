@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EmailVerificationGuard from "@/components/EmailVerificationGuard";
 
 interface ProfileLite {
   user_id: string;
@@ -365,6 +366,7 @@ export default function Mensajes() {
   };
 
   return (
+    <EmailVerificationGuard featureName="Mensajes">
     <div className="min-h-screen bg-background pb-20">
       {/* Navigation global en App.tsx */}
       <div className="h-16 sm:h-20"></div>
@@ -583,5 +585,6 @@ export default function Mensajes() {
         </div>
       </div>
     </div>
+    </EmailVerificationGuard>
   );
 }

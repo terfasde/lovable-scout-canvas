@@ -43,6 +43,7 @@ import {
   deleteAlbum,
 } from "@/lib/gallery";
 import { useToast } from "@/hooks/use-toast";
+import EmailVerificationGuard from "@/components/EmailVerificationGuard";
 
 // Lista de emails con permisos de administración separados por comas
 const ADMIN_EMAILS = (
@@ -276,6 +277,7 @@ const Galeria = () => {
   }, [lightboxOpen, images.length]);
 
   return (
+    <EmailVerificationGuard featureName="Galería">
     <div className="min-h-screen bg-background">
       {/* Hero */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-4 sm:pb-6">
@@ -557,6 +559,7 @@ const Galeria = () => {
 
       {/* Footer global en App.tsx */}
     </div>
+    </EmailVerificationGuard>
   );
 };
 

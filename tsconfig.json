@@ -26,7 +26,8 @@
     "server",
     "node_modules",
     "dist",
-    "src/integrations/supabase/client-BACKUP.ts"
+    "src/integrations/supabase/client-BACKUP.ts",
+    "supabase/functions" // excluir edge functions (Deno) del compilador TS del frontend
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

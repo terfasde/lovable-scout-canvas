@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import UserAvatar from "@/components/UserAvatar";
 import AvatarCropDialog from "@/components/AvatarCropDialog";
-import { ArrowLeft, Eye, EyeOff, Save, Upload, X } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Save, Upload, X, Mail, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -18,8 +18,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Database } from "@/integrations/supabase/types";
-import { isLocalBackend, uploadImage, getAuthUser } from "@/lib/backend";
+import { isLocalBackend, uploadImage, getAuthUser, apiFetch } from "@/lib/backend";
 import {
   getProfile as getLocalProfile,
   updateProfile as updateLocalProfile,
@@ -80,6 +81,8 @@ const Perfil = () => {
   const [ramaEducador, setRamaEducador] = useState<"" | "manada" | "tropa" | "pioneros" | "rovers">("");
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const [emailVerified, setEmailVerified] = useState(true);
+  const [resendingEmail, setResendingEmail] = useState(false);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -159,6 +162,7 @@ const Perfil = () => {
         return;
       }
       setUserEmail(auth.email || "");
+      setEmailVerified(auth.email_verified ?? true);
 
       // Modo local: obtener desde backend propio
       if (isLocalBackend()) {
@@ -602,6 +606,34 @@ const Perfil = () => {
     }
   };
 
+  const handleResendVerificationEmail = async () => {
+    if (!isLocalBackend()) {
+      toast({
+        title: "No disponible",
+        description: "La verificación de email solo está disponible en modo local",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setResendingEmail(true);
+      await apiFetch("/auth/resend-verification", { method: "POST" });
+      toast({
+        title: "✉️ Email enviado",
+        description: "Revisa tu correo para verificar tu cuenta",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo enviar el email",
+        variant: "destructive",
+      });
+    } finally {
+      setResendingEmail(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -644,6 +676,33 @@ const Perfil = () => {
             </p>
           </div>
         </div>
+
+        {/* Email Verification Banner */}
+        {!emailVerified && isLocalBackend() && (
+          <Alert className="mb-6 border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30">
+            <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-500" />
+            <AlertDescription className="flex items-center justify-between gap-4">
+              <div>
+                <p className="font-medium text-yellow-800 dark:text-yellow-200">
+                  Email no verificado
+                </p>
+                <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+                  Revisa tu correo y haz clic en el enlace de verificación.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleResendVerificationEmail}
+                disabled={resendingEmail}
+                className="gap-2 shrink-0"
+              >
+                <Mail className="h-4 w-4" />
+                {resendingEmail ? "Enviando..." : "Reenviar email"}
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Avatar Section */}
         <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-8 border-b">

@@ -41,6 +41,8 @@ export async function sendVerificationEmail(
           .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
           .button { display: inline-block; padding: 15px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
           .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+          .features { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+          .feature-item { margin: 10px 0; }
         </style>
       </head>
       <body>
@@ -50,18 +52,29 @@ export async function sendVerificationEmail(
           </div>
           <div class="content">
             <p>Hola,</p>
-            <p>Gracias por registrarte. Para completar tu registro y verificar tu correo electrónico, haz clic en el siguiente enlace:</p>
+            <p>Te damos la bienvenida al sistema del Grupo Scout. Tu cuenta ha sido creada exitosamente.</p>
+            
+            <p><strong>Para desbloquear todas las funcionalidades</strong>, verifica tu correo electrónico haciendo clic en el siguiente enlace:</p>
+            
             <p style="text-align: center;">
               <a href="${verifyUrl}" class="button">Verificar mi correo</a>
             </p>
+            
+            <div class="features">
+              <p style="margin-top: 0;"><strong>🔓 Con email verificado podrás acceder a:</strong></p>
+              <div class="feature-item">👥 <strong>Comuni 7</strong> - Red social de scouts</div>
+              <div class="feature-item">💬 <strong>Mensajes</strong> - Chat con otros miembros</div>
+              <div class="feature-item">📸 <strong>Galería</strong> - Fotos del grupo</div>
+            </div>
+            
             <p>O copia y pega este enlace en tu navegador:</p>
             <p style="word-break: break-all; color: #667eea;">${verifyUrl}</p>
             <p><strong>⏰ Este enlace expira en 24 horas.</strong></p>
-            <p>Si no solicitaste este registro, puedes ignorar este correo.</p>
+            <p style="font-size: 0.9em; color: #666;">Podrás solicitar un nuevo enlace desde tu perfil en cualquier momento.</p>
             <p>¡Siempre listos!</p>
           </div>
           <div class="footer">
-            <p>Grupo Scout Local - Sistema de Gestión</p>
+            <p>Grupo Scout Séptimo - Montevideo, Uruguay</p>
             <p>Este es un correo automático, por favor no respondas.</p>
           </div>
         </div>
@@ -69,14 +82,20 @@ export async function sendVerificationEmail(
       </html>
     `,
     text: `
-¡Bienvenido/a al Grupo Scout!
+🎖️ ¡Bienvenido/a al Grupo Scout!
 
-Para completar tu registro y verificar tu correo electrónico, visita:
+Te damos la bienvenida al sistema del Grupo Scout. Tu cuenta ha sido creada exitosamente.
+
+Para desbloquear todas las funcionalidades, verifica tu correo electrónico visitando:
 ${verifyUrl}
 
-⏰ Este enlace expira en 24 horas.
+🔓 Con email verificado podrás acceder a:
+- 👥 Comuni 7 - Red social de scouts
+- 💬 Mensajes - Chat con otros miembros  
+- 📸 Galería - Fotos del grupo
 
-Si no solicitaste este registro, puedes ignorar este correo.
+⏰ Este enlace expira en 24 horas.
+Podrás solicitar un nuevo enlace desde tu perfil en cualquier momento.
 
 ¡Siempre listos!
     `,

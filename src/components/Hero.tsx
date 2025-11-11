@@ -70,21 +70,17 @@ const Hero = () => {
                   </Button>
                 </Link>
 
-                <button
+                <Button
                   onClick={() => {
                     document.getElementById("historia")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="group"
+                  size="lg"
+                  variant="heroSecondary"
+                  className="group text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-xl hover:scale-105"
                 >
-                  <Button
-                    size="lg"
-                    variant="heroSecondary"
-                    className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-xl hover:scale-105"
-                  >
-                    <Users className="mr-2 transition-transform duration-300 group-hover:scale-110" />
-                    Conoce Nuestra Historia
-                  </Button>
-                </button>
+                  <Users className="mr-2 transition-transform duration-300 group-hover:scale-110" />
+                  Conoce Nuestra Historia
+                </Button>
               </div>
             </Reveal>
 

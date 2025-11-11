@@ -178,6 +178,7 @@ export async function uploadImage(file: File): Promise<string> {
 export async function getAuthUser(): Promise<{
   id: string;
   email?: string | null;
+  email_verified?: boolean;
   isLocal: boolean;
 } | null> {
   if (isLocalBackend()) {
@@ -185,7 +186,12 @@ export async function getAuthUser(): Promise<{
       await ensureLocalToken();
       const me = (await apiFetch("/profiles/me")) as any;
       if (me && me.id) {
-        return { id: String(me.id), email: me.email || null, isLocal: true };
+        return { 
+          id: String(me.id), 
+          email: me.email || null, 
+          email_verified: !!me.email_verified_at,
+          isLocal: true 
+        };
       }
       return null;
     } catch {
@@ -195,5 +201,5 @@ export async function getAuthUser(): Promise<{
   const { data } = await supabase.auth.getUser();
   const user = data?.user;
   if (!user) return null;
-  return { id: user.id, email: user.email, isLocal: false };
+  return { id: user.id, email: user.email, email_verified: true, isLocal: false };
 }
