@@ -30,46 +30,29 @@ export async function sendVerificationEmail() {
 
     console.log('✅ Token generado:', tokenData);
 
-  // @ts-ignore - tokenData tiene las claves definidas por la función SQL
-  const { token, email } = tokenData as any;
+    // Extraer token (el RPC devuelve token, expires_at, email pero solo necesitamos token)
+    const token = (tokenData as any)?.token;
+    
+    if (!token) {
+      throw new Error('No se pudo generar el token');
+    }
+    
     const verificationUrl = `${window.location.origin}/verificar-email?token=${token}`;
 
     // En desarrollo, mostrar el link en consola
-    if (window.location.hostname === 'localhost') {
-      console.log('🔗 Link de verificación (desarrollo):');
-      console.log(verificationUrl);
-      console.log('\n📋 Copia este link y ábrelo en tu navegador para verificar tu email');
-      
-      // Intentar copiar al clipboard
-      try {
-        await navigator.clipboard.writeText(verificationUrl);
-        console.log('✅ Link copiado al portapapeles!');
-      } catch (e) {
-        console.log('⚠️ No se pudo copiar al portapapeles');
-      }
+    console.log('🔗 Link de verificación (desarrollo):');
+    console.log(verificationUrl);
+    console.log('\n📋 Copia este link y ábrelo en tu navegador para verificar tu email');
+    
+    // Intentar copiar al clipboard
+    try {
+      await navigator.clipboard.writeText(verificationUrl);
+      console.log('✅ Link copiado al portapapeles!');
+    } catch (e) {
+      console.log('⚠️ No se pudo copiar al portapapeles');
     }
 
-    if (USE_EDGE_EMAIL) {
-      // Intentar enviar via Edge Function (si está desplegada y habilitada)
-      try {
-        const { data, error } = await supabase.functions.invoke('send-verification-email', {
-          body: { token, email }
-        });
-
-        if (error) {
-          console.warn('⚠️ Edge Function respondió con error:', error.message);
-        } else {
-          return {
-            success: true,
-            message: 'Email de verificación enviado correctamente',
-          };
-        }
-      } catch (edgeFunctionError: any) {
-        console.warn('⚠️ Edge Function no disponible o CORS bloqueado:', edgeFunctionError?.message);
-      }
-    }
-
-    // Fallback: devolver link para desarrollo
+    // Fallback: devolver link para desarrollo (sin intentar Edge Function por ahora)
     return {
       success: true,
       message: 'Token generado. Revisá la consola para el link de verificación',
@@ -104,7 +87,7 @@ export async function verifyEmailToken(token: string) {
     return {
       success: !!payload.success,
       message: payload.message,
-      userId: payload.user_id
+      userId: payload.verified_user_id || payload.user_id // Soportar ambos nombres
     };
   } catch (error: any) {
     console.error('❌ Error en verifyEmailToken:', error);

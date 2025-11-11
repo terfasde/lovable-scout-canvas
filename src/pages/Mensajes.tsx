@@ -60,24 +60,41 @@ const EMOJIS = [
   "🔥",
 ];
 
-// Stickers scouts
-const STICKERS = [
-  "🏕️ Campamento",
-  "⛺ Carpa",
-  "🎒 Mochila",
-  "🔦 Linterna",
-  "🧭 Brújula",
-  "🪵 Fogata",
-  "🌲 Bosque",
-  "⚜️ Flor de Lis",
-  "🪢 Nudo",
-  "🎯 Siempre Listo",
-  "🦅 Águila",
-  "🐺 Lobo",
-  "⚡ Relámpago",
-  "🌙 Luna",
-  "☀️ Sol",
-];
+// Stickers scouts organizados por categoría
+const STICKER_CATEGORIES = {
+  actividades: [
+    { emoji: "🏕️", text: "¡Campamento!", bg: "bg-green-100 dark:bg-green-900/30" },
+    { emoji: "🥾", text: "¡A caminar!", bg: "bg-amber-100 dark:bg-amber-900/30" },
+    { emoji: "🔥", text: "Fogata encendida", bg: "bg-orange-100 dark:bg-orange-900/30" },
+    { emoji: "⛺", text: "Armando carpa", bg: "bg-teal-100 dark:bg-teal-900/30" },
+    { emoji: "🎒", text: "Mochila lista", bg: "bg-blue-100 dark:bg-blue-900/30" },
+    { emoji: "🧗", text: "¡Escalando!", bg: "bg-purple-100 dark:bg-purple-900/30" },
+  ],
+  scout: [
+    { emoji: "⚜️", text: "Siempre Listo!", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "🪢", text: "Nudo perfecto", bg: "bg-indigo-100 dark:bg-indigo-900/30" },
+    { emoji: "�", text: "Águila scout", bg: "bg-sky-100 dark:bg-sky-900/30" },
+    { emoji: "🐺", text: "Manada unida", bg: "bg-gray-100 dark:bg-gray-800" },
+    { emoji: "🏆", text: "¡Victoria!", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "🎯", text: "En el objetivo", bg: "bg-red-100 dark:bg-red-900/30" },
+  ],
+  naturaleza: [
+    { emoji: "🌲", text: "Bosque scout", bg: "bg-green-100 dark:bg-green-900/30" },
+    { emoji: "🌙", text: "Noche estrellada", bg: "bg-indigo-100 dark:bg-indigo-900/30" },
+    { emoji: "☀️", text: "Día soleado", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "⛰️", text: "Aventura en montaña", bg: "bg-slate-100 dark:bg-slate-800" },
+    { emoji: "🌊", text: "Actividad acuática", bg: "bg-cyan-100 dark:bg-cyan-900/30" },
+    { emoji: "�", text: "Naturaleza viva", bg: "bg-pink-100 dark:bg-pink-900/30" },
+  ],
+  energia: [
+    { emoji: "💪", text: "¡Fuerza scout!", bg: "bg-red-100 dark:bg-red-900/30" },
+    { emoji: "⚡", text: "Energía total", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "🔦", text: "Iluminando el camino", bg: "bg-amber-100 dark:bg-amber-900/30" },
+    { emoji: "🧭", text: "Siempre orientado", bg: "bg-blue-100 dark:bg-blue-900/30" },
+    { emoji: "✨", text: "Brillando siempre", bg: "bg-purple-100 dark:bg-purple-900/30" },
+    { emoji: "�", text: "¡Sos una estrella!", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+  ],
+};
 
 export default function Mensajes() {
   const [directory, setDirectory] = useState<ProfileLite[]>([]);
@@ -558,15 +575,28 @@ export default function Mensajes() {
                           </TabsContent>
 
                           <TabsContent value="stickers" className="mt-2">
-                            <div className="grid grid-cols-1 gap-1 max-h-48 sm:max-h-64 overflow-auto">
-                              {STICKERS.map((sticker, i) => (
-                                <button
-                                  key={i}
-                                  onClick={() => sendSticker(sticker)}
-                                  className="text-left px-2 sm:px-3 py-1.5 sm:py-2 hover:bg-muted rounded transition-colors text-xs sm:text-sm"
-                                >
-                                  {sticker}
-                                </button>
+                            <div className="space-y-3 max-h-48 sm:max-h-80 overflow-auto pr-2">
+                              {Object.entries(STICKER_CATEGORIES).map(([category, stickers]) => (
+                                <div key={category}>
+                                  <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">
+                                    {category === 'actividades' && '🏕️ Actividades'}
+                                    {category === 'scout' && '⚜️ Scout'}
+                                    {category === 'naturaleza' && '🌲 Naturaleza'}
+                                    {category === 'energia' && '⚡ Energía'}
+                                  </div>
+                                  <div className="grid grid-cols-1 gap-1.5">
+                                    {stickers.map((sticker, i) => (
+                                      <button
+                                        key={i}
+                                        onClick={() => sendSticker(`${sticker.emoji} ${sticker.text}`)}
+                                        className={`text-left px-3 py-2 rounded-lg transition-all hover:scale-[1.02] hover:shadow-sm ${sticker.bg} border border-transparent hover:border-primary/20`}
+                                      >
+                                        <span className="text-xl mr-2">{sticker.emoji}</span>
+                                        <span className="text-sm font-medium">{sticker.text}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
                               ))}
                             </div>
                           </TabsContent>
