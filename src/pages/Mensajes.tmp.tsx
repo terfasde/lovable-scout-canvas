@@ -60,12 +60,40 @@ const EMOJIS = [
   "🔥",
 ];
 
-// Stickers scouts al estilo Instagram
-const STICKERS = {
-  actividades: ["🏕️", "🥾", "🔥", "⛺", "🎒", "🧗"],
-  scout: ["⚜️", "🪢", "🦅", "🐺", "🏆", "🎯"],
-  naturaleza: ["🌲", "🌙", "☀️", "⛰️", "🌊", "🌸"],
-  energia: ["💪", "⚡", "🔦", "🧭", "✨", "⭐"],
+// Stickers scouts organizados por categoría
+const STICKER_CATEGORIES = {
+  actividades: [
+    { emoji: "🏕️", text: "¡Campamento!", bg: "bg-green-100 dark:bg-green-900/30" },
+    { emoji: "🥾", text: "¡A caminar!", bg: "bg-amber-100 dark:bg-amber-900/30" },
+    { emoji: "🔥", text: "Fogata encendida", bg: "bg-orange-100 dark:bg-orange-900/30" },
+    { emoji: "⛺", text: "Armando carpa", bg: "bg-teal-100 dark:bg-teal-900/30" },
+    { emoji: "🎒", text: "Mochila lista", bg: "bg-blue-100 dark:bg-blue-900/30" },
+    { emoji: "🧗", text: "¡Escalando!", bg: "bg-purple-100 dark:bg-purple-900/30" },
+  ],
+  scout: [
+    { emoji: "⚜️", text: "Siempre Listo!", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "🪢", text: "Nudo perfecto", bg: "bg-indigo-100 dark:bg-indigo-900/30" },
+    { emoji: "�", text: "Águila scout", bg: "bg-sky-100 dark:bg-sky-900/30" },
+    { emoji: "🐺", text: "Manada unida", bg: "bg-gray-100 dark:bg-gray-800" },
+    { emoji: "🏆", text: "¡Victoria!", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "🎯", text: "En el objetivo", bg: "bg-red-100 dark:bg-red-900/30" },
+  ],
+  naturaleza: [
+    { emoji: "🌲", text: "Bosque scout", bg: "bg-green-100 dark:bg-green-900/30" },
+    { emoji: "🌙", text: "Noche estrellada", bg: "bg-indigo-100 dark:bg-indigo-900/30" },
+    { emoji: "☀️", text: "Día soleado", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "⛰️", text: "Aventura en montaña", bg: "bg-slate-100 dark:bg-slate-800" },
+    { emoji: "🌊", text: "Actividad acuática", bg: "bg-cyan-100 dark:bg-cyan-900/30" },
+    { emoji: "�", text: "Naturaleza viva", bg: "bg-pink-100 dark:bg-pink-900/30" },
+  ],
+  energia: [
+    { emoji: "💪", text: "¡Fuerza scout!", bg: "bg-red-100 dark:bg-red-900/30" },
+    { emoji: "⚡", text: "Energía total", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "🔦", text: "Iluminando el camino", bg: "bg-amber-100 dark:bg-amber-900/30" },
+    { emoji: "🧭", text: "Siempre orientado", bg: "bg-blue-100 dark:bg-blue-900/30" },
+    { emoji: "✨", text: "Brillando siempre", bg: "bg-purple-100 dark:bg-purple-900/30" },
+    { emoji: "�", text: "¡Sos una estrella!", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+  ],
 };
 
 export default function Mensajes() {
@@ -337,18 +365,33 @@ export default function Mensajes() {
   const sendSticker = async (sticker: string) => {
     if (!conversationId) return;
     try {
+      let inserted: Message;
       if (isLocalBackend()) {
-        await sendDM(conversationId, sticker);
+        inserted = await sendDM(conversationId, sticker);
       } else {
         const { data: userData } = await supabase.auth.getUser();
         const sender_id = userData.user?.id;
-        const { error } = await supabase.from("messages").insert({
+        const { data, error } = await supabase.from("messages").insert({
           conversation_id: conversationId,
           sender_id,
           content: sticker,
-        });
+        }).select().single();
         if (error) throw error;
+        inserted = data as Message;
       }
+      
+      // Añadir al estado local para que aparezca inmediatamente
+      const sender = directory.find((u) => u.user_id === inserted.sender_id);
+      const enriched: MessageWithSender = {
+        ...inserted,
+        sender_username: sender?.username,
+        sender_name: sender?.nombre_completo,
+      };
+      setMessages((prev) => [...prev, enriched]);
+      setTimeout(() => {
+        const el = messagesContainerRef.current;
+        if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      }, 50);
     } catch (e: any) {
       toast({ title: "Error", description: e.message, variant: "destructive" });
     }
@@ -478,16 +521,9 @@ export default function Mensajes() {
                                       : m.sender_name || "Scout"}
                                   </div>
                                 )}
-                                {/* Detectar si es un sticker (solo emoji, 1-3 caracteres) */}
-                                {m.content.length <= 3 && /^[\p{Emoji}\u200d]+$/u.test(m.content) ? (
-                                  <div className="text-6xl sm:text-7xl py-2">
-                                    {m.content}
-                                  </div>
-                                ) : (
-                                  <div className="text-sm sm:text-base whitespace-pre-wrap break-words">
-                                    {m.content}
-                                  </div>
-                                )}
+                                <div className="text-sm sm:text-base whitespace-pre-wrap break-words">
+                                  {m.content}
+                                </div>
                                 <div
                                   className={`text-xs mt-1 ${isMine ? "opacity-70" : "opacity-50"}`}
                                 >
@@ -555,7 +591,7 @@ export default function Mensajes() {
 
                           <TabsContent value="stickers" className="mt-2">
                             <div className="space-y-3 max-h-48 sm:max-h-80 overflow-auto pr-2">
-                              {Object.entries(STICKERS).map(([category, stickers]) => (
+                              {Object.entries(STICKER_CATEGORIES).map(([category, stickers]) => (
                                 <div key={category}>
                                   <div className="text-xs font-semibold text-muted-foreground mb-2 capitalize">
                                     {category === 'actividades' && '🏕️ Actividades'}
@@ -563,14 +599,15 @@ export default function Mensajes() {
                                     {category === 'naturaleza' && '🌲 Naturaleza'}
                                     {category === 'energia' && '⚡ Energía'}
                                   </div>
-                                  <div className="grid grid-cols-6 gap-2">
-                                    {stickers.map((emoji, i) => (
+                                  <div className="grid grid-cols-1 gap-1.5">
+                                    {stickers.map((sticker, i) => (
                                       <button
                                         key={i}
-                                        onClick={() => sendSticker(emoji)}
-                                        className="text-4xl hover:scale-110 transition-transform active:scale-95 p-2 rounded-lg hover:bg-muted/50"
+                                        onClick={() => sendSticker(`${sticker.emoji} ${sticker.text}`)}
+                                        className={`text-left px-3 py-2 rounded-lg transition-all hover:scale-[1.02] hover:shadow-sm ${sticker.bg} border border-transparent hover:border-primary/20`}
                                       >
-                                        {emoji}
+                                        <span className="text-xl mr-2">{sticker.emoji}</span>
+                                        <span className="text-sm font-medium">{sticker.text}</span>
                                       </button>
                                     ))}
                                   </div>
@@ -596,3 +633,4 @@ export default function Mensajes() {
     </EmailVerificationGuard>
   );
 }
+
