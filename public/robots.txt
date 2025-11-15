@@ -1,8 +1,14 @@
+# Robots.txt para Grupo Scout Séptimo de Montevideo
+# Optimizado para SEO y crawling eficiente
+
+# Bots principales
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 5
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 5
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +16,30 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# Reglas generales
 User-agent: *
 Allow: /
+
+# Permitir acceso a recursos estáticos
+Allow: /assets/
+Allow: /*.css$
+Allow: /*.js$
+
+# Bloquear rutas privadas
+Disallow: /admin
+Disallow: /api/
+Disallow: /perfil/editar
+
+# Bloquear bots maliciosos conocidos
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap
+Sitemap: https://gruposcout7.com/sitemap.xml
+

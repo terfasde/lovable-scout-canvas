@@ -27,15 +27,17 @@ npm run dev
 
 2. **Configurar variables de entorno en Netlify:**
    - Settings → Environment variables → Add
-   - Copia las variables de `.env.production`:
+   - Copia las variables de `.env.production` (¡NO commitees este archivo!):
      ```
      VITE_BACKEND=supabase
-     VITE_SUPABASE_URL=https://lndqeaspuwwgdwbggayd.supabase.co
-     VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-     VITE_GOOGLE_MAPS_API_KEY=AIzaSyCdG8MYDQuZmbEDypnEMlokDCY2t9B8560
-     VITE_GALLERY_ADMIN_EMAILS=franciscolorenzo2406@gmail.com
+     VITE_SUPABASE_URL=<tu-url-de-supabase>
+     VITE_SUPABASE_ANON_KEY=<tu-anon-key-de-supabase>
+     VITE_GOOGLE_MAPS_API_KEY=<tu-api-key-de-google-maps>
+     VITE_GALLERY_ADMIN_EMAILS=<emails-de-admin-separados-por-comas>
      VITE_ENV=production
      ```
+   
+   ⚠️ **IMPORTANTE**: Nunca commitees archivos `.env` con valores reales al repositorio.
 
 3. **Build settings (ya configuradas en netlify.toml):**
    - Build command: `npm run build`

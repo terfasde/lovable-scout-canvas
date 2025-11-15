@@ -20,7 +20,9 @@
     "deploy:prod:zip": "powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1 prod -Zip",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "generate:sitemap": "node scripts/generate-sitemap.js",
+    "prebuild": "npm run generate:sitemap"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

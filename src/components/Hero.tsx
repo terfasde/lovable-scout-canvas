@@ -20,16 +20,21 @@ const Hero = () => {
     }
   };
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      aria-labelledby="hero-title"
+    >
       {/* Background Image with Enhanced Overlay */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0" aria-hidden="true">
         <img
           src={heroImage}
-          alt="Scouts del Séptimo en aventura"
+          alt=""
+          role="presentation"
           className="w-full h-full object-cover scale-[1.02]"
+          loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-scout-black/75 via-scout-black/60 to-scout-black/35"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-scout-black/50 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-scout-black/75 via-scout-black/60 to-scout-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-t from-scout-black/50 via-transparent to-transparent" />
       </div>
 
       {/* Content */}
@@ -38,7 +43,10 @@ const Hero = () => {
           <div className="space-y-8">
             {/* Main Title */}
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight">
+              <h1 
+                id="hero-title"
+                className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-tight"
+              >
                 <span className="text-primary block mb-2">
                   Grupo Scout Séptimo
                 </span>
@@ -64,9 +72,10 @@ const Hero = () => {
                     size="lg"
                     variant="hero"
                     className="text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                    aria-label="Únete al Grupo Scout Séptimo"
                   >
                     Únete al Grupo
-                    <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+                    <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                   </Button>
                 </Link>
 
@@ -77,8 +86,9 @@ const Hero = () => {
                   size="lg"
                   variant="heroSecondary"
                   className="group text-lg w-full sm:w-auto transition-all duration-300 hover:shadow-xl hover:scale-105"
+                  aria-label="Conoce nuestra historia de 61 años"
                 >
-                  <Users className="mr-2 transition-transform duration-300 group-hover:scale-110" />
+                  <Users className="mr-2 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
                   Conoce Nuestra Historia
                 </Button>
               </div>
@@ -86,17 +96,21 @@ const Hero = () => {
 
             {/* Stats */}
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-white/20">
-                <div className="group">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110">
+              <div 
+                className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-white/20"
+                role="list"
+                aria-label="Estadísticas del grupo"
+              >
+                <div className="group" role="listitem">
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110" aria-label="Más de 61 años">
                     +61
                   </div>
                   <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">
                     Años de historia
                   </div>
                 </div>
-                <div className="group">
-                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent transition-transform duration-300 group-hover:scale-110">
+                <div className="group" role="listitem">
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent transition-transform duration-300 group-hover:scale-110" aria-label="Más de 100 scouts">
                     +100
                   </div>
                   <div className="text-xs sm:text-sm md:text-base text-gray-300 mt-1 sm:mt-2 font-medium">

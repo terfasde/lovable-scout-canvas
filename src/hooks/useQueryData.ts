@@ -166,7 +166,7 @@ export function useConversations(userId: string | null) {
         return apiFetch("/conversations");
       }
       // @ts-ignore - conversations table not in generated types
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("conversations")
         .select("*")
         .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)

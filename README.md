@@ -1,12 +1,79 @@
-# 🏕️ Pagina oficial del Grupo Scout Septimo
+# 🏕️ Grupo Scout Séptimo de Montevideo
 
-Aplicación web para gestión de grupos scout con perfil de usuarios, galería, eventos y más.
+> Sitio web oficial del Grupo Scout Séptimo - Formando líderes desde 1964
 
-> **⚠️ IMPORTANTE:** Este proyecto funciona **SIN Supabase**. Toda la autenticación y datos se manejan localmente con `localStorage` y mocks. Ver [Arquitectura Local](docs/LOCAL_ARCHITECTURE.md) para detalles.
+[![Deploy Status](https://img.shields.io/badge/deploy-ready-brightgreen)]()
+[![Security](https://img.shields.io/badge/security-audited-blue)]()
+[![Performance](https://img.shields.io/badge/performance-optimized-orange)]()
 
 ---
 
-## 🚀 Inicio Rápido
+## ⚡ Setup Rápido
+
+### 1. Clonar e Instalar
+
+```bash
+# Clonar repositorio
+git clone https://github.com/tu-usuario/lovable-scout-canvas.git
+cd lovable-scout-canvas
+
+# Instalar dependencias
+npm install
+```
+
+### 2. Configurar Variables de Entorno
+
+```bash
+# Copiar plantilla
+cp .env.example .env.local
+
+# Editar con tus valores
+# NUNCA commitees .env.local - está en .gitignore
+```
+
+Valores mínimos requeridos:
+```env
+VITE_BACKEND=supabase
+VITE_SUPABASE_URL=tu_url_de_supabase
+VITE_SUPABASE_ANON_KEY=tu_anon_key
+VITE_GOOGLE_MAPS_API_KEY=tu_api_key (opcional)
+```
+
+⚠️ **IMPORTANTE**: Lee [SECURITY.md](./SECURITY.md) antes de configurar.
+
+### 3. Iniciar Desarrollo
+
+```bash
+npm run dev
+```
+
+Accede a http://localhost:5173
+
+---
+
+## 🔒 Seguridad
+
+Este proyecto fue auditado y todas las **credenciales hardcodeadas fueron removidas**.
+
+**Acciones requeridas antes de deploy**:
+1. Regenera API keys si fueron expuestas (ver [SECURITY.md](./SECURITY.md))
+2. Configura variables de entorno en tu hosting
+3. Revisa el [CHECKLIST.md](./CHECKLIST.md) completo
+
+---
+
+## 📖 Documentación Clave
+
+| Documento | Descripción |
+|-----------|-------------|
+| [RESUMEN.md](./RESUMEN.md) | 👈 **Empieza aquí** - Resumen ejecutivo de mejoras |
+| [SECURITY.md](./SECURITY.md) | 🔒 Guía de seguridad y manejo de secrets |
+| [CHECKLIST.md](./CHECKLIST.md) | ✅ Checklist de calidad antes de deploy |
+| [MEJORAS.md](./MEJORAS.md) | 📊 Detalles técnicos de optimizaciones |
+
+---
+
+## 🚀 Inicio Rápido (Legacy)
 
 ### Desarrollo Local
 
@@ -20,11 +87,11 @@ npm run dev
 
 Accede a http://localhost:5173
 
-> Nota: Se eliminaron los scripts y configuraciones Docker. El flujo estándar es usar `npm run dev` y desplegar con Vercel.
+> **Nota**: Este proyecto funciona con Supabase. Toda la autenticación y datos se manejan con Supabase o localmente con `localStorage` en modo desarrollo.
 
 ---
 
-## 📚 Documentación
+## 📚 Documentación Adicional
 
 ### 🏗️ Arquitectura
 
