@@ -1,7 +1,8 @@
 // Navigation y Footer son globales en App.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Users, Flame } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Calendar, Users, Flame, Award, BookOpen } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { Link } from "react-router-dom";
 
@@ -89,49 +90,74 @@ const Historia = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 to-background">
-        <div className="container mx-auto px-4">
-          <Reveal className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
-              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              <span className="text-primary font-semibold text-xs sm:text-sm">
-                Desde 1964
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="max-w-5xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
+              <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
+                Más de 60 años de trayectoria
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6">
               Nuestra Historia
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Más de 60 años formando jóvenes con valores scout, desde nuestros
-              inicios en el Colegio Alemán hasta nuestros locales actuales.
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
+              Desde 1964 formando jóvenes con valores scout. Un recorrido desde el Colegio Alemán hasta nuestros locales actuales, manteniendo viva la llama del escultismo.
             </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+              <Card className="text-center card-hover bg-gradient-to-br from-primary/5 to-background">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">1964</div>
+                  <p className="text-sm text-muted-foreground">Año de fundación</p>
+                </CardContent>
+              </Card>
+              <Card className="text-center card-hover bg-gradient-to-br from-accent/5 to-background">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">11</div>
+                  <p className="text-sm text-muted-foreground">Locales históricos</p>
+                </CardContent>
+              </Card>
+              <Card className="text-center card-hover bg-gradient-to-br from-primary/5 to-background">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">60+</div>
+                  <p className="text-sm text-muted-foreground">Años de servicio</p>
+                </CardContent>
+              </Card>
+            </div>
           </Reveal>
         </div>
       </section>
 
       {/* Nacimiento del grupo */}
-      <section className="py-8 sm:py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+      <section className="py-8 sm:py-12 bg-gradient-to-b from-background to-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
             <Reveal>
-              <Card className="card-hover border-primary/20">
-                <CardContent className="p-5 sm:p-6 md:p-8">
-                  <div className="flex items-start gap-3 sm:gap-4 mb-3 sm:mb-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+              <Card className="card-hover border-2 border-primary/20 shadow-xl bg-gradient-to-br from-primary/5 via-background to-accent/5">
+                <CardContent className="p-6 sm:p-8 md:p-10">
+                  <div className="flex flex-col md:flex-row items-start gap-4 sm:gap-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                      <Users className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
                     </div>
-                    <div>
-                      <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">
-                        Nacimiento del Grupo
-                      </h2>
-                      <p className="text-sm sm:text-base text-muted-foreground mb-2 sm:mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-4">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+                          Nacimiento del Grupo
+                        </h2>
+                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                          1964
+                        </Badge>
+                      </div>
+                      <p className="text-base sm:text-lg text-muted-foreground mb-4 leading-relaxed">
                         Nuestro grupo nació en el{" "}
-                        <strong>Colegio Alemán en 1964</strong>, cuando un
+                        <strong className="text-primary">Colegio Alemán en 1964</strong>, cuando un
                         pequeño grupo de jóvenes y guías se reunió con la
                         intención de formar un espacio de encuentro y formación
                         scout.
                       </p>
-                      <p className="text-sm sm:text-base text-muted-foreground">
+                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                         Desde esos primeros pasos hemos crecido manteniendo los
                         valores fundacionales y adaptándonos a nuevas
                         generaciones, siempre fieles al espíritu scout.
@@ -146,51 +172,53 @@ const Historia = () => {
       </section>
 
       {/* Locales Section */}
-      <section className="py-8 sm:py-12 bg-muted/30">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-muted/30 via-background to-muted/20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-6 sm:mb-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
+            <Reveal className="text-center mb-8 sm:mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 shadow-sm">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="text-primary font-semibold text-xs sm:text-sm">
+                <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
                   Nuestros Locales
                 </span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
                 Un Recorrido por Nuestros Espacios
               </h2>
-              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Desde 1964 hemos transitado por diversos locales, cada uno con
                 su historia y aportes a la formación de generaciones de scouts.
               </p>
-            </div>
+            </Reveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {locales.map((local, index) => (
                 <Reveal key={index}>
-                  <Card className="card-hover h-full">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  <Card className="card-hover h-full overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group bg-gradient-to-br from-background via-background to-muted/20">
+                    <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary"></div>
+                    <CardContent className="p-5 sm:p-6">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                          <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-base sm:text-lg mb-1">
+                          <h3 className="font-bold text-lg sm:text-xl mb-1 group-hover:text-primary transition-colors">
                             {local.nombre}
                           </h3>
-                          <p className="text-xs text-muted-foreground truncate">
+                          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                             {local.direccion}
                           </p>
                         </div>
                       </div>
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">
+                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                         {local.resumen}
                       </p>
-                      <details className="text-xs sm:text-sm text-muted-foreground">
-                        <summary className="cursor-pointer text-primary hover:text-primary/80 font-medium">
-                          Ver detalles
+                      <details className="text-sm text-muted-foreground">
+                        <summary className="cursor-pointer text-primary hover:text-primary/80 font-semibold transition-colors flex items-center gap-2">
+                          <span>Ver detalles</span>
+                          <Award className="w-4 h-4" />
                         </summary>
-                        <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t whitespace-pre-line text-xs leading-relaxed">
+                        <div className="mt-3 pt-3 border-t border-primary/20 whitespace-pre-line text-xs sm:text-sm leading-relaxed">
                           {local.detalle}
                         </div>
                       </details>
@@ -204,42 +232,42 @@ const Historia = () => {
       </section>
 
       {/* Acontecimientos importantes y Tradiciones */}
-      <section className="py-8 sm:py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-muted/30">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Acontecimientos importantes */}
             <Reveal>
-              <Card className="card-hover">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center shadow-lg">
+                      <Calendar className="w-6 h-6 text-primary" />
                     </div>
-                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+                    <h2 className="text-xl sm:text-2xl font-bold">
                       Acontecimientos Importantes
                     </h2>
                   </div>
-                  <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground">
-                    <li className="flex gap-2 sm:gap-3">
-                      <span className="text-primary font-bold flex-shrink-0">
+                  <ul className="space-y-4 text-sm sm:text-base text-muted-foreground">
+                    <li className="flex gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 h-fit">
                         2004
-                      </span>
-                      <span>
+                      </Badge>
+                      <span className="flex-1">
                         Creación de BAUEN, la competencia nacional organizada
                         por nuestro grupo.
                       </span>
                     </li>
-                    <li className="flex gap-2 sm:gap-3">
-                      <span className="text-primary font-bold flex-shrink-0">
+                    <li className="flex gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 h-fit">
                         2014
-                      </span>
-                      <span>Aniversario y celebración de los 50 años del Grupo Séptimo.</span>
+                      </Badge>
+                      <span className="flex-1">Aniversario y celebración de los 50 años del Grupo Séptimo.</span>
                     </li>
-                    <li className="flex gap-2 sm:gap-3">
-                      <span className="text-primary font-bold flex-shrink-0">
+                    <li className="flex gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 h-fit">
                         2025
-                      </span>
-                      <span>
+                      </Badge>
+                      <span className="flex-1">
                         Participación en JOTA-JOTI y colaboración con Grupo de
                         Coleccionistas Scouts.
                       </span>
@@ -251,29 +279,29 @@ const Historia = () => {
 
             {/* Am Lagerfeuers */}
             <Reveal>
-              <Card className="card-hover">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-accent/5 via-background to-primary/5">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-accent/20 to-primary/10 rounded-xl flex items-center justify-center shadow-lg">
+                      <Flame className="w-6 h-6 text-primary" />
                     </div>
-                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+                    <h2 className="text-xl sm:text-2xl font-bold">
                       Am Lagerfeuer
                     </h2>
                   </div>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
+                  <p className="text-sm sm:text-base text-muted-foreground mb-4 leading-relaxed">
                     Nuestra tradición de reuniones nocturnas alrededor del
                     fuego: cantos, historias y reflexión. "Am Lagerfeuer" resume
                     la esencia del compañerismo scout.
                   </p>
-                  <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-6 leading-relaxed">
                     Eventos periódicos en el campo de campamento donde
                     compartimos experiencias y fortalecemos lazos.
                   </p>
                   <Link to="/am-lagerfeuer">
-                    <Button className="w-full sm:w-auto gap-2">
+                    <Button className="w-full gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                       <Flame className="w-4 h-4" />
-                      Ver Repositorio Am Lagerfeuer
+                      Ver Repositorio
                     </Button>
                   </Link>
                 </CardContent>
@@ -282,22 +310,22 @@ const Historia = () => {
 
             {/* Línea del Tiempo */}
             <Reveal>
-              <Card className="card-hover">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center shadow-lg">
+                      <Calendar className="w-6 h-6 text-primary" />
                     </div>
-                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+                    <h2 className="text-xl sm:text-2xl font-bold">
                       Línea del Tiempo
                     </h2>
                   </div>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">
+                  <p className="text-sm sm:text-base text-muted-foreground mb-6 leading-relaxed">
                     Explorá nuestra historia cronológica desde 1964 hasta hoy.
                     Un recorrido visual por los momentos más importantes del grupo.
                   </p>
                   <Link to="/linea-temporal">
-                    <Button className="w-full sm:w-auto gap-2">
+                    <Button className="w-full gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                       <Calendar className="w-4 h-4" />
                       Ver Línea del Tiempo
                     </Button>

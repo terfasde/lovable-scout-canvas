@@ -32,7 +32,7 @@ const Events = () => {
           setEvents([
             {
               title: "Campamento de Verano 2026",
-              date: "22-26 Enero, 2026",
+              date: "21-25 Enero, 2026",
               location: "Próximamente Revelado",
               participants: "+100 scouts",
               type: "Campamento",
@@ -97,40 +97,34 @@ const Events = () => {
   }, []);
 
   return (
-    <section className="section-padding bg-gradient-to-b from-muted/30 to-background">
+    <section className="section-padding bg-gradient-to-b from-background via-muted/20 to-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <Reveal className="text-center mb-12 sm:mb-16">
-          <div className="inline-block px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-3 sm:mb-4 shadow-sm">
-            <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
-              Próximos Eventos
-            </span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
-            Vive la aventura con nosotros
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+            Calendario de Actividades
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Participa en nuestras actividades, campamentos y eventos especiales
-            como el prestigioso BAUEN.
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Participa en nuestras actividades, campamentos y eventos especiales.
           </p>
         </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {events.map((event, index) => (
             <Reveal key={index}>
-              <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full">
+              <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full bg-gradient-to-br from-background via-background to-muted/20">
                 <div
-                  className={`h-2 bg-gradient-to-r from-primary to-accent`}
+                  className={`h-3 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x`}
                 ></div>
                 <CardHeader className="space-y-2 sm:space-y-3 p-4 sm:p-6">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs sm:text-sm font-semibold text-primary">
+                    <span className="text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
                       {event.type}
                     </span>
-                    <span className="text-xs bg-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-medium whitespace-nowrap">
+                    <span className="text-xs bg-gradient-to-r from-accent/30 to-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold whitespace-nowrap border border-accent/30">
                       {event.status}
                     </span>
                   </div>
-                  <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight">
+                  <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight group-hover:text-primary transition-colors">
                     {event.title}
                   </CardTitle>
                 </CardHeader>
