@@ -475,30 +475,30 @@ const Usuarios = () => {
     ) : (
     <div className="min-h-screen bg-background">
       {/* Navigation global en App.tsx */}
-      <div className="h-16 sm:h-20"></div>
+      <div className="h-14 sm:h-16"></div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
-        <div className="flex items-center gap-3 mb-4">
-          <UsersIcon className="w-8 h-8 text-primary" />
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+        <div className="flex items-center gap-2 mb-3">
+          <UsersIcon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold">Comuni 7</h1>
-            <p className="text-sm text-muted-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold">Comuni 7</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
               Personas y hilos de la comunidad
             </p>
           </div>
         </div>
 
         {/* Botones de acceso a Galería y Mensajes */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
           <Link to="/galeria">
             <Card className="card-hover cursor-pointer h-full">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <ImageIconGallery className="w-6 h-6 text-primary" />
+              <CardContent className="p-2 sm:p-3 flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <ImageIconGallery className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">Galería</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="font-semibold text-sm sm:text-base">Galería</h3>
+                  <p className="text-xs text-muted-foreground hidden sm:block">
                     Explorá las fotos del grupo
                   </p>
                 </div>
@@ -508,13 +508,13 @@ const Usuarios = () => {
           
           <Link to="/mensajes">
             <Card className="card-hover cursor-pointer h-full">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-primary" />
+              <CardContent className="p-2 sm:p-3 flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">Mensajes</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="font-semibold text-sm sm:text-base">Mensajes</h3>
+                  <p className="text-xs text-muted-foreground hidden sm:block">
                     Conversá con otros scouts
                   </p>
                 </div>
@@ -524,27 +524,27 @@ const Usuarios = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="personas">Personas</TabsTrigger>
-            <TabsTrigger value="hilos">Hilos</TabsTrigger>
-            <TabsTrigger value="grupos">Grupos</TabsTrigger>
+          <TabsList className="mb-3 sm:mb-4 h-8 sm:h-10">
+            <TabsTrigger value="personas" className="text-xs sm:text-sm">Personas</TabsTrigger>
+            <TabsTrigger value="hilos" className="text-xs sm:text-sm">Hilos</TabsTrigger>
+            <TabsTrigger value="grupos" className="text-xs sm:text-sm">Grupos</TabsTrigger>
           </TabsList>
 
           <TabsContent value="personas">
             {/* Búsqueda */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <div className="relative mb-3">
+              <Search className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Buscar por nombre..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12"
+                className="pl-8 sm:pl-10 h-9 sm:h-10 text-sm"
               />
             </div>
 
             {/* Filtros y ordenamiento */}
-            <div className="grid gap-3 sm:grid-cols-3 mb-6">
+            <div className="grid gap-2 sm:gap-3 grid-cols-3 mb-3 sm:mb-4">
               {/* Filtro por rama */}
               <div>
                 <label className="text-sm font-medium mb-2 block text-muted-foreground">

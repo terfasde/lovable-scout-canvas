@@ -98,7 +98,7 @@ const Events = () => {
 
   return (
     <section className="section-padding bg-gradient-to-b from-background via-muted/20 to-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-3 sm:px-6 lg:px-8">
         <Reveal className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
             Calendario de Actividades

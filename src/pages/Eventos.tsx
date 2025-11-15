@@ -49,23 +49,23 @@ const Eventos = () => {
                     </p>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-8">
                     <Card className="text-center card-hover">
-                      <CardContent className="p-4">
-                        <div className="text-3xl font-bold text-primary mb-1">2004</div>
-                        <p className="text-sm text-muted-foreground">Año de creación</p>
+                      <CardContent className="p-2 sm:p-4">
+                        <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">2004</div>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Año de creación</p>
                       </CardContent>
                     </Card>
                     <Card className="text-center card-hover">
-                      <CardContent className="p-4">
-                        <div className="text-3xl font-bold text-primary mb-1">+300</div>
-                        <p className="text-sm text-muted-foreground">Participantes</p>
+                      <CardContent className="p-2 sm:p-4">
+                        <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">+300</div>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Participantes</p>
                       </CardContent>
                     </Card>
                     <Card className="text-center card-hover">
-                      <CardContent className="p-4">
-                        <div className="text-3xl font-bold text-primary mb-1">4</div>
-                        <p className="text-sm text-muted-foreground">Ramas participantes</p>
+                      <CardContent className="p-2 sm:p-4">
+                        <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">4</div>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Ramas participantes</p>
                       </CardContent>
                     </Card>
                   </div>

@@ -106,23 +106,23 @@ const Historia = () => {
               Desde 1964 formando jóvenes con valores scout. Un recorrido desde el Colegio Alemán hasta nuestros locales actuales, manteniendo viva la llama del escultismo.
             </p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto">
               <Card className="text-center card-hover bg-gradient-to-br from-primary/5 to-background">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">1964</div>
-                  <p className="text-sm text-muted-foreground">Año de fundación</p>
+                <CardContent className="p-3 sm:p-6">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 sm:mb-2">1964</div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Año de fundación</p>
                 </CardContent>
               </Card>
               <Card className="text-center card-hover bg-gradient-to-br from-accent/5 to-background">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">11</div>
-                  <p className="text-sm text-muted-foreground">Locales históricos</p>
+                <CardContent className="p-3 sm:p-6">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 sm:mb-2">11</div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Locales históricos</p>
                 </CardContent>
               </Card>
               <Card className="text-center card-hover bg-gradient-to-br from-primary/5 to-background">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="text-3xl sm:text-4xl font-bold text-primary mb-2">60+</div>
-                  <p className="text-sm text-muted-foreground">Años de servicio</p>
+                <CardContent className="p-3 sm:p-6">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 sm:mb-2">60+</div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Años de servicio</p>
                 </CardContent>
               </Card>
             </div>
@@ -234,7 +234,7 @@ const Historia = () => {
       {/* Acontecimientos importantes y Tradiciones */}
       <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Acontecimientos importantes */}
             <Reveal>
               <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-primary/5 via-background to-accent/5">

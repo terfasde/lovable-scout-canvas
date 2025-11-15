@@ -158,7 +158,13 @@ All colors MUST be HSL.
   }
   
   .card-hover {
-    @apply transition-all duration-500 hover:shadow-lg hover:-translate-y-6;
+    @apply transition-all duration-500 hover:shadow-lg;
+  }
+  
+  @media (min-width: 768px) {
+    .card-hover {
+      @apply hover:-translate-y-2;
+    }
   }
   
   .section-padding {
@@ -186,6 +192,18 @@ All colors MUST be HSL.
     border-radius: 9999px;
     filter: blur(56px) saturate(1.1);
     animation: blob 42s ease-in-out infinite alternate;
+  }
+  
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+  
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  
+  .animation-delay-4000 {
+    animation-delay: 4s;
   }
 
   .animate-gradient-slow {

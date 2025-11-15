@@ -8,7 +8,7 @@ const Bauen = () => {
   const actividades = [
     { nombre: "Pionerismo", icon: "🏗️" },
     { nombre: "Cabullería", icon: "🪢" },
-    { nombre: "Cocina de Campamento", icon: "🔥" },
+    { nombre: "Cocina", icon: "🔥" },
   ];
 
   const ramas = [
@@ -39,9 +39,17 @@ const Bauen = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background decorativo global */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl animate-blob"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 dark:bg-accent/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/3 dark:bg-primary/8 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+      </div>
+
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/10 via-accent/5 to-transparent dark:from-primary/20 dark:via-accent/10 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent dark:from-primary/15"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
@@ -50,17 +58,17 @@ const Bauen = () => {
                 Desde 2004 - Competencia entre Grupos Scouts
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6">
               BAUEN
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl font-medium text-primary mb-6">
+            <p className="text-base sm:text-xl md:text-2xl font-medium text-primary mb-6">
               Construyendo juntos los ideales del Escultismo
             </p>
             
-            <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-8 px-4">
               <Button
                 size="lg"
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
                 onClick={() => window.open('https://www.instagram.com/bauen.septimo/', '_blank')}
               >
                 <Instagram className="w-5 h-5" />
@@ -69,7 +77,7 @@ const Bauen = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
                 onClick={() => window.open('tel:098138668', '_blank')}
               >
                 <Phone className="w-5 h-5" />
@@ -90,8 +98,9 @@ const Bauen = () => {
       </section>
 
       {/* Acerca del Evento */}
-      <section className="section-padding bg-gradient-to-b from-background to-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="section-padding bg-gradient-to-b from-background via-muted/20 to-background dark:from-background dark:via-muted/30 dark:to-background relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent dark:from-accent/10"></div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-center">
               Acerca del Evento
@@ -132,8 +141,9 @@ const Bauen = () => {
       </section>
 
       {/* Nuestras Ramas - Rediseño */}
-      <section className="section-padding bg-gradient-to-b from-muted/30 to-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="section-padding bg-gradient-to-b from-background via-primary/5 to-muted/30 dark:from-background dark:via-primary/10 dark:to-muted/40 relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent dark:from-primary/10"></div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
               Nuestras Ramas
@@ -143,7 +153,7 @@ const Bauen = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 max-w-7xl mx-auto">
             {ramas.map((rama, idx) => (
               <Card 
                 key={idx} 
@@ -163,10 +173,10 @@ const Bauen = () => {
                   </h3>
                   
                   <div className="space-y-3 mb-4">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs sm:text-sm">
                       Actividad de {rama.duracion}
                     </Badge>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                       {rama.descripcion}
                     </p>
                   </div>

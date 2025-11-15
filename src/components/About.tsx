@@ -119,75 +119,70 @@ const About = () => {
   ];
 
   return (
-    <section id="historia" className="section-padding bg-background">
-      <div className="container mx-auto px-4">
-        {/* Main Introduction - FIRST */}
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-          <Reveal>
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Quiénes Somos
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Somos un Grupo Scout, una comunidad que acompaña el crecimiento de niños, niñas, jóvenes y adolescentes a través del juego, la aventura, el servicio y la vida al aire libre.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Formamos parte del Movimiento Scout del Uruguay y del Movimiento Scout Mundial, un espacio presente en más de 170 países, que busca contribuir a la construcción de un mundo mejor, donde cada persona viva con sentido, compromiso y alegría.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                En nuestro grupo, las distintas unidades —Manada, Rama Scout, Pioneros y Rovers— comparten un mismo camino: aprender haciendo, desarrollar habilidades, fortalecer valores y descubrir el poder del trabajo en equipo.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                A través de campamentos, proyectos comunitarios, juegos, construcciones y desafíos personales, cada integrante aprende a ser responsable, solidario, respetuoso y activo en su entorno.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Detrás de todo esto hay un equipo de educadores voluntarios que guía, orienta y acompaña cada etapa, y un Comité de Padres que brinda su apoyo constante para hacer posible cada actividad.
-              </p>
-              <p className="text-lg text-primary font-semibold leading-relaxed">
-                Ser scout es vivir con una sonrisa, con la mochila llena de experiencias y con el corazón dispuesto a servir.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Somos un grupo que se enorgullece de sus tradiciones, respetando y tomando de la esencia del escultismo lo mejor, llevándolo a nuestros días. Somos un grupo donde la amistad, el respeto y el amor por la naturaleza nos unen en una gran familia que crece cada día, aprende y deja huella.
-              </p>
-              <div className="pt-6 flex gap-4">
-                <Button asChild size="lg">
-                  <Link to="/historia">Conoce nuestra historia</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline">
-                  <Link to="/contacto">Únete al grupo</Link>
-                </Button>
+    <>
+      {/* Quiénes Somos */}
+      <section className="section-padding bg-background">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
+            <Reveal>
+              <div className="space-y-4">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  Quiénes Somos
+                </h2>
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                  Somos un Grupo Scout, una comunidad que acompaña el crecimiento de niños, niñas, jóvenes y adolescentes a través del juego, la aventura, el servicio y la vida al aire libre.
+                </p>
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                  Formamos parte del Movimiento Scout del Uruguay y del Movimiento Scout Mundial, un espacio presente en más de 170 países, que busca contribuir a la construcción de un mundo mejor.
+                </p>
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                  En nuestro grupo, las distintas unidades comparten un mismo camino: aprender haciendo, desarrollar habilidades, fortalecer valores y descubrir el poder del trabajo en equipo.
+                </p>
+                <p className="text-base sm:text-lg text-primary font-semibold leading-relaxed">
+                  Ser scout es vivir con una sonrisa, con la mochila llena de experiencias y con el corazón dispuesto a servir.
+                </p>
+                <div className="pt-4 sm:pt-6 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <Button asChild size="lg" className="w-full sm:w-auto">
+                    <Link to="/historia">Conoce nuestra historia</Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
+                    <Link to="/contacto">Únete al grupo</Link>
+                  </Button>
+                </div>
               </div>
-            </div>
-          </Reveal>
+            </Reveal>
 
-          <Reveal>
-            <div className="relative">
-              <div className="relative z-10">
-                <img
-                  src={communityImage}
-                  alt="Comunidad Scout Séptimo"
-                  className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]"
-                />
+            <Reveal>
+              <div className="relative hidden md:block">
+                <div className="relative z-10">
+                  <img
+                    src={communityImage}
+                    alt="Comunidad Scout Séptimo"
+                    className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]"
+                  />
+                </div>
+                <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
+                <div className="absolute -top-6 -right-6 w-40 h-40 bg-accent rounded-full opacity-20 blur-3xl -z-0"></div>
               </div>
-              <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
-              <div className="absolute -top-6 -right-6 w-40 h-40 bg-accent rounded-full opacity-20 blur-3xl -z-0"></div>
-            </div>
-          </Reveal>
+            </Reveal>
+          </div>
         </div>
+      </section>
 
-        {/* Branches Grid - SECOND */}
-        <div className="mb-20">
-          <Reveal className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">
+      {/* Ramas y Pilares */}
+      <section className="section-padding bg-background">
+        <div className="container mx-auto px-4">
+          <Reveal className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
               Nuestras Unidades
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
               Cada etapa del escultismo está diseñada para acompañar el
               crecimiento y desarrollo de nuestros jóvenes
             </p>
           </Reveal>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 overflow-visible py-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 overflow-visible py-2 sm:py-4 mb-8 sm:mb-12">
             {branches.map((branch, index) => (
               <Reveal key={index}>
                 <Dialog>
@@ -257,22 +252,21 @@ const About = () => {
               </Reveal>
             ))}
           </div>
-        </div>
 
-        {/* Values Grid */}
-        <Reveal>
-          <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-3xl p-8 md:p-12">
-            <div className="text-center mb-10">
-              <h3 className="text-3xl md:text-4xl font-bold mb-3">
-                Los Pilares del Escultismo
-              </h3>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Cuatro fundamentos que nos guían en la formación integral de
-                nuestros jóvenes
-              </p>
-            </div>
+          {/* Values Grid - Pilares */}
+          <Reveal>
+            <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-12">
+              <div className="text-center mb-6 sm:mb-10">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
+                  Los Pilares del Escultismo
+                </h3>
+                <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+                  Cuatro fundamentos que nos guían en la formación integral de
+                  nuestros jóvenes
+                </p>
+              </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
               {values.map((value, index) => (
                 <Card
                   key={index}
@@ -291,11 +285,12 @@ const About = () => {
                   </CardContent>
                 </Card>
               ))}
+              </div>
             </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
+          </Reveal>
+        </div>
+      </section>
+    </>
   );
 };
 
