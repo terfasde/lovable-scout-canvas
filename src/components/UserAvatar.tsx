@@ -57,7 +57,7 @@ const UserAvatar = ({
         className={`${sizeClasses[size]} ${className} ${clickable && avatarUrl ? 'cursor-pointer hover:ring-2 hover:ring-primary/50 transition-all' : ''}`}
         onClick={handleClick}
       >
-        {avatarUrl && <AvatarImage src={avatarUrl} alt={userName || "Usuario"} />}
+        {avatarUrl && <AvatarImage src={avatarUrl} alt={userName || "Usuario"} loading="lazy" />}
         <AvatarFallback className="bg-primary/10 text-primary font-semibold">
           {initials}
         </AvatarFallback>

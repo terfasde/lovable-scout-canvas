@@ -1,9 +1,10 @@
-import { useEffect, useState, ReactNode } from "react";
+import { useEffect, useState, useMemo, useCallback, ReactNode } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
 import UserAvatar from "@/components/UserAvatar";
 import EmailVerificationGuard from "@/components/EmailVerificationGuard";
+import { useProfiles, useThreads, useGroups } from "@/hooks/useQueryData";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,16 +65,17 @@ type Profile = {
 };
 
 const Usuarios = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
+  // React Query hooks (reemplazan useState + useEffect)
+  const { data: profiles = [], isLoading: loadingProfiles } = useProfiles();
+  const { data: threadsData = [], isLoading: loadingThreads, refetch: refetchThreads } = useThreads();
+  const { data: groupsData = [], isLoading: loadingGroups, refetch: refetchGroups } = useGroups();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [ramaFilter, setRamaFilter] = useState<string>("all");
   const [visibilityFilter, setVisibilityFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("name");
-  const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("personas");
-  const [threads, setThreads] = useState<ThreadWithAuthor[]>([]);
   const [newThreadText, setNewThreadText] = useState("");
   const [newThreadFile, setNewThreadFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -84,7 +86,6 @@ const Usuarios = () => {
   const [userEmail, setUserEmail] = useState<string>("");
 
   // Estados para grupos
-  const [groups, setGroups] = useState<GroupWithMemberCount[]>([]);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupDescription, setNewGroupDescription] = useState("");
@@ -97,6 +98,8 @@ const Usuarios = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const loading = loadingProfiles || loadingThreads || loadingGroups;
+
   useEffect(() => {
     (async () => {
       try {
@@ -107,103 +110,29 @@ const Usuarios = () => {
         }
         setCurrentUserId(auth.id);
         setUserEmail(auth.email || "");
-
-        let rows: Profile[] = [];
-        if (isLocalBackend()) {
-          const data = await apiFetch(
-            "/profiles/directory?q=&limit=200&offset=0",
-          );
-          rows = (data as any[]).map((r: any) => ({
-            user_id: String(r.user_id),
-            nombre_completo: r.nombre_completo ?? null,
-            avatar_url: r.avatar_url ?? null,
-            edad: r.edad ?? null,
-            is_public: r.is_public ?? null,
-            username: r.username ?? null,
-          }));
-        } else {
-          // Preferir RPC que lista el directorio completo (bypasa RLS de profiles con SECURITY DEFINER)
-          const { data: rpcData, error: rpcError } = await supabase.rpc(
-            "list_profiles_directory",
-          );
-          let data: any[] | null = rpcData as any[] | null;
-          if (rpcError) {
-            // Fallback a lectura directa (respetando RLS)
-            const { data: d2, error: e2 } = await supabase
-              .from("profiles")
-              .select("user_id, nombre_completo, avatar_url, edad, is_public")
-              .order("nombre_completo", { ascending: true });
-            if (e2) throw e2;
-            data = d2 as any[] | null;
-          }
-          rows = (data || []).map((r: any) => ({
-            user_id: String(r.user_id),
-            nombre_completo: r.nombre_completo ?? null,
-            avatar_url: r.avatar_url ?? null,
-            edad: r.edad ?? null,
-            is_public: r.is_public ?? null,
-            username: r.username ?? null,
-          }));
-        }
-
-        setProfiles(rows);
-        setFilteredProfiles(rows);
       } catch (err) {
-        console.error("Error cargando usuarios:", err);
-      } finally {
-        setLoading(false);
+        console.error("Error cargando usuario:", err);
       }
     })();
-  }, []);
+  }, [navigate]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await listThreads(50);
-        // Enriquecer con datos del autor
-        const enriched: ThreadWithAuthor[] = data.map((thread) => {
-          const author = profiles.find((p) => p.user_id === thread.author_id);
-          return {
-            ...thread,
-            author_name: author?.nombre_completo,
-            author_username: author?.username,
-            author_avatar: author?.avatar_url,
-          };
-        });
-        setThreads(enriched);
-      } catch (e) {
-        console.error("Error cargando hilos:", e);
-      }
-    })();
-  }, [profiles]);
+  // Enriquecer threads con datos del autor (useMemo para evitar recalcular)
+  const threads = useMemo(() => {
+    return threadsData.map((thread) => {
+      const author = profiles.find((p) => p.user_id === thread.author_id);
+      return {
+        ...thread,
+        author_name: author?.nombre_completo,
+        author_username: author?.username,
+        author_avatar: author?.avatar_url,
+      };
+    });
+  }, [threadsData, profiles]);
 
-  // Cargar grupos
-  useEffect(() => {
-    if (activeTab === "grupos") {
-      loadGroups();
-    }
-  }, [activeTab]);
+  const groups = groupsData;
 
-  const loadGroups = async () => {
-    try {
-      const data = await listGroups();
-      setGroups(data);
-    } catch (e) {
-      console.error("Error cargando grupos:", e);
-    }
-  };
-
-  useEffect(() => {
-    if (
-      !searchTerm.trim() &&
-      ramaFilter === "all" &&
-      visibilityFilter === "all"
-    ) {
-      // Apply only sorting
-      applySorting(profiles);
-      return;
-    }
-
+  // Filtrado y ordenamiento con useMemo (optimización)
+  const filteredProfiles = useMemo(() => {
     let filtered = profiles;
 
     // Filter by search term
@@ -226,12 +155,8 @@ const Usuarios = () => {
       filtered = filtered.filter((p) => p.is_public !== true);
     }
 
-    applySorting(filtered);
-  }, [searchTerm, ramaFilter, visibilityFilter, sortBy, profiles]);
-
-  const applySorting = (data: Profile[]) => {
-    const sorted = [...data];
-
+    // Apply sorting
+    const sorted = [...filtered];
     if (sortBy === "name") {
       sorted.sort((a, b) =>
         (a.nombre_completo || "").localeCompare(b.nombre_completo || ""),
@@ -241,24 +166,23 @@ const Usuarios = () => {
     } else if (sortBy === "age-desc") {
       sorted.sort((a, b) => (b.edad || 0) - (a.edad || 0));
     } else if (sortBy === "rama") {
+      const ramaOrder: { [key: string]: number } = {
+        Manada: 1,
+        Tropa: 2,
+        Pionero: 3,
+        Rover: 4,
+        Adulto: 5,
+        Desconocido: 6,
+      };
       sorted.sort((a, b) => {
-        const ramaOrder: { [key: string]: number } = {
-          Manada: 1,
-          Tropa: 2,
-          Pionero: 3,
-          Rover: 4,
-          Adulto: 5,
-          Scout: 6,
-        };
-        return (
-          (ramaOrder[getRamaActual(a.edad)] || 99) -
-          (ramaOrder[getRamaActual(b.edad)] || 99)
-        );
+        const ramaA = getRamaActual(a.edad);
+        const ramaB = getRamaActual(b.edad);
+        return (ramaOrder[ramaA] || 999) - (ramaOrder[ramaB] || 999);
       });
     }
 
-    setFilteredProfiles(sorted);
-  };
+    return sorted;
+  }, [profiles, searchTerm, ramaFilter, visibilityFilter, sortBy]);
 
   const submitThread = async () => {
     if (!newThreadText.trim() && !newThreadFile) return;
@@ -289,7 +213,8 @@ const Usuarios = () => {
         author_avatar: author?.avatar_url,
       };
 
-      setThreads((prev) => [enriched, ...prev]);
+      // Refrescar threads con React Query
+      await refetchThreads();
       setNewThreadText("");
       setNewThreadFile(null);
       setImagePreview(null);
@@ -379,7 +304,7 @@ const Usuarios = () => {
     if (!confirm("¿Estás seguro de eliminar este hilo?")) return;
     try {
       await deleteThread(threadId);
-      setThreads((prev) => prev.filter((t) => t.id !== threadId));
+      await refetchThreads(); // Refrescar con React Query
       toast({
         title: "Hilo eliminado",
         description: "El hilo se eliminó correctamente",
@@ -456,7 +381,7 @@ const Usuarios = () => {
       setNewGroupCover(null);
       setGroupCoverPreview(null);
       setShowCreateGroup(false);
-      await loadGroups();
+      await refetchGroups(); // Refrescar con React Query
     } catch (e: any) {
       toast({
         title: "Error",
@@ -475,7 +400,7 @@ const Usuarios = () => {
         title: "Te has unido al grupo",
         description: "Ahora eres miembro de este grupo",
       });
-      await loadGroups();
+      await refetchGroups(); // Refrescar con React Query
     } catch (e: any) {
       toast({
         title: "Error",
@@ -494,7 +419,7 @@ const Usuarios = () => {
         title: "Has salido del grupo",
         description: "Ya no eres miembro de este grupo",
       });
-      await loadGroups();
+      await refetchGroups(); // Refrescar con React Query
     } catch (e: any) {
       toast({
         title: "Error",
@@ -895,6 +820,7 @@ const Usuarios = () => {
                           src={imagePreview}
                           alt="Preview"
                           className="rounded-xl max-h-64 object-cover border"
+                          loading="lazy"
                         />
                         <Button
                           variant="destructive"
@@ -1001,6 +927,7 @@ const Usuarios = () => {
                                 src={t.image_url}
                                 alt="imagen del hilo"
                                 className="w-full max-h-96 object-cover"
+                                loading="lazy"
                               />
                             </div>
                           )}
@@ -1166,6 +1093,7 @@ const Usuarios = () => {
                             src={groupCoverPreview}
                             alt="Preview"
                             className="w-full h-32 object-cover rounded-lg"
+                            loading="lazy"
                           />
                           <Button
                             variant="destructive"
@@ -1243,6 +1171,7 @@ const Usuarios = () => {
                           src={group.cover_image}
                           alt={group.name}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </div>
                     )}

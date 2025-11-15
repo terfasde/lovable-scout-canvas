@@ -155,10 +155,22 @@ const Bauen = () => {
                     <Users className="w-6 h-6 sm:w-7 sm:h-7 text-[#FEB21A]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    Manada
+                    La Manada: (Actividad de 1 día).
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Los lobatos en el BAUEN hacen cubiles: pequeños refugios hechos de cañas, paja, hojas, entre otros recursos naturales. Desarrollan el trabajo en equipo y la habilidad de hacer amarres y nudos desde chiquitos para tener una buena base para su futuro en el pionerismo scout.
+                    En la Manada realiza construcciones de cubiles. Esta se
+                    desarrolla en una sola jornada donde deben presentar sus
+                    construcciones que se realizan dentro de un box delimitado.
+                    Cada cubil representará a un personaje del Libro de la Selva,
+                    elegido por cada seisena, y la elección del mismo no podrá
+                    repetirse dentro del mismo Grupo Scout. Con esta propuesta
+                    se busca que exploren y se sumerjan en el mundo de las
+                    Tierras Vírgenes durante esta actividad. Es una actividad
+                    familiar que los Lobatos disfrutan mucho así como los Padres
+                    y familia y amigos. <br/>
+                    Las bases de esta competencia se encuentran en la descripción 
+                    de Instagram del evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "yellow"}}>bauen.septimo</a>
+
                   </p>
                 </CardContent>
               </Card>
@@ -169,24 +181,46 @@ const Bauen = () => {
                     <Target className="w-6 h-6 sm:w-7 sm:h-7 text-[#344F1F]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    Tropa
+                    Rama Scout / Tropa: (Actividad de 2 días).
+
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Tropa está conformada por patrullas, las cuales tienen que presentar a los jueces un menú especial con una ambientación. Además de la comida ellos diseñan el estilo de su "box", armando mesas, portadas, bancos, entre otros. Desarrolla la creatividad, trabajo en equipo, la sinergia de la patrulla, entre otras áreas.
+                    Es uno de los platos fuertes de este evento ya que nuclear a
+                    la mayor cantidad de participantes. A la fecha participan más
+                    de 25 Patrullas en la modalidad de competencia de
+                    construcciones de Rincones de Patrulla y competencia de
+                    Cocina con fuego. En la competencia de Rama Scout/Tropa se
+                    puede ver en tiempo real todo lo que los scouts han
+                    aprendido a lo largo de su vida scout en la teoría y ponerlo
+                    en práctica de la mejor manera posible. Cabuyería, amarres,
+                    pionerismo, campismo, cocina, fuego, armado de toldos,
+                    armado de mesas y bancos, cuidado y limpieza del rincón.
+                    Las bases de esta competencia se encuentran en la descripción de
+                    Instagram del evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "green"}}>bauen.septimo</a>
+
                   </p>
                 </CardContent>
               </Card>
-
               <Card className="card-hover border-2 hover:border-[#134686]/50 transition-all duration-500">
                 <CardContent className="p-5 sm:p-6 lg:p-8">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#134686]/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6 transition-transform duration-300 hover:scale-110">
                     <Flame className="w-6 h-6 sm:w-7 sm:h-7 text-[#134686]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    Pioneros
+                    Pioneros: (Actividad de 2 días).
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    En pioneros ya son más grandes por lo tanto les toca hacer construcciones más grandes. La rama Pioneros está ambientada en la edad medieval por lo tanto, los pioneros en el BAUEN tendrán que construir "trebuchets". Estos se puntúan por mayor distancia, mejor puntería, mejores amarres entre otros. Construir estos desarrolla creatividad de diseño porque antes del BAUEN es necesario pensar en cada ínfimo detalle del armado.
+                    Sin duda se ha transformado en la actividad del segundo día que
+                    mayor atención atrae. La construcción de Trebuchet es una competencia que aplica todo lo referente a cabuyería pero de una forma más compleja. Requiere precisión, técnica y que
+                    todos los participantes tengan muy en claro su roll dentro de la
+                    competencia. En este caso además se agrega una cena Medieval a la
+                    Noche donde todos los scouts de todos los grupos comparten una
+                    velada totalmente caracterizados con la época y a la mañana siguiente
+                    antes de comenzar la competencia tienen un momento de distinción y
+                    juego donde realizan competencias medievales de arquería, etc. <br />
+                    Las bases de esta competencia se encuentran en la descripción de Instagram del
+                    evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "blue"}}>bauen.septimo</a>
+
                   </p>
                 </CardContent>
               </Card>
@@ -197,10 +231,25 @@ const Bauen = () => {
                     <Award className="w-6 h-6 sm:w-7 sm:h-7 text-[#DD0303]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    Rovers
+                    Rovers:(Actividad de 2 días)
                   </h3>
                   <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Los rovers ya son bastante grandes por lo cual hacen construcciones a su medida. Normalmente hacían torres, pero ahora se cambia la temática cada año, hubo barcos, campamentos elevados y juegos mecánicos. Si quieres saber cuál es la temática del próximo año, no dudes en venir al BAUEN 2026!! El armado de torres y otros en rovers desarrolla muchas áreas como es el trabajo en equipo, la buena comunicación entre rovers y el alto agotamiento físico que esto implica.
+                    Los rovers realiza generalmente competencias de Torres aunque en
+                    los últimos años se han realizado otro tipo de competencias como
+                    construcciones de barcos, campamentos elevados, juegos mecánicos,
+                    etc. En esta Unidad la competencia ha tomado mayor interés ya que
+                    Poco a poco más y más Comunidades se anotan a esta competencia.
+                    Además se realiza una actividad en la primera noche donde el objetivo
+                    es conocerse y dejar la competencia de lado un momento. En esta
+                    competencia se nota la diferencia en cuanto a la madurez como scouts
+                    y la experiencia. Podemos ver mucho más desarrollado el trabajo en
+                    equipo, la práctica de la paciencia y la fraternidad entre comunidades.
+                    Es una competencia más distendida debido a la seguridad que
+                    manejan los participantes y además la motivación es constante, tanto
+                    dentro del equipo como entre competidores. <br />
+                    Las bases de esta competencia se encuentran en la descripción de 
+                    Instagram del evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "red"}}>bauen.septimo</a>
+
                   </p>
                 </CardContent>
               </Card>
