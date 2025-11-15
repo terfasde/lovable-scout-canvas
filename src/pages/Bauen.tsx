@@ -1,33 +1,27 @@
 // Navigation y Footer son globales en App.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Flag, Target, Users, Calendar, Award, Flame } from "lucide-react";
+import { Flag, Target, Users, Calendar, Award, Flame, Instagram, Phone } from "lucide-react";
 
 const Bauen = () => {
-  const pruebas = [
+  const categorias = [
     {
       icon: Target,
-      nombre: "Desarrollo de Habilidades",
+      nombre: "Pionerismo",
       descripcion:
-        "Desafíos que ponen a prueba las destrezas scouts individuales y grupales.",
+        "Técnicas de construcción y trabajo con cuerdas, aplicando conocimientos de cabuyería y amarres.",
     },
     {
       icon: Flame,
-      nombre: "Supervivencia",
+      nombre: "Cabullería",
       descripcion:
-        "Construcción de refugios, cocina con fuego y técnicas de campismo.",
+        "Dominio de nudos, amarres y construcciones que forman la base del escultismo.",
     },
     {
       icon: Users,
-      nombre: "Trabajo en Equipo",
+      nombre: "Cocina de Campamento",
       descripcion:
-        "Actividades que requieren coordinación y cooperación entre equipos scouts, poniendo a prueba distintas habilidades.",
-    },
-    {
-      icon: Award,
-      nombre: "Mini Eventos",
-      descripcion:
-        "En 2025 tuvimos el placer de tener a Grupo de Coleccionistas Scouts. También tuvimos la posibilidad de contar con equipamiento informático para participar en el JOTA-JOTI.",
+        "Preparación de alimentos al aire libre, uso del fuego y técnicas de cocina scout.",
     },
   ];
 
@@ -47,23 +41,95 @@ const Bauen = () => {
               BAUEN
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
-              La competencia scout, creada por
+              La competencia scout más importante del país, creada por
               nuestro grupo en 2004. Un desafío que reúne distintos grupos
-              scouts cada año. El termino Competencia suele ser una excusa para reunir diferentes grupos scouts y crear lazos de amistad entre ellos.
+              scouts cada año.
             </p>
-            <Button
-              size="lg"
-              className="gap-2 text-sm sm:text-base transition-all duration-300 hover:shadow-2xl hover:scale-105"
-            >
-              <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-              Próxima Edición 2026
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                size="lg"
+                className="gap-2 text-sm sm:text-base transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              >
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+                Próxima Edición 2026
+              </Button>
+              <div className="flex gap-4">
+                <a
+                  href="https://www.instagram.com/bauen.septimo/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Instagram className="w-5 h-5" />
+                  <span className="text-sm sm:text-base">@bauen.septimo</span>
+                </a>
+                <a
+                  href="tel:098138668"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Phone className="w-5 h-5" />
+                  <span className="text-sm sm:text-base">098138668</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Acerca del Evento */}
+      <section className="section-padding bg-gradient-to-b from-muted/30 to-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <Card className="card-hover border-2 shadow-xl">
+              <CardContent className="p-5 sm:p-6 md:p-8 lg:p-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center">
+                  Acerca del Evento
+                </h2>
+                <div className="space-y-4 sm:space-y-6 text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed">
+                  <p>
+                    Bauen significa "construir". El objetivo del Bauen es trabajar en equipo, desarrollando
+                    técnicas de pionerismo y, por supuesto, divirtiéndonos, ayudando a continuar construyendo
+                    juntos los ideales del Escultismo.
+                  </p>
+                  <p>
+                    Bauen es una excusa para conocer a otros Grupos de nuestro país, otras formas de hacer
+                    escultismo, es una instancia para practicar la empatía, la tolerancia y sentir el verdadero
+                    espíritu scout del que todos tenemos conocimiento. Si bien es un evento de competencia, no
+                    falta el apoyo, el cuidado por el otro, la hermandad y sobre todo la aplicación de todos
+                    nuestros valores siempre bajo la mirada de nuestra Ley y promesa scout.
+                  </p>
+                </div>
+
+                {/* Categorías del evento */}
+                <div className="mt-8 sm:mt-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                  {categorias.map((categoria, index) => {
+                    const Icon = categoria.icon;
+                    return (
+                      <div
+                        key={index}
+                        className="flex flex-col items-center text-center p-4 rounded-lg bg-gradient-to-b from-primary/5 to-transparent hover:from-primary/10 transition-all duration-300"
+                      >
+                        <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-3">
+                          <Icon className="w-6 h-6 text-primary" />
+                        </div>
+                        <h3 className="font-bold text-base sm:text-lg mb-2">
+                          {categoria.nombre}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          {categoria.descripcion}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* Historia BAUEN */}
-      <section className="section-padding bg-gradient-to-b from-muted/30 to-background">
+      <section className="section-padding">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <Card className="card-hover border-2 shadow-xl">
@@ -81,56 +147,14 @@ const Bauen = () => {
                   <p>
                     Desde entonces, el BAUEN se ha convertido en el evento más
                     esperado del calendario scout. Cada año, grupos de
-                    Montevideo/Canelones se preparan intensamente, para tener un buen BAUEN.
+                    Montevideo/Canelones se preparan intensamente para tener un buen BAUEN.
                   </p>
                   <p>
-                    El nombre BAUEN significa "construir" en alemán, reflejando
-                    nuestra filosofía: construir habilidades, construir
-                    carácter, construir comunidad. Más que una competencia,
-                    BAUEN es una celebración de lo que significa ser scout.
+                    Más que una competencia, BAUEN es una celebración de lo que significa ser scout.
                   </p>
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Tipos de Pruebas */}
-      <section className="section-padding">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
-              Desarrollo de Habilidades
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              BAUEN desafía a los scouts en múltiples disciplinas, poniendo a
-              prueba su preparación.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
-            {pruebas.map((prueba, index) => {
-              const Icon = prueba.icon;
-              return (
-                <Card
-                  key={index}
-                  className="card-hover border-2 hover:border-primary/50 transition-all duration-500"
-                >
-                  <CardContent className="p-5 sm:p-6 lg:p-8">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center mb-4 sm:mb-6 transition-transform duration-300 hover:scale-110">
-                      <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
-                    </div>
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                      {prueba.nombre}
-                    </h3>
-                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                      {prueba.descripcion}
-                    </p>
-                  </CardContent>
-                </Card>
-              );
-            })}
           </div>
         </div>
       </section>
@@ -144,7 +168,7 @@ const Bauen = () => {
                 Nuestras Ramas
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Conoce brevemente qué hace cada rama dentro del BAUEN.
+                Conoce las competencias que realiza cada rama en el BAUEN.
               </p>
             </div>
 
@@ -155,23 +179,20 @@ const Bauen = () => {
                     <Users className="w-6 h-6 sm:w-7 sm:h-7 text-[#FEB21A]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    La Manada: (Actividad de 1 día).
+                    La Manada
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    En la Manada realiza construcciones de cubiles. Esta se
-                    desarrolla en una sola jornada donde deben presentar sus
-                    construcciones que se realizan dentro de un box delimitado.
-                    Cada cubil representará a un personaje del Libro de la Selva,
-                    elegido por cada seisena, y la elección del mismo no podrá
-                    repetirse dentro del mismo Grupo Scout. Con esta propuesta
-                    se busca que exploren y se sumerjan en el mundo de las
-                    Tierras Vírgenes durante esta actividad. Es una actividad
-                    familiar que los Lobatos disfrutan mucho así como los Padres
-                    y familia y amigos. <br/>
-                    Las bases de esta competencia se encuentran en la descripción 
-                    de Instagram del evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "yellow"}}>bauen.septimo</a>
-
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-3">
+                    Actividad de 1 día. Construcción de cubiles representando personajes del Libro de la Selva.
                   </p>
+                  <a 
+                    href="https://www.instagram.com/bauen.septimo/" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs sm:text-sm text-[#FEB21A] hover:underline inline-flex items-center gap-1"
+                  >
+                    <Instagram className="w-4 h-4" />
+                    Ver bases en Instagram
+                  </a>
                 </CardContent>
               </Card>
 
@@ -181,47 +202,43 @@ const Bauen = () => {
                     <Target className="w-6 h-6 sm:w-7 sm:h-7 text-[#344F1F]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    Rama Scout / Tropa: (Actividad de 2 días).
-
+                    Rama Scout / Tropa
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Es uno de los platos fuertes de este evento ya que nuclear a
-                    la mayor cantidad de participantes. A la fecha participan más
-                    de 25 Patrullas en la modalidad de competencia de
-                    construcciones de Rincones de Patrulla y competencia de
-                    Cocina con fuego. En la competencia de Rama Scout/Tropa se
-                    puede ver en tiempo real todo lo que los scouts han
-                    aprendido a lo largo de su vida scout en la teoría y ponerlo
-                    en práctica de la mejor manera posible. Cabuyería, amarres,
-                    pionerismo, campismo, cocina, fuego, armado de toldos,
-                    armado de mesas y bancos, cuidado y limpieza del rincón.
-                    Las bases de esta competencia se encuentran en la descripción de
-                    Instagram del evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "green"}}>bauen.septimo</a>
-
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-3">
+                    Actividad de 2 días. Competencia de construcciones de Rincones de Patrulla y cocina con fuego.
                   </p>
+                  <a 
+                    href="https://www.instagram.com/bauen.septimo/" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs sm:text-sm text-[#344F1F] hover:underline inline-flex items-center gap-1"
+                  >
+                    <Instagram className="w-4 h-4" />
+                    Ver bases en Instagram
+                  </a>
                 </CardContent>
               </Card>
+
               <Card className="card-hover border-2 hover:border-[#134686]/50 transition-all duration-500">
                 <CardContent className="p-5 sm:p-6 lg:p-8">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#134686]/20 rounded-xl flex items-center justify-center mb-4 sm:mb-6 transition-transform duration-300 hover:scale-110">
                     <Flame className="w-6 h-6 sm:w-7 sm:h-7 text-[#134686]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    Pioneros: (Actividad de 2 días).
+                    Pioneros
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Sin duda se ha transformado en la actividad del segundo día que
-                    mayor atención atrae. La construcción de Trebuchet es una competencia que aplica todo lo referente a cabuyería pero de una forma más compleja. Requiere precisión, técnica y que
-                    todos los participantes tengan muy en claro su roll dentro de la
-                    competencia. En este caso además se agrega una cena Medieval a la
-                    Noche donde todos los scouts de todos los grupos comparten una
-                    velada totalmente caracterizados con la época y a la mañana siguiente
-                    antes de comenzar la competencia tienen un momento de distinción y
-                    juego donde realizan competencias medievales de arquería, etc. <br />
-                    Las bases de esta competencia se encuentran en la descripción de Instagram del
-                    evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "blue"}}>bauen.septimo</a>
-
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-3">
+                    Actividad de 2 días. Construcción de Trebuchet con técnicas avanzadas de cabuyería. Incluye cena medieval.
                   </p>
+                  <a 
+                    href="https://www.instagram.com/bauen.septimo/" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs sm:text-sm text-[#134686] hover:underline inline-flex items-center gap-1"
+                  >
+                    <Instagram className="w-4 h-4" />
+                    Ver bases en Instagram
+                  </a>
                 </CardContent>
               </Card>
 
@@ -231,26 +248,20 @@ const Bauen = () => {
                     <Award className="w-6 h-6 sm:w-7 sm:h-7 text-[#DD0303]" />
                   </div>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3">
-                    Rovers:(Actividad de 2 días)
+                    Rovers
                   </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                    Los rovers realiza generalmente competencias de Torres aunque en
-                    los últimos años se han realizado otro tipo de competencias como
-                    construcciones de barcos, campamentos elevados, juegos mecánicos,
-                    etc. En esta Unidad la competencia ha tomado mayor interés ya que
-                    Poco a poco más y más Comunidades se anotan a esta competencia.
-                    Además se realiza una actividad en la primera noche donde el objetivo
-                    es conocerse y dejar la competencia de lado un momento. En esta
-                    competencia se nota la diferencia en cuanto a la madurez como scouts
-                    y la experiencia. Podemos ver mucho más desarrollado el trabajo en
-                    equipo, la práctica de la paciencia y la fraternidad entre comunidades.
-                    Es una competencia más distendida debido a la seguridad que
-                    manejan los participantes y además la motivación es constante, tanto
-                    dentro del equipo como entre competidores. <br />
-                    Las bases de esta competencia se encuentran en la descripción de 
-                    Instagram del evento: <a href="https://www.instagram.com/bauen.septimo/" style={{color: "red"}}>bauen.septimo</a>
-
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-3">
+                    Actividad de 2 días. Competencias de construcciones complejas (torres, barcos, campamentos elevados).
                   </p>
+                  <a 
+                    href="https://www.instagram.com/bauen.septimo/" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs sm:text-sm text-[#DD0303] hover:underline inline-flex items-center gap-1"
+                  >
+                    <Instagram className="w-4 h-4" />
+                    Ver bases en Instagram
+                  </a>
                 </CardContent>
               </Card>
             </div>
