@@ -15,6 +15,11 @@ dist
 dist-ssr
 *.local
 
+# Ignorar artefactos de builds y pruebas
+artifacts/
+bun.lockb
+.vite/
+
 # Environment files (IMPORTANTE: nunca commitear con valores reales)
 .env
 .env.local
@@ -23,6 +28,8 @@ dist-ssr
 .env.staging
 .env.production
 .env.vercel
+
+# Recomendación: nunca subas tus claves reales a GitHub
 
 # TypeScript
 *.tsbuildinfo
