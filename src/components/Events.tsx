@@ -111,48 +111,53 @@ const Events = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
           {events.map((event, index) => {
             // Helper para Google Calendar link
+
             function getGoogleCalendarUrl(event: any) {
-              // Intentar parsear fecha (formato simple: "21-25 Enero, 2026" o "Diciembre 2025")
-              // Si no se puede, usar solo fecha de inicio
+              // Mejor soporte de formatos: 'DD Mes, YYYY', 'DD-MM Mes, YYYY', 'Mes YYYY'
               let start = "";
               let end = "";
-              // Ejemplo: "21-25 Enero, 2026" => start: 20260121, end: 20260125
-              const match = event.date.match(/(\d{1,2})-(\d{1,2})\s+(\w+),\s*(\d{4})/);
+              const months = {
+                "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04", "Mayo": "05", "Junio": "06",
+                "Julio": "07", "Agosto": "08", "Setiembre": "09", "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
+              };
+              // 1. DD-MM Mes, YYYY
+              let match = event.date.match(/(\d{1,2})-(\d{1,2})\s+(\w+),\s*(\d{4})/);
               if (match) {
-                const months = {
-                  "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04", "Mayo": "05", "Junio": "06",
-                  "Julio": "07", "Agosto": "08", "Setiembre": "09", "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
-                };
                 const year = match[4];
                 const month = months[match[3]] || "01";
                 start = `${year}${month}${match[1].padStart(2, "0")}T090000`;
                 end = `${year}${month}${match[2].padStart(2, "0")}T170000`;
               } else {
-                // Ejemplo: "Diciembre 2025"
-                const match2 = event.date.match(/(\w+)\s*(\d{4})/);
-                if (match2) {
-                  const months = {
-                    "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04", "Mayo": "05", "Junio": "06",
-                    "Julio": "07", "Agosto": "08", "Setiembre": "09", "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
-                  };
-                  const year = match2[2];
-                  const month = months[match2[1]] || "01";
-                  start = `${year}${month}01T090000`;
-                  end = `${year}${month}02T170000`;
+                // 2. DD Mes, YYYY
+                match = event.date.match(/(\d{1,2})\s+(\w+),\s*(\d{4})/);
+                if (match) {
+                  const year = match[3];
+                  const month = months[match[2]] || "01";
+                  start = `${year}${month}${match[1].padStart(2, "0")}T090000`;
+                  end = `${year}${month}${match[1].padStart(2, "0")}T170000`;
                 } else {
-                  start = "";
-                  end = "";
+                  // 3. Mes YYYY
+                  match = event.date.match(/(\w+)\s*(\d{4})/);
+                  if (match) {
+                    const year = match[2];
+                    const month = months[match[1]] || "01";
+                    start = `${year}${month}01T090000`;
+                    end = `${year}${month}01T170000`;
+                  } else {
+                    start = "";
+                    end = "";
+                  }
                 }
               }
               const base = "https://www.google.com/calendar/render?action=TEMPLATE";
               const params = [
                 `text=${encodeURIComponent(event.title)}`,
-                `dates=${start}/${end}`,
+                start && end ? `dates=${start}/${end}` : "",
                 `details=${encodeURIComponent("Evento scout organizado por Grupo Séptimo")}`,
                 `location=${encodeURIComponent(event.location)}`,
                 `sf=true`,
                 `output=xml`
-              ];
+              ].filter(Boolean);
               return `${base}&${params.join("&")}`;
             }
 
