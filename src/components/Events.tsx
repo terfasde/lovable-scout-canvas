@@ -2,109 +2,110 @@ import { useEffect, useState } from "react";
 import { Calendar, MapPin, Flag, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Reveal } from "@/components/Reveal";
-import { getEventos } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
+          {events.map((event, index) => {
+            // Helper para Google Calendar link
+            function getGoogleCalendarUrl(event: any) {
+              let start = "";
+              let end = "";
+              const months = {
+                "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04", "Mayo": "05", "Junio": "06",
+                "Julio": "07", "Agosto": "08", "Setiembre": "09", "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
+              };
+              let match = event.date.match(/(\d{1,2})-(\d{1,2})\s+(\w+),\s*(\d{4})/);
+              if (match) {
+                const year = match[4];
+                const month = months[match[3]] || "01";
+                start = `${year}${month}${match[1].padStart(2, "0")}T090000`;
+                end = `${year}${month}${match[2].padStart(2, "0")}T170000`;
+              } else {
+                match = event.date.match(/(\d{1,2})\s+(\w+),\s*(\d{4})/);
+                if (match) {
+                  const year = match[3];
+                  const month = months[match[2]] || "01";
+                  start = `${year}${month}${match[1].padStart(2, "0")}T090000`;
+                  end = `${year}${month}${match[1].padStart(2, "0")}T170000`;
+                } else {
+                  match = event.date.match(/(\w+)\s*(\d{4})/);
+                  if (match) {
+                    const year = match[2];
+                    const month = months[match[1]] || "01";
+                    start = `${year}${month}01T090000`;
+                    end = `${year}${month}01T170000`;
+                  } else {
+                    start = "";
+                    end = "";
+                  }
+                }
+              }
+              const base = "https://www.google.com/calendar/render?action=TEMPLATE";
+              const params = [
+                `text=${encodeURIComponent(event.title)}`,
+                start && end ? `dates=${start}/${end}` : "",
+                `details=${encodeURIComponent("Evento scout organizado por Grupo Séptimo")}`,
+                `location=${encodeURIComponent(event.location)}`,
+                `sf=true`,
+                `output=xml`
+              ].filter(Boolean);
+              return `${base}&${params.join("&")}`;
+            }
 
-const Events = () => {
-  const { toast } = useToast();
-  const [events, setEvents] = useState<Array<any>>([]);
+            // Solo mostrar el botón si la fecha es válida
+            const fechaValida = event.date && event.date !== "A confirmar";
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const rows = await getEventos().catch(() => []);
-        if (rows && rows.length) {
-          setEvents(
-            rows.map((r: any) => ({
-              title: r.title || r.nombre || "Evento",
-              date: r.fecha_inicio || r.date || "",
-              location: r.location || "",
-              participants: r.participants || "",
-              type: r.type || "",
-              status: r.status || "",
-              color: r.color || "primary",
-            })),
-          );
-        } else {
-          // Fallback a contenido estático si no hay datos en DB
-          setEvents([
-            {
-              title: "Campamento de Verano 2026",
-              date: "21-25 Enero, 2026",
-              location: "Próximamente Revelado",
-              participants: "+100 scouts",
-              type: "Campamento",
-              status: "Confirmado para más adelante",
-              color: "primary",
-            },
-            {
-              title: "BAUEN - Evento Scout Nacional",
-              date: "Próximamente Anunciado",
-              location: "Parque Barofio, Montevideo",
-              participants: "+300 scouts",
-              type: "Construcción, Hermandad",
-              status: "Próximamente",
-              color: "primary",
-            },
-            {
-              title: "Lobabi",
-              date: "Próximamente",
-              location: "A confirmar",
-              participants: "Lobatos y Scouts",
-              type: "Actividad",
-              status: "Próximamente",
-              color: "primary",
-            },
-            {
-              title: "Fogón de fin de año",
-              date: "06 Diciembre, 2025",
-              location: "Sede del Grupo",
-              participants: "Todo el grupo",
-              type: "Celebración",
-              status: "Próximamente",
-              color: "primary",
-            },
-            {
-              title: "Cumple de Grupo",
-              date: "A confirmar",
-              location: "Sede del Grupo",
-              participants: "Todo el grupo",
-              type: "Aniversario",
-              status: "Próximamente",
-              color: "primary",
-            },
-            {
-              title: "Lentejeada Solidaria, Servicio Comunitario",
-              date: "Próximamente",
-              location: "Club de Pesca Ramirez",
-              participants: "+30 scouts, Fundación Álvarez Carldeyro Barcia",
-              type: "Servicio",
-              status: "Confirmado",
-              color: "primary",
-            },
-          ]);
-        }
-      } catch (e: any) {
-        toast({
-          title: "Error",
-          description: e?.message || "No se pudieron cargar los eventos",
-          variant: "destructive",
-        });
-      }
-    })();
-  }, []);
-
-  return (
-    <section className="section-padding bg-gradient-to-b from-background via-muted/20 to-background">
-      <div className="container mx-auto px-3 sm:px-6 lg:px-8">
-        <Reveal className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-            Calendario de Actividades
-          </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Participa en nuestras actividades, campamentos y eventos especiales.
+            return (
+              <Reveal key={index}>
+                <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full bg-gradient-to-br from-background via-background to-muted/20">
+                  <div className={`h-3 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x`}></div>
+                  <CardHeader className="space-y-2 sm:space-y-3 p-4 sm:p-6">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
+                        {event.type}
+                      </span>
+                      <span className="text-xs bg-gradient-to-r from-accent/30 to-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold whitespace-nowrap border border-accent/30">
+                        {event.status}
+                      </span>
+                    </div>
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight group-hover:text-primary transition-colors">
+                      {event.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
+                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
+                      <Calendar className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-xs sm:text-sm leading-relaxed">
+                        {event.date}
+                      </span>
+                    </div>
+                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
+                      <MapPin className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-xs sm:text-sm leading-relaxed">
+                        {event.location}
+                      </span>
+                    </div>
+                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
+                      <Users className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-xs sm:text-sm leading-relaxed">
+                        {event.participants}
+                      </span>
+                    </div>
+                    {fechaValida && (
+                      <div className="mt-4">
+                        <a
+                          href={getGoogleCalendarUrl(event)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button variant="secondary" size="sm">
+                            Añadir a Google Calendar
+                          </Button>
+                        </a>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </Reveal>
+            );
+          })}
           </p>
         </Reveal>
 
@@ -156,42 +157,42 @@ const Events = () => {
                 `details=${encodeURIComponent("Evento scout organizado por Grupo Séptimo")}`,
                 `location=${encodeURIComponent(event.location)}`,
                 `sf=true`,
-                `output=xml`
-              ].filter(Boolean);
-              return `${base}&${params.join("&")}`;
-            }
-
-            return (
-              <Reveal key={index}>
-                <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full bg-gradient-to-br from-background via-background to-muted/20">
-                  <div className={`h-3 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x`}></div>
-                  <CardHeader className="space-y-2 sm:space-y-3 p-4 sm:p-6">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
-                        {event.type}
-                      </span>
-                      <span className="text-xs bg-gradient-to-r from-accent/30 to-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold whitespace-nowrap border border-accent/30">
-                        {event.status}
-                      </span>
-                    </div>
-                    <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight group-hover:text-primary transition-colors">
-                      {event.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
-                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                      <Calendar className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-xs sm:text-sm leading-relaxed">
-                        {event.date}
-                      </span>
-                    </div>
-                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                      <MapPin className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                      <span className="text-xs sm:text-sm leading-relaxed">
-                        {event.location}
-                      </span>
-                    </div>
-                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
+                {
+                  title: "BAUEN - Evento Scout Nacional",
+                  date: "A confirmar",
+                  location: "Parque Barofio, Montevideo",
+                  participants: "+300 scouts",
+                  type: "Construcción, Hermandad",
+                  status: "Próximamente",
+                  color: "primary",
+                },
+                {
+                  title: "Lobabi",
+                  date: "A confirmar",
+                  location: "A confirmar",
+                  participants: "Lobatos y Scouts",
+                  type: "Actividad",
+                  status: "Próximamente",
+                  color: "primary",
+                },
+                {
+                  title: "Cumple de Grupo",
+                  date: "A confirmar",
+                  location: "Sede del Grupo",
+                  participants: "Todo el grupo",
+                  type: "Aniversario",
+                  status: "Próximamente",
+                  color: "primary",
+                },
+                {
+                  title: "Lentejeada Solidaria, Servicio Comunitario",
+                  date: "A confirmar",
+                  location: "Club de Pesca Ramirez",
+                  participants: "+30 scouts, Fundación Álvarez Carldeyro Barcia",
+                  type: "Servicio",
+                  status: "Confirmado",
+                  color: "primary",
+                },
                       <Users className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
                       <span className="text-xs sm:text-sm leading-relaxed">
                         {event.participants}
