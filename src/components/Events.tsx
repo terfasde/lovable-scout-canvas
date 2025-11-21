@@ -59,7 +59,7 @@ const Events = () => {
             },
             {
               title: "Fogón de fin de año",
-              date: "Diciembre 2025",
+              date: "06 Diciembre, 2025",
               location: "Sede del Grupo",
               participants: "Todo el grupo",
               type: "Celebración",
@@ -109,48 +109,105 @@ const Events = () => {
         </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
-          {events.map((event, index) => (
-            <Reveal key={index}>
-              <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full bg-gradient-to-br from-background via-background to-muted/20">
-                <div
-                  className={`h-3 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x`}
-                ></div>
-                <CardHeader className="space-y-2 sm:space-y-3 p-4 sm:p-6">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
-                      {event.type}
-                    </span>
-                    <span className="text-xs bg-gradient-to-r from-accent/30 to-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold whitespace-nowrap border border-accent/30">
-                      {event.status}
-                    </span>
-                  </div>
-                  <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight group-hover:text-primary transition-colors">
-                    {event.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
-                  <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                    <Calendar className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs sm:text-sm leading-relaxed">
-                      {event.date}
-                    </span>
-                  </div>
-                  <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                    <MapPin className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs sm:text-sm leading-relaxed">
-                      {event.location}
-                    </span>
-                  </div>
-                  <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                    <Users className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-xs sm:text-sm leading-relaxed">
-                      {event.participants}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Reveal>
-          ))}
+          {events.map((event, index) => {
+            // Helper para Google Calendar link
+            function getGoogleCalendarUrl(event: any) {
+              // Intentar parsear fecha (formato simple: "21-25 Enero, 2026" o "Diciembre 2025")
+              // Si no se puede, usar solo fecha de inicio
+              let start = "";
+              let end = "";
+              // Ejemplo: "21-25 Enero, 2026" => start: 20260121, end: 20260125
+              const match = event.date.match(/(\d{1,2})-(\d{1,2})\s+(\w+),\s*(\d{4})/);
+              if (match) {
+                const months = {
+                  "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04", "Mayo": "05", "Junio": "06",
+                  "Julio": "07", "Agosto": "08", "Setiembre": "09", "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
+                };
+                const year = match[4];
+                const month = months[match[3]] || "01";
+                start = `${year}${month}${match[1].padStart(2, "0")}T090000`;
+                end = `${year}${month}${match[2].padStart(2, "0")}T170000`;
+              } else {
+                // Ejemplo: "Diciembre 2025"
+                const match2 = event.date.match(/(\w+)\s*(\d{4})/);
+                if (match2) {
+                  const months = {
+                    "Enero": "01", "Febrero": "02", "Marzo": "03", "Abril": "04", "Mayo": "05", "Junio": "06",
+                    "Julio": "07", "Agosto": "08", "Setiembre": "09", "Septiembre": "09", "Octubre": "10", "Noviembre": "11", "Diciembre": "12"
+                  };
+                  const year = match2[2];
+                  const month = months[match2[1]] || "01";
+                  start = `${year}${month}01T090000`;
+                  end = `${year}${month}02T170000`;
+                } else {
+                  start = "";
+                  end = "";
+                }
+              }
+              const base = "https://www.google.com/calendar/render?action=TEMPLATE";
+              const params = [
+                `text=${encodeURIComponent(event.title)}`,
+                `dates=${start}/${end}`,
+                `details=${encodeURIComponent("Evento scout organizado por Grupo Séptimo")}`,
+                `location=${encodeURIComponent(event.location)}`,
+                `sf=true`,
+                `output=xml`
+              ];
+              return `${base}&${params.join("&")}`;
+            }
+
+            return (
+              <Reveal key={index}>
+                <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full bg-gradient-to-br from-background via-background to-muted/20">
+                  <div className={`h-3 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x`}></div>
+                  <CardHeader className="space-y-2 sm:space-y-3 p-4 sm:p-6">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
+                        {event.type}
+                      </span>
+                      <span className="text-xs bg-gradient-to-r from-accent/30 to-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold whitespace-nowrap border border-accent/30">
+                        {event.status}
+                      </span>
+                    </div>
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight group-hover:text-primary transition-colors">
+                      {event.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
+                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
+                      <Calendar className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-xs sm:text-sm leading-relaxed">
+                        {event.date}
+                      </span>
+                    </div>
+                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
+                      <MapPin className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-xs sm:text-sm leading-relaxed">
+                        {event.location}
+                      </span>
+                    </div>
+                    <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
+                      <Users className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
+                      <span className="text-xs sm:text-sm leading-relaxed">
+                        {event.participants}
+                      </span>
+                    </div>
+                    <div className="mt-4">
+                      <a
+                        href={getGoogleCalendarUrl(event)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="secondary" size="sm">
+                          Añadir a Google Calendar
+                        </Button>
+                      </a>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Reveal>
+            );
+          })}
         </div>
 
         {/* BAUEN Special Section */}
