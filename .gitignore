@@ -65,8 +65,8 @@ backup-*.tar.gz
 
 # Environment variables
 .env
-.env.local
-# .env.production  # Comentado: necesario para Lovable
+
+# .env.production  
 !.env.example
 !.env.local.example
 
