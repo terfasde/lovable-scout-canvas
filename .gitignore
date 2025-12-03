@@ -20,6 +20,7 @@ artifacts/
 bun.lockb
 .vite/
 
+
 # Environment files (IMPORTANTE: nunca commitear con valores reales)
 .env
 .env.local
@@ -28,6 +29,9 @@ bun.lockb
 .env.staging
 .env.production
 .env.vercel
+# Solo se permite subir la plantilla:
+!.env.example
+!.env.local.example
 
 # Recomendación: nunca subas tus claves reales a GitHub
 
