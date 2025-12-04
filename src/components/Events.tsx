@@ -2,14 +2,11 @@ import { useEffect, useState } from "react";
 import { Calendar, MapPin, Flag, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-          {events.map((event, index) => {
-            // Helper para Google Calendar link
+import { Reveal } from "@/components/Reveal";
+import { Link } from "react-router-dom";
 
-            import { Reveal } from "@/components/Reveal";
-            import { Link } from "react-router-dom";
-
-            // Recibe los eventos como prop o desde un hook/estado
-            const events = [];
+// Recibe los eventos como prop o desde un hook/estado
+const events: any[] = [];
 
             function getGoogleCalendarUrl(event: any) {
               let start = "";
@@ -58,43 +55,52 @@ import { Button } from "@/components/ui/button";
 
             const Events = () => {
               return (
-                <section>
+                <section aria-label="Eventos scouts" role="region">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
                     {events.map((event, index) => {
                       const fechaValida = event.date && event.date !== "A confirmar";
                       return (
                         <Reveal key={index}>
-                          <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full bg-gradient-to-br from-background via-background to-muted/20">
+                          <Card className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group h-full bg-gradient-to-br from-background via-background to-muted/20" role="article" aria-label={`Evento: ${event.title}`} tabIndex={0}>
                             <div className="h-3 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x"></div>
+                            {/* Imagen del evento si existe */}
+                            {event.image && (
+                              <img
+                                src={event.image}
+                                alt={`Imagen del evento ${event.title}`}
+                                loading="lazy"
+                                className="w-full h-48 object-cover mb-2 rounded-b"
+                              />
+                            )}
                             <CardHeader className="space-y-2 sm:space-y-3 p-4 sm:p-6">
                               <div className="flex items-center justify-between gap-2">
-                                <span className="text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full">
+                                <span className="text-xs sm:text-sm font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-full" aria-label="Tipo de evento">
                                   {event.type}
                                 </span>
-                                <span className="text-xs bg-gradient-to-r from-accent/30 to-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold whitespace-nowrap border border-accent/30">
+                                <span className="text-xs bg-gradient-to-r from-accent/30 to-accent/20 text-accent-foreground px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold whitespace-nowrap border border-accent/30" aria-label="Estado del evento">
                                   {event.status}
                                 </span>
                               </div>
-                              <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight group-hover:text-primary transition-colors">
+                              <CardTitle className="text-lg sm:text-xl md:text-2xl leading-tight group-hover:text-primary transition-colors" aria-label={`Título: ${event.title}`}>
                                 {event.title}
                               </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
                               <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                                <Calendar className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                                <span className="text-xs sm:text-sm leading-relaxed">
+                                <Calendar className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
+                                <span className="text-xs sm:text-sm leading-relaxed" aria-label="Fecha del evento">
                                   {event.date}
                                 </span>
                               </div>
                               <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                                <MapPin className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                                <span className="text-xs sm:text-sm leading-relaxed">
+                                <MapPin className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
+                                <span className="text-xs sm:text-sm leading-relaxed" aria-label="Ubicación del evento">
                                   {event.location}
                                 </span>
                               </div>
                               <div className="flex items-start text-muted-foreground group-hover:text-primary transition-colors">
-                                <Users className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" />
-                                <span className="text-xs sm:text-sm leading-relaxed">
+                                <Users className="w-4 h-4 mr-2 mt-0.5 sm:mt-1 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
+                                <span className="text-xs sm:text-sm leading-relaxed" aria-label="Participantes">
                                   {event.participants}
                                 </span>
                               </div>
@@ -104,8 +110,10 @@ import { Button } from "@/components/ui/button";
                                     href={getGoogleCalendarUrl(event)}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={`Añadir ${event.title} a Google Calendar`}
+                                    tabIndex={0}
                                   >
-                                    <Button variant="secondary" size="sm">
+                                    <Button variant="secondary" size="sm" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
                                       Añadir a Google Calendar
                                     </Button>
                                   </a>
@@ -125,7 +133,9 @@ import { Button } from "@/components/ui/button";
                         <div className="flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
                           <div className="flex-1 space-y-4 sm:space-y-6">
                             <div className="flex items-center">
-                              <Flag className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary mr-3 sm:mr-4 transition-transform duration-300 group-hover:-translate-y-0.5 flex-shrink-0" />
+                              <Flag className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-primary mr-3 sm:mr-4 transition-transform duration-300 group-hover:-translate-y-0.5 flex-shrink-0" aria-hidden="true" />
+                              {/* Imagen especial BAUEN si existe */}
+                              {/* <img src="/ruta/bauen.jpg" alt="BAUEN evento scout" loading="lazy" className="w-16 h-16 object-cover rounded-full mr-3" /> */}
                               <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold">
                                 BAUEN — Evento Scout Nacional
                               </h3>
@@ -149,10 +159,11 @@ import { Button } from "@/components/ui/button";
                             <Button
                               size="lg"
                               variant="hero"
-                              className="w-full whitespace-nowrap text-sm sm:text-base md:text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                              className="w-full whitespace-nowrap text-sm sm:text-base md:text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                              aria-label="Conoce más sobre BAUEN"
                             >
                               Conoce más sobre BAUEN
-                              <Flag className="ml-2 w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                              <Flag className="ml-2 w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:-translate-y-0.5" aria-hidden="true" />
                             </Button>
                           </Link>
                         </div>
@@ -164,4 +175,4 @@ import { Button } from "@/components/ui/button";
             };
 
             export default Events;
-                  color: "primary",
+// (Eliminada línea inválida)

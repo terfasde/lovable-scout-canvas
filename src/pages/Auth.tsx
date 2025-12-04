@@ -1,3 +1,29 @@
+// --- Validación y sanitización ---
+function validateAuth({ email, password, nombreCompleto, telefono }: { email: string; password: string; nombreCompleto?: string; telefono?: string }) {
+  const errors: string[] = [];
+  // Email obligatorio y formato válido
+  if (!email.trim()) errors.push("El email es obligatorio.");
+  if (email && !/^\S+@\S+\.\S+$/.test(email)) errors.push("El email no es válido.");
+  // Password obligatorio y mínimo 6 caracteres
+  if (!password.trim()) errors.push("La contraseña es obligatoria.");
+  if (password && password.length < 6) errors.push("La contraseña debe tener al menos 6 caracteres.");
+  // Nombre: opcional pero si existe, mínimo 3 caracteres y sin caracteres peligrosos
+  if (nombreCompleto && nombreCompleto.length < 3) errors.push("El nombre debe tener al menos 3 caracteres.");
+  if (nombreCompleto && /[<>"']/.test(nombreCompleto)) errors.push("El nombre contiene caracteres inválidos.");
+  // Teléfono: opcional pero si existe debe ser numérico
+  if (telefono && !/^\+?\d{7,15}$/.test(telefono)) errors.push("El teléfono debe ser válido (solo números, puede incluir +).");
+  // Sanitización básica
+  return {
+    valid: errors.length === 0,
+    errors,
+    sanitized: {
+      email: email.trim().toLowerCase(),
+      password: password.trim(),
+      nombreCompleto: nombreCompleto ? nombreCompleto.replace(/[<>"']/g, "") : "",
+      telefono: telefono ? telefono.replace(/[^\d+]/g, "") : "",
+    },
+  };
+}
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,20 +141,28 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Validar y sanear datos antes de registrar
+    const { valid, errors, sanitized } = validateAuth({ email, password, nombreCompleto, telefono });
+    if (!valid) {
+      toast({
+        title: "Error en el formulario",
+        description: errors.join("\n"),
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
-
     try {
       // Usar cliente Supabase (mock o real según configuración)
       const redirectUrl = `${window.location.origin}/`;
       const { error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: sanitized.email,
+        password: sanitized.password,
         options: {
-          data: { nombre: nombreCompleto || null, telefono: telefono || null },
+          data: { nombre: sanitized.nombreCompleto || null, telefono: sanitized.telefono || null },
           emailRedirectTo: redirectUrl,
         },
       });
-
       if (error) {
         if (
           error.message.includes("already registered") ||
@@ -159,7 +193,7 @@ const Auth = () => {
         } else {
           toast({
             title: "Confirma tu correo electrónico",
-            description: `Te enviamos un correo a ${email}. Abre ese email y haz clic en el enlace de confirmación (revisa también la carpeta de spam).`,
+            description: `Te enviamos un correo a ${sanitized.email}. Abre ese email y haz clic en el enlace de confirmación (revisa también la carpeta de spam).`,
           });
         }
         setEmail("");
@@ -180,15 +214,23 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Validar y sanear datos antes de login
+    const { valid, errors, sanitized } = validateAuth({ email, password });
+    if (!valid) {
+      toast({
+        title: "Error en el formulario",
+        description: errors.join("\n"),
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
-
     try {
       // Usar cliente Supabase (mock o real según configuración)
       const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: sanitized.email,
+        password: sanitized.password,
       });
-
       if (error) {
         if (
           error.message.includes("Invalid login credentials") ||

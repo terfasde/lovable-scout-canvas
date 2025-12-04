@@ -1,3 +1,8 @@
+// Sanitización básica para mostrar datos
+function sanitizeText(text: string | null | undefined): string {
+  if (!text) return "";
+  return String(text).replace(/[<>"']/g, "");
+}
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -341,7 +346,7 @@ const PerfilView = () => {
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 mb-4 flex-wrap">
                 <div className="flex flex-col items-center sm:items-start">
                   <h1 className="text-xl sm:text-2xl font-normal">
-                    {(profile?.nombre_completo ?? minimalProfile?.nombre_completo) || "Usuario Scout"}
+                    {sanitizeText(profile?.nombre_completo ?? minimalProfile?.nombre_completo) || "Usuario Scout"}
                   </h1>
                   {((profile as any)?.username || minimalProfile?.username) && (
                     <p className="text-sm text-muted-foreground">
@@ -408,7 +413,7 @@ const PerfilView = () => {
                 </h1>
                 {((profile as any)?.username || minimalProfile?.username) && (
                   <p className="text-sm text-muted-foreground">
-                    @{(profile as any)?.username || minimalProfile?.username}
+                    @{sanitizeText((profile as any)?.username || minimalProfile?.username)}
                   </p>
                 )}
               </div>
@@ -608,7 +613,7 @@ const PerfilView = () => {
               )}
               {profile.telefono && (
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  📞 {profile.telefono}
+                  📞 {sanitizeText(profile.telefono)}
                 </p>
               )}
               {/* Para adultos ya mostramos Rol y Rama que educa arriba; no repetir aquí */}

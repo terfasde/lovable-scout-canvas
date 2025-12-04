@@ -1,3 +1,8 @@
+// Sanitización básica para mostrar datos
+function sanitizeText(text: string | null | undefined): string {
+  if (!text) return "";
+  return String(text).replace(/[<>"']/g, "");
+}
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -166,7 +171,7 @@ const PerfilPublic = () => {
   );
 
   const displayName = (profile?.nombre_completo ?? minimalProfile?.nombre_completo) || "Usuario Scout";
-  const displayUsername = (profile as any)?.username || minimalProfile?.username || null;
+  const displayUsername = sanitizeText((profile as any)?.username || minimalProfile?.username || null);
 
   return (
     <div className="min-h-screen bg-background py-12 px-4">
@@ -175,11 +180,11 @@ const PerfilPublic = () => {
           <div className="flex items-center gap-4">
             <UserAvatar
               avatarUrl={profile?.avatar_url}
-              userName={displayName}
+              userName={sanitizeText(displayName)}
               size="lg"
             />
             <div>
-              <CardTitle>{displayName}</CardTitle>
+              <CardTitle>{sanitizeText(displayName)}</CardTitle>
               <div className="flex items-center gap-2 mt-1">
                 {(profile as any)?.is_public ? (
                   <p className="text-sm text-muted-foreground">
@@ -236,7 +241,7 @@ const PerfilPublic = () => {
                     <AlertDialogTitle>¿Dejar de seguir?</AlertDialogTitle>
                     <AlertDialogDescription>
                       Ya no verás las publicaciones de{" "}
-                      {profile?.nombre_completo || "este usuario"} en tu feed.
+                      {sanitizeText(profile?.nombre_completo) || "este usuario"} en tu feed.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -285,16 +290,16 @@ const PerfilPublic = () => {
           {isAccessible ? (
             <div className="space-y-3">
               <p>
-                <strong>Teléfono:</strong> {profile?.telefono || "-"}
+                <strong>Teléfono:</strong> {sanitizeText(profile?.telefono) || "-"}
               </p>
               <p>
                 <strong>Edad:</strong> {profile?.edad ?? "-"}
               </p>
               <p>
-                <strong>Seisena:</strong> {profile?.seisena || "-"}
+                <strong>Seisena:</strong> {sanitizeText(profile?.seisena) || "-"}
               </p>
               <p>
-                <strong>Patrulla:</strong> {profile?.patrulla || "-"}
+                <strong>Patrulla:</strong> {sanitizeText(profile?.patrulla) || "-"}
               </p>
             </div>
           ) : (

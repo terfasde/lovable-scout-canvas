@@ -157,8 +157,10 @@ const About = () => {
                 <div className="relative z-10">
                   <img
                     src={communityImage}
-                    alt="Comunidad Scout Séptimo"
+                    alt="Grupo de scouts compartiendo actividades en comunidad"
                     className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
@@ -230,8 +232,10 @@ const About = () => {
                       <div className="w-full space-y-4">
                         <img
                           src={communityImage}
-                          alt={branch.title}
+                          alt={`Foto representativa de la rama ${branch.title}`}
                           className="w-full rounded-lg object-cover aspect-video shadow-lg"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <div className="flex gap-3 justify-end">
                           <DialogClose asChild>

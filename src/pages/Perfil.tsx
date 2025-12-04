@@ -1,3 +1,41 @@
+// --- Validación y sanitización ---
+type ProfileFormData = {
+  nombre_completo: string;
+  telefono: string;
+  edad: number;
+  fecha_nacimiento: string;
+  seisena: string;
+  patrulla: string;
+  equipo_pioneros: string;
+  comunidad_rovers: string;
+  rol_adulto: string;
+  rama_que_educa: string | null;
+  password: string;
+  avatar_url: string | null;
+  username: string;
+  username_updated_at: string | null;
+};
+function validateProfile(data: ProfileFormData) {
+  const errors: string[] = [];
+  // Nombre obligatorio y sin caracteres peligrosos
+  if (!data.nombre_completo.trim()) errors.push("El nombre completo es obligatorio.");
+  if (/[^\p{L} .'-]/u.test(data.nombre_completo)) errors.push("El nombre contiene caracteres inválidos.");
+  // Teléfono: opcional pero si existe debe ser numérico
+  if (data.telefono && !/^\+?\d{7,15}$/.test(data.telefono)) errors.push("El teléfono debe ser válido (solo números, puede incluir +).");
+  // Fecha de nacimiento: formato YYYY-MM-DD
+  if (data.fecha_nacimiento && !/^\d{4}-\d{2}-\d{2}$/.test(data.fecha_nacimiento)) errors.push("La fecha de nacimiento no es válida.");
+  // Username: obligatorio, sin espacios ni caracteres raros
+  if (!data.username.trim()) errors.push("El nombre de usuario es obligatorio.");
+  if (!/^[a-zA-Z0-9._-]{3,20}$/.test(data.username)) errors.push("El nombre de usuario solo puede tener letras, números, puntos, guiones y guion bajo (3-20 caracteres).");
+  // Sanitización básica
+  const sanitized = {
+    ...data,
+    nombre_completo: data.nombre_completo.replace(/[<>"']/g, ""),
+    telefono: data.telefono.replace(/[^\d+]/g, ""),
+    username: data.username.replace(/[^a-zA-Z0-9._-]/g, ""),
+  };
+  return { valid: errors.length === 0, errors, sanitized };
+}
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,7 +112,7 @@ const Perfil = () => {
     username: "",
     username_updated_at: null,
   });
-  const [originalData, setOriginalData] = useState<typeof formData | null>(
+  const [originalData, setOriginalData] = useState<ProfileFormData | null>(
     null,
   );
   const [ramaActual, setRamaActual] = useState("");
@@ -424,70 +462,23 @@ const Perfil = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validaciones antes de guardar
-    if (!formData.nombre_completo.trim()) {
+    // Validar y sanear datos antes de guardar
+    const { valid, errors, sanitized } = validateProfile(formData);
+    if (!valid) {
       toast({
-        title: "Campo requerido",
-        description: "El nombre completo es obligatorio",
+        title: "Error en el formulario",
+        description: errors.join("\n"),
         variant: "destructive",
       });
       return;
     }
-
-    if (formData.nombre_completo.length < 3) {
-      toast({
-        title: "Nombre muy corto",
-        description: "El nombre debe tener al menos 3 caracteres",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (formData.telefono && formData.telefono.replace(/\D/g, "").length < 8) {
-      toast({
-        title: "Teléfono inválido",
-        description: "El teléfono debe tener al menos 8 dígitos",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!formData.fecha_nacimiento) {
-      toast({
-        title: "Campo requerido",
-        description: "Debes ingresar tu fecha de nacimiento",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (formData.password && formData.password.length < 6) {
-      toast({
-        title: "Contraseña débil",
-        description: "La contraseña debe tener al menos 6 caracteres",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (formData.username && formData.username.length < 3) {
-      toast({
-        title: "Username muy corto",
-        description: "El username debe tener al menos 3 caracteres",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setSaving(true);
-
     try {
       const auth = await getAuthUser();
       if (!auth) throw new Error("No hay sesión activa");
 
       // Subir avatar si hay uno nuevo
-      let avatarUrl = formData.avatar_url;
+      let avatarUrl = sanitized.avatar_url;
       if (avatarFile) {
         const uploadedUrl = await uploadAvatar(auth.id);
         if (uploadedUrl) {
@@ -496,9 +487,9 @@ const Perfil = () => {
       }
 
       // Actualizar contraseña: solo soportado en Supabase
-      if (!isLocalBackend() && formData.password) {
+      if (!isLocalBackend() && sanitized.password) {
         const { error: passwordError } = await supabase.auth.updateUser({
-          password: formData.password,
+          password: sanitized.password,
         });
         if (passwordError) throw passwordError;
       }
@@ -506,50 +497,50 @@ const Perfil = () => {
       // Preparar datos de perfil
       const profileData: any = {
         user_id: auth.id,
-        nombre_completo: formData.nombre_completo,
-        telefono: formData.telefono,
-        edad: formData.edad,
+        nombre_completo: sanitized.nombre_completo,
+        telefono: sanitized.telefono,
+        edad: sanitized.edad,
         avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       };
 
       // Agregar username si se proporcionó
-      if (formData.username && formData.username.trim()) {
-        profileData.username = formData.username.trim().toLowerCase();
+      if (sanitized.username && sanitized.username.trim()) {
+        profileData.username = sanitized.username.trim().toLowerCase();
       }
 
       // Solo agregar campos si existen en la base de datos
-      if (formData.fecha_nacimiento) {
-        profileData.fecha_nacimiento = formData.fecha_nacimiento;
+      if (sanitized.fecha_nacimiento) {
+        profileData.fecha_nacimiento = sanitized.fecha_nacimiento;
       }
 
-      if (formData.edad >= 7 && formData.edad <= 20) {
-        profileData.seisena = formData.seisena || null;
+      if (sanitized.edad >= 7 && sanitized.edad <= 20) {
+        profileData.seisena = sanitized.seisena || null;
       }
 
-      if (formData.edad >= 11 && formData.edad <= 20) {
-        profileData.patrulla = formData.patrulla || null;
+      if (sanitized.edad >= 11 && sanitized.edad <= 20) {
+        profileData.patrulla = sanitized.patrulla || null;
       }
 
-      if (formData.edad >= 15 && formData.edad <= 20) {
-        profileData.equipo_pioneros = formData.equipo_pioneros || null;
+      if (sanitized.edad >= 15 && sanitized.edad <= 20) {
+        profileData.equipo_pioneros = sanitized.equipo_pioneros || null;
       }
 
-      if (formData.edad >= 18 && formData.edad <= 20) {
-        profileData.comunidad_rovers = formData.comunidad_rovers || null;
+      if (sanitized.edad >= 18 && sanitized.edad <= 20) {
+        profileData.comunidad_rovers = sanitized.comunidad_rovers || null;
       }
 
-      if (formData.edad >= 21 && formData.rol_adulto) {
-        profileData.rol_adulto = formData.rol_adulto;
+      if (sanitized.edad >= 21 && sanitized.rol_adulto) {
+        profileData.rol_adulto = sanitized.rol_adulto;
       }
 
       // Permitir a Adultos Educadores guardar sus unidades a cargo
-      if (formData.edad >= 21 && formData.rol_adulto === "Educador/a") {
-        profileData.seisena = formData.seisena || null;
-        profileData.patrulla = formData.patrulla || null;
-        profileData.equipo_pioneros = formData.equipo_pioneros || null;
-        profileData.comunidad_rovers = formData.comunidad_rovers || null;
-        profileData.rama_que_educa = formData.rama_que_educa || null;
+      if (sanitized.edad >= 21 && sanitized.rol_adulto === "Educador/a") {
+        profileData.seisena = sanitized.seisena || null;
+        profileData.patrulla = sanitized.patrulla || null;
+        profileData.equipo_pioneros = sanitized.equipo_pioneros || null;
+        profileData.comunidad_rovers = sanitized.comunidad_rovers || null;
+        profileData.rama_que_educa = sanitized.rama_que_educa || null;
       }
 
       if (isLocalBackend()) {

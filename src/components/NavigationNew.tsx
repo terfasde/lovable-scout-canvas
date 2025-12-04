@@ -240,79 +240,56 @@ const Navigation = () => {
                 ))}
               </div>
 
-              {/* Notificaciones */}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] leading-none rounded-full px-1.5 py-1">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-80">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-semibold">Notificaciones</span>
-                    {notifications.length > 0 && (
-                      <button onClick={markAllRead} className="text-xs text-primary hover:underline">Marcar todas como leídas</button>
-                    )}
-                  </div>
-                  {notifications.length === 0 ? (
-                    <div className="text-sm text-muted-foreground py-4 text-center">Sin notificaciones</div>
-                  ) : (
-                    <ul className="space-y-2 max-h-80 overflow-auto pr-1">
-                      {notifications.map(n => {
-                        let title = '';
-                        let description = '';
-                        let action: (() => void) | null = null;
-                        if (n.type === 'message') {
-                          title = 'Nuevo mensaje';
-                          description = n.data.content || '';
-                          action = () => navigate('/mensajes');
-                        } else if (n.type === 'follow_request') {
-                          title = 'Solicitud de seguimiento';
-                          description = `${n.data.display} quiere seguirte`;
-                          action = () => navigate(`/perfil?userId=${n.data.follower_id}`);
-                        } else if (n.type === 'thread_comment') {
-                          title = 'Nuevo comentario en tu hilo';
-                          description = (n.data.content || '').slice(0, 100);
-                          action = () => navigate('/usuarios');
-                        } else if (n.type === 'mention') {
-                          title = 'Te mencionaron';
-                          description = (n.data.content || '').slice(0, 100);
-                          action = () => navigate('/usuarios');
-                        }
-                        return (
-                          <li key={n.id} className={`p-2 rounded border space-y-1 ${n.read ? 'opacity-70' : 'bg-muted/40'}`}>
-                            <div className="flex justify-between items-start gap-2">
-                              <div>
-                                <div className="text-sm font-medium">{title}</div>
-                                <div className="text-xs text-muted-foreground truncate" title={description}>{description}</div>
-                              </div>
-                              {!n.read && (
-                                <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => markRead(n.id)}>Leer</Button>
+                      {/* Notificaciones */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="ghost" size="icon" className="relative">
+                            <Bell className="h-5 w-5" />
+                            {unreadCount > 0 && (
+                              <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] leading-none rounded-full px-1.5 py-1">
+                                {unreadCount}
+                              </span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-80 p-0">
+                          <div className="p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-semibold">Notificaciones</span>
+                              {unreadCount > 0 && (
+                                <Button size="sm" variant="ghost" onClick={markAllRead}>
+                                  Marcar todo como leído
+                                </Button>
                               )}
                             </div>
-                            {action && (
-                              <div className="flex gap-2">
-                                <Button size="sm" variant="outline" onClick={() => { markRead(n.id); action(); }}>Abrir</Button>
-                                <Button size="sm" variant="ghost" onClick={() => removeNotification(n.id)}>Ocultar</Button>
-                              </div>
+                            <ul className="space-y-2 max-h-60 overflow-y-auto">
+                              {notifications.length === 0 ? (
+                                <li className="text-sm text-muted-foreground">No hay notificaciones</li>
+                              ) : (
+                                notifications.map((n) => (
+                                  <li key={n.id} className={cn("p-2 rounded-md", !n.read && "bg-accent")}> 
+                                    <div className="flex items-center justify-between gap-2">
+                                      <div>
+                                        <div className="text-sm font-medium">Notificación #{n.id}</div>
+                                        <div className="text-xs text-muted-foreground truncate">Sin detalles</div>
+                                      </div>
+                                      {!n.read && (
+                                        <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => markRead(n.id)}>Leer</Button>
+                                      )}
+                                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" onClick={() => removeNotification(n.id)}>Eliminar</Button>
+                                    </div>
+                                  </li>
+                                ))
+                              )}
+                            </ul>
+                            {hasMore && (
+                              <Button size="sm" variant="ghost" className="w-full mt-2" onClick={loadMore} disabled={loadingMore}>
+                                {loadingMore ? "Cargando..." : "Ver más"}
+                              </Button>
                             )}
-                          </li>
-                        );
-                      })}
-                      {hasMore && (
-                        <div className="pt-2 border-t">
-                          <Button size="sm" className="w-full" onClick={loadMore} disabled={loadingMore}>{loadingMore ? 'Cargando...' : 'Cargar más'}</Button>
-                        </div>
-                      )}
-                    </ul>
-                  )}
-                </PopoverContent>
-              </Popover>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
 
               {/* Theme Toggle */}
               <ThemeToggle />

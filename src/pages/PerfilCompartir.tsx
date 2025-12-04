@@ -1,3 +1,8 @@
+// Sanitización básica para mostrar datos
+function sanitizeText(text: string | null | undefined): string {
+  if (!text) return "";
+  return String(text).replace(/[<>"']/g, "");
+}
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -138,7 +143,7 @@ const PerfilCompartir = () => {
             <Avatar className="w-16 h-16 sm:w-20 sm:h-20">
               <AvatarFallback className="text-xl sm:text-2xl font-semibold bg-primary text-primary-foreground">
                 {profile?.nombre_completo ? (
-                  getInitials(profile.nombre_completo)
+                  getInitials(sanitizeText(profile.nombre_completo))
                 ) : (
                   <User className="w-8 h-8 sm:w-10 sm:h-10" />
                 )}
@@ -146,10 +151,10 @@ const PerfilCompartir = () => {
             </Avatar>
             <div className="flex-1 min-w-0">
               <h2 className="text-lg sm:text-xl font-semibold truncate">
-                {profile?.nombre_completo || "Usuario Scout"}
+                {sanitizeText(profile?.nombre_completo) || "Usuario Scout"}
               </h2>
               <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                {profile?.telefono || "Sin teléfono"}
+                {sanitizeText(profile?.telefono) || "Sin teléfono"}
               </p>
             </div>
           </div>

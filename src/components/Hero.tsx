@@ -28,10 +28,10 @@ const Hero = () => {
       <div className="absolute inset-0 z-0" aria-hidden="true">
         <img
           src={heroImage}
-          alt=""
-          role="presentation"
+          alt="Grupo Scout Séptimo de Montevideo en actividad al aire libre"
           className="w-full h-full object-cover scale-[1.02]"
-          loading="eager"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-scout-black/75 via-scout-black/60 to-scout-black/35" />
         <div className="absolute inset-0 bg-gradient-to-t from-scout-black/50 via-transparent to-transparent" />

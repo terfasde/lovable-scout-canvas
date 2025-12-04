@@ -13,7 +13,7 @@ const FooterLink = ({ to, children, external = false }: FooterLinkProps) => {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const className =
-    "text-sm hover:text-primary transition-all duration-300 inline-flex items-center group";
+    "text-sm hover:text-primary transition-all duration-300 inline-flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary";
 
   if (external) {
     return (
@@ -22,6 +22,8 @@ const FooterLink = ({ to, children, external = false }: FooterLinkProps) => {
         target="_blank"
         rel="noopener noreferrer"
         className={className}
+        tabIndex={0}
+        aria-label={typeof children === "string" ? children : undefined}
       >
         <span className="group-hover:translate-x-1 transition-transform duration-300">
           {children}
@@ -31,7 +33,7 @@ const FooterLink = ({ to, children, external = false }: FooterLinkProps) => {
   }
 
   return (
-    <Link to={to} onClick={scrollTop} className={className}>
+    <Link to={to} onClick={scrollTop} className={className} tabIndex={0} aria-label={typeof children === "string" ? children : undefined}>
       <span className="group-hover:translate-x-1 transition-transform duration-300">
         {children}
       </span>
@@ -50,8 +52,9 @@ const SocialLink = ({ href, icon, label }: SocialLinkProps) => (
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/20"
+    className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     aria-label={label}
+    tabIndex={0}
   >
     {icon}
   </a>
@@ -59,7 +62,7 @@ const SocialLink = ({ href, icon, label }: SocialLinkProps) => (
 
 const FooterNew = () => {
   return (
-    <footer className="bg-scout-black text-gray-300 border-t border-white/5">
+    <footer role="contentinfo" aria-label="Pie de página Grupo Scout Séptimo" className="bg-scout-black text-gray-300 border-t border-white/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 mb-8">
@@ -203,10 +206,10 @@ const FooterNew = () => {
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <button className="hover:text-primary transition-colors duration-300 hover:underline underline-offset-4">
+            <button className="hover:text-primary transition-colors duration-300 hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" tabIndex={0} aria-label="Política de Privacidad">
               Política de Privacidad
             </button>
-            <button className="hover:text-primary transition-colors duration-300 hover:underline underline-offset-4">
+            <button className="hover:text-primary transition-colors duration-300 hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" tabIndex={0} aria-label="Términos y Condiciones">
               Términos y Condiciones
             </button>
           </div>
