@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -247,9 +248,9 @@ const Events = () => {
                   El evento más importante del escultismo uruguayo, creado por el Grupo Séptimo en 2004. Un desafío que reúne a grupos scouts de todo el país para compartir experiencias, desarrollar habilidades y fortalecer la hermandad scout.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <span className="badge">Creado en 2004</span>
-                  <span className="badge-accent">+300 Participantes</span>
-                  <span className="badge-muted">Tradición Nacional</span>
+                  <Badge variant="outline" className="px-4 py-2 text-base bg-primary/10 text-primary border-primary/30 transition-transform hover:scale-105">Creado en 2004</Badge>
+                  <Badge variant="secondary" className="px-4 py-2 text-base bg-accent/20 text-accent-foreground border-accent/30 transition-transform hover:scale-105">+300 Participantes</Badge>
+                  <Badge variant="outline" className="px-4 py-2 text-base bg-muted text-muted-foreground border-muted-foreground/20 transition-transform hover:scale-105">Tradición Nacional</Badge>
                 </div>
               </div>
               <Link to="/bauen" className="group/button w-full md:w-auto">
