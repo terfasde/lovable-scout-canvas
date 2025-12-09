@@ -38,7 +38,10 @@ const Comite = () => {
               <img
                 src={communityImage}
                 alt="Comité de Padres"
-                className="rounded-2xl w-full object-cover shadow-lg"
+                loading="lazy"
+                width="600"
+                height="400"
+                className="rounded-lg shadow-md"
               />
             </div>
           </div>

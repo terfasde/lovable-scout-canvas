@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { lazy, Suspense } from "react";
 import * as RechartsPrimitive from "recharts";
 
 import { cn } from "@/lib/utils";
@@ -32,6 +32,10 @@ function useChart() {
   return context;
 }
 
+const LazyResponsiveContainer = lazy(() =>
+  import("recharts").then((mod) => ({ default: mod.ResponsiveContainer })),
+);
+
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -56,9 +60,9 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
-          {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        <Suspense fallback={<div>Cargando gráfico...</div>}>
+          <LazyResponsiveContainer>{children}</LazyResponsiveContainer>
+        </Suspense>
       </div>
     </ChartContext.Provider>
   );

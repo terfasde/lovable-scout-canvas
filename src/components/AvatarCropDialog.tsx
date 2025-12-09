@@ -1,5 +1,5 @@
+import React, { lazy, Suspense } from "react";
 import { useState, useCallback } from "react";
-import Cropper from "react-easy-crop";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { ZoomIn, ZoomOut } from "lucide-react";
+
+const LazyCropper = lazy(() => import("react-easy-crop"));
 
 interface AvatarCropDialogProps {
   open: boolean;
@@ -124,21 +126,22 @@ const AvatarCropDialog = ({
             Ajustar foto de perfil
           </DialogTitle>
         </DialogHeader>
-
         <div className="space-y-4 sm:space-y-6">
           {/* Crop Area */}
           <div className="relative w-full h-[300px] sm:h-[400px] bg-muted rounded-lg overflow-hidden">
-            <Cropper
-              image={imageSrc}
-              crop={crop}
-              zoom={zoom}
-              aspect={1}
-              cropShape="round"
-              showGrid={false}
-              onCropChange={onCropChange}
-              onZoomChange={onZoomChange}
-              onCropComplete={onCropCompleteCallback}
-            />
+            <Suspense fallback={<div>Cargando editor de imagen...</div>}>
+              <LazyCropper
+                image={imageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                cropShape="round"
+                showGrid={false}
+                onCropChange={onCropChange}
+                onZoomChange={onZoomChange}
+                onCropComplete={onCropCompleteCallback}
+              />
+            </Suspense>
           </div>
 
           {/* Zoom Controls */}

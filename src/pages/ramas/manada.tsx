@@ -35,8 +35,11 @@ const Manada = () => {
             <div>
               <img
                 src={communityImage}
-                alt="Manada"
-                className="rounded-2xl w-full object-cover shadow-lg"
+                alt="Grupo Scout Séptimo - Comunidad"
+                loading="lazy"
+                width="600"
+                height="400"
+                className="rounded-lg shadow-md"
               />
             </div>
           </div>
