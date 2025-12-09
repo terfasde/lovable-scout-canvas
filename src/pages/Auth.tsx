@@ -227,11 +227,12 @@ const Auth = () => {
     setLoading(true);
     try {
       // Usar cliente Supabase (mock o real según configuración)
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: sanitized.email,
         password: sanitized.password,
       });
       if (error) {
+        console.error("Error en login:", error);
         if (
           error.message.includes("Invalid login credentials") ||
           error.message.includes("Usuario no encontrado")
@@ -239,6 +240,12 @@ const Auth = () => {
           toast({
             title: "Credenciales inválidas",
             description: "El correo o la contraseña son incorrectos.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes("Email not confirmed") || error.message.includes("correo no confirmado")) {
+          toast({
+            title: "Correo no verificado",
+            description: "Debes confirmar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y spam.",
             variant: "destructive",
           });
         } else {
@@ -249,13 +256,22 @@ const Auth = () => {
           });
         }
       } else {
-        // Navegación se maneja automáticamente por onAuthStateChange
-        toast({
-          title: "¡Bienvenido!",
-          description: "Has iniciado sesión correctamente.",
-        });
+        // Verificar si el usuario está verificado
+        if (data?.user && !data.user.confirmed_at) {
+          toast({
+            title: "Correo no verificado",
+            description: "Debes confirmar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada y spam.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "¡Bienvenido!",
+            description: "Has iniciado sesión correctamente.",
+          });
+        }
       }
     } catch (error) {
+      console.error("Error inesperado en login:", error);
       toast({
         title: "Error",
         description: "Ocurrió un error inesperado",
