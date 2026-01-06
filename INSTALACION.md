@@ -6,9 +6,27 @@ Este archivo contiene las instrucciones para instalar y ejecutar el proyecto en 
 
 Antes de comenzar, asegurate de tener instalado:
 
-1. **Node.js** (version 18 o superior)
-   - Descargar desde: https://nodejs.org/
-   - Verificar instalacion: `node --version`
+1. **Node.js** (se requiere específicamente **20.17.0**) 
+   - Recomendado: usar `nvm` para instalar la versión exacta:
+     ```bash
+     # instalar nvm (si no lo tenés)
+     curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+     source ~/.nvm/nvm.sh
+
+     # instalar y usar Node 20.17.0
+     nvm install 20.17.0
+     nvm use 20.17.0
+     nvm alias default 20.17.0
+     ```
+   - Alternativa con asdf:
+     ```bash
+     asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+     asdf install nodejs 20.17.0
+     asdf global nodejs 20.17.0
+     ```
+   - Verificar instalacion: `node --version` (`v20.17.0`)
+
+   - Nota: También agregamos un archivo `.nvmrc` que define la versión del proyecto. Si usás nvm podés simplemente correr `nvm use` dentro del proyecto para seleccionar 20.17.0.
 
 2. **Git** (opcional, pero recomendado)
    - Descargar desde: https://git-scm.com/
@@ -28,11 +46,24 @@ Copia toda la carpeta del pendrive a tu disco local, por ejemplo:
 C:\Users\TuUsuario\Documents\lovable-scout-canvas
 ```
 
-### 2. Abrir PowerShell en la carpeta del proyecto
+### 2. Abrir PowerShell / Terminal en la carpeta del proyecto
 
 - Click derecho en la carpeta del proyecto
 - Selecciona "Abrir en Terminal" o "PowerShell aqui"
 
+> Recomendado: antes de instalar manualmente, corre el script de setup que automatiza todo:
+>
+> Linux / macOS:
+> ```bash
+> sh ./scripts/setup.sh
+> ```
+>
+> Windows (PowerShell):
+> ```powershell
+> powershell -ExecutionPolicy Bypass -File .\scripts\setup.ps1
+> ```
+>
+> El script intentará instalar nvm y Node 20.17.0 (en Linux/Ubuntu) y las dependencias del proyecto, configurará Husky y ejecutará checks básicos.
 ### 3. Instalar dependencias del frontend
 
 ```powershell

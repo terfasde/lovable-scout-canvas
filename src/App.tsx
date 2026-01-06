@@ -13,6 +13,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AdminDashboard from "./pages/AdminDashboard";
 import { ThemeProvider } from "next-themes";
 import ScrollToTop from "@/components/ScrollToTop";
 import RouteTransition from "@/components/RouteTransition";
@@ -191,6 +192,7 @@ const App = () => (
                     <Route path="/ramas/staff" element={<Staff />} />
                     <Route path="/ramas/comite" element={<Comite />} />
 
+                    <Route path="/admin" element={<AdminDashboard />} />
                     {/* Ruta por defecto */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
