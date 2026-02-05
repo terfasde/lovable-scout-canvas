@@ -22,11 +22,10 @@
     "deploy:prod": "powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1 prod",
     "deploy:prod:zip": "powershell -ExecutionPolicy Bypass -File scripts/deploy.ps1 prod -Zip",
     "lint": "eslint .",
-    "test": "vitest",
+    "test": "vitest run",
     "type-check": "tsc --noEmit",
     "setup": "sh scripts/setup.sh",
     "ci": "npm run type-check && npm run lint && npm run build",
-    "test": "vitest run",
     "test:ci": "vitest run",
     "test:watch": "vitest",
     "prepare": "husky install",
@@ -108,6 +107,7 @@
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "autoprefixer": "^10.4.21",
+    "baseline-browser-mapping": "^2.9.19",
     "concurrently": "^9.1.2",
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -121,6 +121,6 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vite": "^7.1.12",
-    "vitest": "^1.3.0"
+    "vitest": "^4.0.18"
   }
 }

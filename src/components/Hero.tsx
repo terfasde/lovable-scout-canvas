@@ -30,7 +30,7 @@ const Hero = () => {
         <OptimizedImage
           src={heroImage}
           alt="Grupo Scout Séptimo de Montevideo en actividad al aire libre"
-          className="absolute inset-0"
+          className="absolute inset-0 object-left"
           objectFit="cover"
           priority
         />
