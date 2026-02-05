@@ -69,7 +69,7 @@ interface SupabaseUserContextType {
   user: any | null;
 }
 
-const SupabaseUserContext = createContext<SupabaseUserContextType>({
+export const SupabaseUserContext = createContext<SupabaseUserContextType>({
   user: null,
 });
 
@@ -80,20 +80,37 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);
 
   useEffect(() => {
-    // Obtener sesión actual
+    async function fetchUserAndProfile(sessionUser: any) {
+      if (!sessionUser) {
+        setUser(null);
+        return;
+      }
+      // Buscar perfil en Supabase
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", sessionUser.id)
+        .maybeSingle();
+      if (error || !profile) {
+        setUser(sessionUser); // fallback solo datos auth
+        return;
+      }
+      // Combina datos auth y perfil
+      setUser({ ...sessionUser, ...profile });
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       const u = session?.user ?? null;
       console.log("App.tsx - Sesión inicial:", u?.email || "sin usuario");
-      setUser(u);
+      fetchUserAndProfile(u);
       if (u) ensureProfileExists(u).catch(() => {});
     });
 
-    // Escuchar cambios en la sesión
     const { data: listener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         const u = session?.user ?? null;
         console.log("App.tsx - Auth change:", event, "usuario:", u?.email || "sin usuario");
-        setUser(u);
+        fetchUserAndProfile(u);
         if (u) ensureProfileExists(u).catch(() => {});
       },
     );
@@ -134,6 +151,8 @@ async function ensureProfileExists(user: { id: string; email?: string | null; us
       nombre_completo: nombreFallback,
       telefono: telefonoFallback,
       is_public: false,
+      email: user.email ?? null,
+      role: "user"
     });
   } catch {
     // No bloquear flujo si falla

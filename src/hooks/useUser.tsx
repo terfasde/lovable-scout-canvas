@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
-import { getAuthUser } from "@/lib/backend";
+import { useContext } from "react";
+import { SupabaseUserContext } from "../App";
 
 export function useUser() {
-  const [user, setUser] = useState<any>(null);
-  useEffect(() => {
-    (async () => {
-      const auth = await getAuthUser();
-      setUser(auth);
-    })();
-  }, []);
-  return { user };
+  const context = useContext(SupabaseUserContext);
+  if (!context) {
+    throw new Error("useUser debe usarse dentro de SupabaseUserProvider");
+  }
+  return context;
 }
