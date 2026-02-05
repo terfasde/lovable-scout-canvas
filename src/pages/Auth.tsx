@@ -352,26 +352,6 @@ const Auth = () => {
   };
 
   const handleGoogleSignIn = async (intent: "login" | "signup") => {
-    if (intent === "login") {
-      const trimmed = email.trim().toLowerCase();
-      if (!trimmed) {
-        toast({
-          title: "Ingresa tu correo",
-          description: "Para iniciar sesión con Google, primero ingresa tu correo registrado.",
-          variant: "destructive",
-        });
-        return;
-      }
-      if (!googleLoginAllowed) {
-        toast({
-          title: "Correo no registrado",
-          description: "Ese correo no está registrado. Regístrate primero y luego podrás iniciar sesión con Google.",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
     setLoading(true);
     try {
       // Usar la URL actual completa para el redirect
@@ -521,7 +501,7 @@ const Auth = () => {
                       variant="outline"
                       className="w-full"
                       onClick={() => handleGoogleSignIn("login")}
-                      disabled={loading || checkingEmail || !googleLoginAllowed}
+                      disabled={loading}
                     >
                       <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                         <path
@@ -543,9 +523,12 @@ const Auth = () => {
                       </svg>
                       Iniciar sesión con Google
                     </Button>
-                    {!googleLoginAllowed && email.trim() !== "" && (
+                    {checkingEmail && (
+                      <p className="text-xs text-muted-foreground mt-2">Verificando correo…</p>
+                    )}
+                    {!googleLoginAllowed && email.trim() !== "" && !checkingEmail && (
                       <p className="text-xs text-muted-foreground mt-2">
-                        Este correo no está registrado. Regístrate primero para usar Google.
+                        Si ese correo no está registrado, el login con Google se rechazará y se te pedirá registrarte.
                       </p>
                     )}
                   </>
