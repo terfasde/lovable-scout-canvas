@@ -52,6 +52,8 @@ const Auth = () => {
   const [showPasswordSignup, setShowPasswordSignup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [processingOAuth, setProcessingOAuth] = useState(false);
+  const [googleLoginAllowed, setGoogleLoginAllowed] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -81,6 +83,28 @@ const Auth = () => {
 
         if (session?.user) {
           console.log("Usuario autenticado detectado en checkSession:", session.user.email);
+          // Validar intent de OAuth (login vs signup)
+          if (!isLocalBackend()) {
+            const oauthIntent = localStorage.getItem("oauth_intent");
+            if (oauthIntent === "login" && session.user.email) {
+              const { data: isRegistered, error: regErr } = await supabase.rpc("is_email_registered", {
+                p_email: session.user.email,
+              });
+              if (regErr || !isRegistered) {
+                await supabase.auth.signOut();
+                localStorage.removeItem("oauth_intent");
+                toast({
+                  title: "Primero debes registrarte",
+                  description: "Ese correo no está registrado. Regístrate y luego podrás iniciar sesión con Google.",
+                  variant: "destructive",
+                });
+                setProcessingOAuth(false);
+                setLoading(false);
+                return;
+              }
+            }
+            localStorage.removeItem("oauth_intent");
+          }
           // Pequeño delay para asegurar que la sesión se persiste
           setTimeout(() => {
             navigate("/", { replace: true });
@@ -138,6 +162,51 @@ const Auth = () => {
       }
     };
   }, [navigate]);
+
+  // Validar si el email está registrado (para login con Google)
+  useEffect(() => {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed) {
+      setGoogleLoginAllowed(false);
+      setCheckingEmail(false);
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(trimmed)) {
+      setGoogleLoginAllowed(false);
+      setCheckingEmail(false);
+      return;
+    }
+    if (isLocalBackend()) {
+      setGoogleLoginAllowed(true);
+      setCheckingEmail(false);
+      return;
+    }
+
+    let isCancelled = false;
+    setCheckingEmail(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const { data: isRegistered, error } = await supabase.rpc("is_email_registered", {
+          p_email: trimmed,
+        });
+        if (isCancelled) return;
+        if (error) {
+          setGoogleLoginAllowed(false);
+          setCheckingEmail(false);
+          return;
+        }
+        setGoogleLoginAllowed(!!isRegistered);
+      } finally {
+        if (!isCancelled) setCheckingEmail(false);
+      }
+    }, 400);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timer);
+    };
+  }, [email]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -282,12 +351,34 @@ const Auth = () => {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = async (intent: "login" | "signup") => {
+    if (intent === "login") {
+      const trimmed = email.trim().toLowerCase();
+      if (!trimmed) {
+        toast({
+          title: "Ingresa tu correo",
+          description: "Para iniciar sesión con Google, primero ingresa tu correo registrado.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (!googleLoginAllowed) {
+        toast({
+          title: "Correo no registrado",
+          description: "Ese correo no está registrado. Regístrate primero y luego podrás iniciar sesión con Google.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       // Usar la URL actual completa para el redirect
       const redirectUrl = window.location.origin + "/auth";
       console.log("Iniciando OAuth con redirect a:", redirectUrl);
+
+      localStorage.setItem("oauth_intent", intent);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -429,8 +520,8 @@ const Auth = () => {
                       type="button"
                       variant="outline"
                       className="w-full"
-                      onClick={handleGoogleSignIn}
-                      disabled={loading}
+                      onClick={() => handleGoogleSignIn("login")}
+                      disabled={loading || checkingEmail || !googleLoginAllowed}
                     >
                       <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                         <path
@@ -452,6 +543,11 @@ const Auth = () => {
                       </svg>
                       Iniciar sesión con Google
                     </Button>
+                    {!googleLoginAllowed && email.trim() !== "" && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Este correo no está registrado. Regístrate primero para usar Google.
+                      </p>
+                    )}
                   </>
                 )}
               </form>
@@ -554,7 +650,7 @@ const Auth = () => {
                       type="button"
                       variant="outline"
                       className="w-full"
-                      onClick={handleGoogleSignIn}
+                      onClick={() => handleGoogleSignIn("signup")}
                       disabled={loading}
                     >
                       <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
