@@ -395,6 +395,7 @@ const Navigation = () => {
                     isLoggedIn={isLoggedIn}
                     userName={userName}
                     avatarUrl={avatarUrl}
+                    isAdmin={isAdmin}
                     isActive={isActive}
                     handleSignOut={handleSignOut}
                     onLinkClick={() => setIsMobileMenuOpen(false)}
@@ -418,6 +419,7 @@ interface MobileMenuProps {
   isLoggedIn: boolean;
   userName: string | null;
   avatarUrl: string | null;
+  isAdmin: boolean;
   isActive: (path: string) => boolean;
   handleSignOut: () => void;
   onLinkClick: () => void;
@@ -428,6 +430,7 @@ function MobileMenu({
   isLoggedIn,
   userName,
   avatarUrl,
+  isAdmin,
   isActive,
   handleSignOut,
   onLinkClick,
@@ -494,6 +497,19 @@ function MobileMenu({
                 <Share2 className="h-4 w-4" />
                 <span>Compartir perfil</span>
               </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin-panel"
+                  onClick={() => {
+                    setAccountMenuOpen(false);
+                    onLinkClick();
+                  }}
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-accent transition-colors text-sm font-semibold text-primary"
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Panel Admin</span>
+                </Link>
+              )}
               <button
                 onClick={() => {
                   handleSignOut();
