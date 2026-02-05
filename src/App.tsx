@@ -36,6 +36,7 @@ const Usuarios = lazy(() => import("./pages/Usuarios"));
 const Mensajes = lazy(() => import("./pages/Mensajes"));
 const GrupoDetail = lazy(() => import("@/pages/GrupoDetail"));
 const DashboardCoordinador = lazy(() => import("./pages/DashboardCoordinador"));
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Manada = lazy(() => import("./pages/ramas/manada"));
 const Tropa = lazy(() => import("./pages/ramas/tropa"));
@@ -80,27 +81,6 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);
 
   useEffect(() => {
-    // ESCRIBIR EN LA PÁGINA DIRECTAMENTE para verificar
-    if (typeof document !== "undefined") {
-      const debugDiv = document.createElement("div");
-      debugDiv.id = "app-debug";
-      debugDiv.style.position = "fixed";
-      debugDiv.style.top = "0";
-      debugDiv.style.left = "0";
-      debugDiv.style.zIndex = "99999";
-      debugDiv.style.background = "red";
-      debugDiv.style.color = "white";
-      debugDiv.style.padding = "10px";
-      debugDiv.style.fontFamily = "monospace";
-      debugDiv.style.fontSize = "12px";
-      debugDiv.textContent = "🟢 SUPABSE PROVIDER INICIADO";
-      document.body.appendChild(debugDiv);
-      
-      setTimeout(() => {
-        debugDiv.textContent = "🔄 Llamando getSession...";
-      }, 100);
-    }
-
     async function fetchUserAndProfile(sessionUser: any) {
       console.log("🔍 fetchUserAndProfile llamado");
       
@@ -129,15 +109,6 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("✅ Usuario guardado:", combinedUser?.email, "Rol:", (combinedUser as any)?.role);
       setUser(combinedUser);
       localStorage.setItem("adminUser", JSON.stringify(combinedUser));
-      
-      // ACTUALIZAR DEBUG EN PÁGINA
-      if (typeof document !== "undefined") {
-        const debug = document.getElementById("app-debug");
-        if (debug) {
-          debug.style.background = "green";
-          debug.textContent = `✅ Usuario: ${combinedUser.email} | Rol: ${combinedUser.role}`;
-        }
-      }
     }
 
     // Obtener sesión inicial
@@ -147,13 +118,6 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
       if (u) fetchUserAndProfile(u);
     }).catch(err => {
       console.error("❌ Error getSession:", err);
-      if (typeof document !== "undefined") {
-        const debug = document.getElementById("app-debug");
-        if (debug) {
-          debug.style.background = "orange";
-          debug.textContent = `⚠️ Error: ${err.message}`;
-        }
-      }
     });
 
     // Escuchar cambios de auth
@@ -261,7 +225,8 @@ const App = () => (
                     <Route path="/ramas/comite" element={<Comite />} />
 
                     {/* Admin */}
-                    <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
+                    <Route path="/admin-panel" element={<AdminPanel />} />
+                    <Route path="/admin" element={<AdminGuard><AdminPanel /></AdminGuard>} />
                     {/* Ruta por defecto */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

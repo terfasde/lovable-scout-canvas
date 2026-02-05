@@ -16,6 +16,7 @@ import {
   Mail,
   Users,
   MessageSquare,
+  Shield,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -80,6 +81,7 @@ const Navigation = () => {
   const [userName, setUserName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -104,6 +106,7 @@ const Navigation = () => {
             setUserName(me.nombre_completo || null);
             setAvatarUrl(me.avatar_url || null);
             setIsLoggedIn(true);
+            setIsAdmin((me as any)?.role === "admin");
           }
           return;
         }
@@ -112,21 +115,24 @@ const Navigation = () => {
         } = await supabase.auth.getUser();
         if (!user) {
           setIsLoggedIn(false);
+          setIsAdmin(false);
           return;
         }
         setIsLoggedIn(true);
         const { data: profile } = await supabase
           .from("profiles")
-          .select("nombre_completo, avatar_url")
+          .select("nombre_completo, avatar_url, role")
           .eq("user_id", user.id)
           .maybeSingle();
         if (profile) {
           const emailFallback = user.email || null;
           setUserName(((profile as any).nombre_completo || emailFallback) ?? null);
           setAvatarUrl((profile as any).avatar_url || null);
+          setIsAdmin((profile as any)?.role === "admin");
         }
       } catch (err) {
         setIsLoggedIn(false);
+        setIsAdmin(false);
       }
     })();
   }, [location.pathname]);
@@ -339,6 +345,17 @@ const Navigation = () => {
                         Configuración
                       </Link>
                     </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin-panel" className="cursor-pointer font-semibold text-primary">
+                            <Shield className="h-4 w-4 mr-2" />
+                            Panel Admin
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={handleSignOut}
