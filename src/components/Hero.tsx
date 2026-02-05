@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Hand, Calendar, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Reveal } from "@/components/Reveal";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import heroImage from "@/assets/hero-scouts.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { useSupabaseUser } from "@/App";
@@ -26,12 +27,12 @@ const Hero = () => {
     >
       {/* Background Image with Enhanced Overlay */}
       <div className="absolute inset-0 z-0" aria-hidden="true">
-        <img
+        <OptimizedImage
           src={heroImage}
           alt="Grupo Scout Séptimo de Montevideo en actividad al aire libre"
-          className="w-full h-full object-cover scale-[1.02]"
-          loading="lazy"
-          decoding="async"
+          className="absolute inset-0"
+          objectFit="cover"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-r from-scout-black/75 via-scout-black/60 to-scout-black/35" />
         <div className="absolute inset-0 bg-gradient-to-t from-scout-black/50 via-transparent to-transparent" />
