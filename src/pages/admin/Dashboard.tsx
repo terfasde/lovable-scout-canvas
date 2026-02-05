@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Download, Edit2, Trash2, Users, Shield, Clock } from "lucide-react";
 import {
@@ -21,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
   const [users, setUsers] = useState<any[]>([]);
@@ -29,18 +29,35 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [editUser, setEditUser] = useState<any | null>(null);
   const [editData, setEditData] = useState<any>({});
-  const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+
+  function computeStats(list: any[]) {
+    const admins = list?.filter((u: any) => u.role === "admin").length || 0;
+    const registradosHoy = list?.filter((u: any) => u.created_at?.startsWith(new Date().toISOString().slice(0, 10))).length || 0;
+    setStats({ total: list?.length || 0, admins, registradosHoy });
+  }
+
+  async function fetchData() {
+    setLoading(true);
+    const { data: usuarios, error } = await supabase.from("profiles").select("*");
+    if (error) {
+      toast({
+        title: "Error al cargar usuarios",
+        description: error.message,
+        variant: "destructive",
+      });
+      setUsers([]);
+      computeStats([]);
+      setLoading(false);
+      return;
+    }
+    setUsers(usuarios || []);
+    computeStats(usuarios || []);
+    setLoading(false);
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const { data: usuarios } = await supabase.from("profiles").select("*");
-      const admins = usuarios?.filter((u: any) => u.role === "admin").length || 0;
-      const registradosHoy = usuarios?.filter((u: any) => u.created_at?.startsWith(new Date().toISOString().slice(0, 10))).length || 0;
-      setUsers(usuarios || []);
-      setStats({ total: usuarios?.length || 0, admins, registradosHoy });
-      setLoading(false);
-    }
     fetchData();
   }, []);
 
@@ -53,27 +70,93 @@ export default function Dashboard() {
 
   function handleEdit(u: any) {
     setEditUser(u);
-    setEditData({ ...u });
+    setEditData({
+      user_id: u.user_id,
+      email: u.email ?? "",
+      nombre_completo: u.nombre_completo ?? "",
+      username: u.username ?? "",
+      role: u.role ?? "user",
+    });
   }
   
   async function handleSaveEdit() {
+    if (!editUser) return;
+    setSaving(true);
     try {
-      await supabase.from("profiles").update(editData).eq("user_id", editUser.user_id);
+      const payload = {
+        email: editData.email || null,
+        nombre_completo: editData.nombre_completo || null,
+        username: editData.username || null,
+        role: editData.role || "user",
+      };
+      const { error } = await supabase
+        .from("profiles")
+        .update(payload)
+        .eq("user_id", editUser.user_id);
+
+      if (error) {
+        toast({
+          title: "No se pudo guardar",
+          description: error.message,
+          variant: "destructive",
+        });
+        setSaving(false);
+        return;
+      }
+
+      setUsers((prev) => {
+        const updated = prev.map((u) =>
+          u.user_id === editUser.user_id ? { ...u, ...payload } : u,
+        );
+        computeStats(updated);
+        return updated;
+      });
+
+      toast({
+        title: "Cambios guardados",
+        description: "El usuario fue actualizado correctamente.",
+      });
       setEditUser(null);
       setEditData({});
-      window.location.reload();
-    } catch (err) {
-      console.error("Error al guardar:", err);
+    } catch (err: any) {
+      toast({
+        title: "Error inesperado",
+        description: err?.message || "No se pudo guardar el usuario.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
     }
   }
   
   async function handleDelete(id: string) {
     if (!window.confirm("¿Eliminar usuario? Esta acción no se puede deshacer.")) return;
     try {
-      await supabase.from("profiles").delete().eq("user_id", id);
-      window.location.reload();
+      const { error } = await supabase.from("profiles").delete().eq("user_id", id);
+      if (error) {
+        toast({
+          title: "No se pudo eliminar",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      setUsers((prev) => {
+        const updated = prev.filter((u) => u.user_id !== id);
+        computeStats(updated);
+        return updated;
+      });
+      toast({
+        title: "Usuario eliminado",
+        description: "El usuario fue eliminado correctamente.",
+      });
     } catch (err) {
       console.error("Error al eliminar:", err);
+      toast({
+        title: "Error inesperado",
+        description: "No se pudo eliminar el usuario.",
+        variant: "destructive",
+      });
     }
   }
   
@@ -236,7 +319,7 @@ export default function Dashboard() {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog open={!!editUser} onOpenChange={(open) => !open && setEditUser(null)}>
+      <Dialog open={!!editUser} onOpenChange={(open) => !open && !saving && setEditUser(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Editar Usuario</DialogTitle>
@@ -250,6 +333,7 @@ export default function Dashboard() {
                   value={editData.email || ""}
                   onChange={(e) => setEditData({ ...editData, email: e.target.value })}
                   className="mt-1"
+                  disabled={saving}
                 />
               </div>
               <div>
@@ -259,6 +343,7 @@ export default function Dashboard() {
                   value={editData.nombre_completo || ""}
                   onChange={(e) => setEditData({ ...editData, nombre_completo: e.target.value })}
                   className="mt-1"
+                  disabled={saving}
                 />
               </div>
               <div>
@@ -268,6 +353,7 @@ export default function Dashboard() {
                   value={editData.username || ""}
                   onChange={(e) => setEditData({ ...editData, username: e.target.value })}
                   className="mt-1"
+                  disabled={saving}
                 />
               </div>
               <div>
@@ -275,6 +361,7 @@ export default function Dashboard() {
                 <Select
                   value={editData.role || "user"}
                   onValueChange={(value) => setEditData({ ...editData, role: value })}
+                  disabled={saving}
                 >
                   <SelectTrigger id="role" className="mt-1">
                     <SelectValue />
@@ -288,11 +375,11 @@ export default function Dashboard() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditUser(null)}>
+            <Button variant="outline" onClick={() => setEditUser(null)} disabled={saving}>
               Cancelar
             </Button>
-            <Button onClick={handleSaveEdit}>
-              Guardar Cambios
+            <Button onClick={handleSaveEdit} disabled={saving}>
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </Button>
           </DialogFooter>
         </DialogContent>
