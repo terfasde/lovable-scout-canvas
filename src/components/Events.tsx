@@ -241,7 +241,7 @@ const Events = () => {
                 <div className="flex items-center">
                   <Flag className="w-10 h-10 md:w-12 md:h-12 text-primary mr-4 transition-transform duration-500 group-hover:rotate-[-5deg] group-hover:scale-110 flex-shrink-0" aria-hidden="true" />
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-                    BAUEN — Evento Scout Nacional
+                    BAUEN — Evento Scout
                   </h3>
                 </div>
                 <p className="text-base md:text-lg text-muted-foreground leading-relaxed">

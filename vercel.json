@@ -1,4 +1,5 @@
 {
+  "buildCommand": "vite build --config vite.config.ts",
   "rewrites": [
     {
       "source": "/(.*)",

@@ -42,10 +42,14 @@ const Pioneros = lazy(() => import("./pages/ramas/pioneros"));
 const Rovers = lazy(() => import("./pages/ramas/rovers"));
 const Staff = lazy(() => import("./pages/ramas/staff"));
 const Comite = lazy(() => import("./pages/ramas/comite"));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
 import { supabase } from "@/integrations/supabase/client";
 import BackgroundFX from "@/components/BackgroundFX";
 import { NotificationsProvider } from "@/context/Notifications";
+import { LoadingMessage } from "@/components/ui/loading";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { AdminGuard } from "@/components/AdminGuard";
+import SkipToContent from "@/components/SkipToContent";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -148,13 +152,8 @@ const App = () => (
               <BackgroundFX />
               <NavigationNew />
               <ScrollToTop />
-              <Suspense
-                fallback={
-                  <div className="p-8 text-center text-sm text-muted-foreground">
-                    Cargando…
-                  </div>
-                }
-              >
+              <SkipToContent />
+              <Suspense fallback={<LoadingMessage message="Cargando página..." />}>
                 <RouteTransition>
                   <Routes>
                     <Route path="/" element={<Index />} />
@@ -190,6 +189,9 @@ const App = () => (
                     <Route path="/ramas/rovers" element={<Rovers />} />
                     <Route path="/ramas/staff" element={<Staff />} />
                     <Route path="/ramas/comite" element={<Comite />} />
+
+                    {/* Admin */}
+                    <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
 
                     {/* Ruta por defecto */}
                     <Route path="*" element={<NotFound />} />

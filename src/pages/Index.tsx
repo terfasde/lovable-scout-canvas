@@ -3,7 +3,7 @@ import About from "@/components/About";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div id="main-content" className="min-h-screen">
       <Hero />
       <About />
     </div>
