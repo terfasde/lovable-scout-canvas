@@ -390,142 +390,146 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/5 p-2 sm:p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-2">
-            Panel de Administración
+        <div className="mb-4 sm:mb-6 md:mb-8">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-1 sm:mb-2">
+            Panel de Admin
           </h1>
-          <p className="text-muted-foreground">Gestiona usuarios y permisos de la plataforma</p>
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground">Gestiona usuarios y contenido</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6 md:mb-8">
           <Card className="border-l-4 border-l-blue-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Users className="w-5 h-5 text-blue-500" />
-                Total de Usuarios
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="flex items-center gap-2 text-xs sm:text-sm md:text-base">
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
+                Usuarios
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{stats.total}</div>
-              <p className="text-xs text-muted-foreground mt-1">Usuarios registrados</p>
+              <div className="text-2xl sm:text-3xl font-bold">{stats.total}</div>
+              <p className="text-xs text-muted-foreground mt-1">Registrados</p>
             </CardContent>
           </Card>
 
           <Card className="border-l-4 border-l-red-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Shield className="w-5 h-5 text-red-500" />
-                Administradores
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="flex items-center gap-2 text-xs sm:text-sm md:text-base">
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
+                <span className="hidden sm:inline">Administradores</span>
+                <span className="sm:hidden">Admins</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{stats.admins}</div>
-              <p className="text-xs text-muted-foreground mt-1">Usuarios con rol admin</p>
+              <div className="text-2xl sm:text-3xl font-bold">{stats.admins}</div>
+              <p className="text-xs text-muted-foreground mt-1">Con rol admin</p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-green-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Clock className="w-5 h-5 text-green-500" />
-                Registrados Hoy
+          <Card className="border-l-4 border-l-green-500 sm:col-span-2 md:col-span-1">
+            <CardHeader className="pb-2 sm:pb-3">
+              <CardTitle className="flex items-center gap-2 text-xs sm:text-sm md:text-base">
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+                <span className="hidden sm:inline">Registrados Hoy</span>
+                <span className="sm:hidden">Hoy</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{stats.registradosHoy}</div>
-              <p className="text-xs text-muted-foreground mt-1">Nuevos usuarios hoy</p>
+              <div className="text-2xl sm:text-3xl font-bold">{stats.registradosHoy}</div>
+              <p className="text-xs text-muted-foreground mt-1">Nuevos usuarios</p>
             </CardContent>
           </Card>
         </div>
 
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="flex flex-wrap gap-2">
-            <TabsTrigger value="users">Usuarios</TabsTrigger>
-            <TabsTrigger value="groups">Grupos</TabsTrigger>
-            <TabsTrigger value="events">Eventos</TabsTrigger>
-            <TabsTrigger value="threads">Publicaciones</TabsTrigger>
-            <TabsTrigger value="comments">Comentarios</TabsTrigger>
-            <TabsTrigger value="messages">Mensajes</TabsTrigger>
-            <TabsTrigger value="groupMessages">Mensajes de Grupo</TabsTrigger>
-            <TabsTrigger value="pages">Páginas</TabsTrigger>
+          <TabsList className="flex flex-wrap gap-1 sm:gap-2 bg-muted/50 p-1 sm:p-2 rounded-lg w-full justify-start overflow-x-auto">
+            <TabsTrigger value="users" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Usuarios</TabsTrigger>
+            <TabsTrigger value="groups" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Grupos</TabsTrigger>
+            <TabsTrigger value="events" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Eventos</TabsTrigger>
+            <TabsTrigger value="threads" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Posts</TabsTrigger>
+            <TabsTrigger value="comments" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Comentarios</TabsTrigger>
+            <TabsTrigger value="messages" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Msgs</TabsTrigger>
+            <TabsTrigger value="groupMessages" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Msgs Grupo</TabsTrigger>
+            <TabsTrigger value="pages" className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2">Páginas</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
               <Input
-                placeholder="Buscar por email, nombre o username..."
+                placeholder="Buscar usuario..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1"
+                className="text-xs sm:text-sm flex-1"
               />
-              <Button onClick={exportCSV} className="gap-2 whitespace-nowrap">
-                <Download className="w-4 h-4" />
-                Exportar CSV
+              <Button onClick={exportCSV} className="gap-2 whitespace-nowrap text-xs sm:text-sm w-full sm:w-auto">
+                <Download className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Exportar CSV</span>
+                <span className="sm:hidden">Exportar</span>
               </Button>
             </div>
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="flex items-center justify-between text-base sm:text-lg">
                   <span>Usuarios ({filtered.length})</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
                   <div className="flex items-center justify-center py-12">
-                    <p className="text-muted-foreground">Cargando usuarios...</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Cargando usuarios...</p>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3 font-semibold text-muted-foreground">Email</th>
-                          <th className="text-left p-3 font-semibold text-muted-foreground">Nombre</th>
-                          <th className="text-left p-3 font-semibold text-muted-foreground">Usuario</th>
-                          <th className="text-left p-3 font-semibold text-muted-foreground">Rol</th>
-                          <th className="text-right p-3 font-semibold text-muted-foreground">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 font-semibold text-muted-foreground text-xs">Email</th>
+                          <th className="text-left p-2 sm:p-3 font-semibold text-muted-foreground text-xs">Nombre</th>
+                          <th className="text-left p-2 sm:p-3 font-semibold text-muted-foreground text-xs">Usuario</th>
+                          <th className="text-left p-2 sm:p-3 font-semibold text-muted-foreground text-xs">Rol</th>
+                          <th className="text-right p-2 sm:p-3 font-semibold text-muted-foreground text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filtered.length === 0 ? (
                           <tr>
-                            <td colSpan={5} className="text-center py-8 text-muted-foreground">
+                            <td colSpan={5} className="text-center py-8 text-xs sm:text-sm text-muted-foreground">
                               No se encontraron usuarios
                             </td>
                           </tr>
                         ) : (
                           filtered.map((u) => (
                             <tr key={u.user_id} className="border-b hover:bg-muted/50 transition-colors">
-                              <td className="p-3 font-medium">{u.email || "-"}</td>
-                              <td className="p-3">{u.nombre_completo || "-"}</td>
-                              <td className="p-3 text-muted-foreground">{u.username || "-"}</td>
-                              <td className="p-3">
+                              <td className="p-2 sm:p-3 font-medium text-xs sm:text-sm truncate">{u.email || "-"}</td>
+                              <td className="p-2 sm:p-3 text-xs sm:text-sm truncate">{u.nombre_completo || "-"}</td>
+                              <td className="p-2 sm:p-3 text-xs sm:text-sm text-muted-foreground truncate">{u.username || "-"}</td>
+                              <td className="p-2 sm:p-3 text-xs sm:text-sm">
                                 {getRoleBadge(u.role || "user")}
                               </td>
-                              <td className="p-3 text-right flex gap-2 justify-end">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleEdit(u)}
-                                  className="gap-1"
-                                >
-                                  <Edit2 className="w-3 h-3" />
-                                  Editar
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => handleDelete(u.user_id)}
-                                  className="gap-1"
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                  Eliminar
-                                </Button>
+                              <td className="p-2 sm:p-3 text-right">
+                                <div className="flex gap-1 sm:gap-2 justify-end flex-wrap">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleEdit(u)}
+                                    className="gap-1 text-xs h-8 px-2"
+                                  >
+                                    <Edit2 className="w-3 h-3" />
+                                    <span className="hidden sm:inline">Editar</span>
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => handleDelete(u.user_id)}
+                                    className="gap-1 text-xs h-8 px-2"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
+                                </div>
                               </td>
                             </tr>
                           ))
@@ -541,47 +545,51 @@ export default function Dashboard() {
           <TabsContent value="groups">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <Layers className="w-4 h-4" />
                   Grupos ({groups.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingAdmin ? (
-                  <div className="py-8 text-muted-foreground">Cargando grupos...</div>
+                  <div className="py-8 text-xs sm:text-sm text-muted-foreground">Cargando grupos...</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3">Nombre</th>
-                          <th className="text-left p-3">Descripción</th>
-                          <th className="text-left p-3">Creador</th>
-                          <th className="text-left p-3">Creado</th>
-                          <th className="text-right p-3">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 text-xs">Nombre</th>
+                          <th className="text-left p-2 sm:p-3 text-xs hidden md:table-cell">Descripción</th>
+                          <th className="text-left p-2 sm:p-3 text-xs hidden lg:table-cell">Creador</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Creado</th>
+                          <th className="text-right p-2 sm:p-3 text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {groups.map((g) => (
                           <tr key={g.id} className="border-b hover:bg-muted/50">
-                            <td className="p-3 font-medium">{g.name}</td>
-                            <td className="p-3 text-muted-foreground">{g.description || "-"}</td>
-                            <td className="p-3 text-muted-foreground">{g.creator_id}</td>
-                            <td className="p-3">{formatDate(g.created_at)}</td>
-                            <td className="p-3 text-right flex gap-2 justify-end">
-                              <Button size="sm" variant="outline" onClick={() => setEditGroup(g)}>
-                                <Edit2 className="w-3 h-3 mr-1" />Editar
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={async () => {
-                                  const ok = await handleDeleteById("groups", "id", g.id);
-                                  if (ok) setGroups((prev) => prev.filter((x) => x.id !== g.id));
-                                }}
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />Eliminar
-                              </Button>
+                            <td className="p-2 sm:p-3 font-medium text-xs sm:text-sm truncate">{g.name}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm text-muted-foreground hidden md:table-cell truncate">{g.description || "-"}</td>
+                            <td className="p-2 sm:p-3 text-xs text-muted-foreground hidden lg:table-cell truncate">{g.creator_id}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm">{formatDate(g.created_at)}</td>
+                            <td className="p-2 sm:p-3 text-right">
+                              <div className="flex gap-1 sm:gap-2 justify-end">
+                                <Button size="sm" variant="outline" onClick={() => setEditGroup(g)} className="text-xs h-8 px-2">
+                                  <Edit2 className="w-3 h-3" />
+                                  <span className="hidden sm:inline ml-1">Editar</span>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={async () => {
+                                    const ok = await handleDeleteById("groups", "id", g.id);
+                                    if (ok) setGroups((prev) => prev.filter((x) => x.id !== g.id));
+                                  }}
+                                  className="text-xs h-8 px-2"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -596,45 +604,49 @@ export default function Dashboard() {
           <TabsContent value="events">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <CalendarDays className="w-4 h-4" />
                   Eventos ({events.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingAdmin ? (
-                  <div className="py-8 text-muted-foreground">Cargando eventos...</div>
+                  <div className="py-8 text-xs sm:text-sm text-muted-foreground">Cargando eventos...</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3">Título</th>
-                          <th className="text-left p-3">Inicio</th>
-                          <th className="text-left p-3">Fin</th>
-                          <th className="text-right p-3">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 text-xs">Título</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Inicio</th>
+                          <th className="text-left p-2 sm:p-3 text-xs hidden sm:table-cell">Fin</th>
+                          <th className="text-right p-2 sm:p-3 text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {events.map((e) => (
                           <tr key={e.id} className="border-b hover:bg-muted/50">
-                            <td className="p-3 font-medium">{e.titulo}</td>
-                            <td className="p-3">{formatDate(e.fecha_inicio)}</td>
-                            <td className="p-3">{formatDate(e.fecha_fin)}</td>
-                            <td className="p-3 text-right flex gap-2 justify-end">
-                              <Button size="sm" variant="outline" onClick={() => setEditEvent(e)}>
-                                <Edit2 className="w-3 h-3 mr-1" />Editar
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={async () => {
-                                  const ok = await handleDeleteById("eventos", "id", e.id);
-                                  if (ok) setEvents((prev) => prev.filter((x) => x.id !== e.id));
-                                }}
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />Eliminar
-                              </Button>
+                            <td className="p-2 sm:p-3 font-medium text-xs sm:text-sm truncate">{e.titulo}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm">{formatDate(e.fecha_inicio)}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm hidden sm:table-cell">{formatDate(e.fecha_fin)}</td>
+                            <td className="p-2 sm:p-3 text-right">
+                              <div className="flex gap-1 sm:gap-2 justify-end">
+                                <Button size="sm" variant="outline" onClick={() => setEditEvent(e)} className="text-xs h-8 px-2">
+                                  <Edit2 className="w-3 h-3" />
+                                  <span className="hidden sm:inline ml-1">Editar</span>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={async () => {
+                                    const ok = await handleDeleteById("eventos", "id", e.id);
+                                    if (ok) setEvents((prev) => prev.filter((x) => x.id !== e.id));
+                                  }}
+                                  className="text-xs h-8 px-2"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -649,32 +661,32 @@ export default function Dashboard() {
           <TabsContent value="threads">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <MessageSquare className="w-4 h-4" />
                   Publicaciones ({threads.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingAdmin ? (
-                  <div className="py-8 text-muted-foreground">Cargando publicaciones...</div>
+                  <div className="py-8 text-xs sm:text-sm text-muted-foreground">Cargando publicaciones...</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3">Autor</th>
-                          <th className="text-left p-3">Contenido</th>
-                          <th className="text-left p-3">Fecha</th>
-                          <th className="text-right p-3">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 text-xs hidden md:table-cell">Autor</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Contenido</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Fecha</th>
+                          <th className="text-right p-2 sm:p-3 text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {threads.map((t) => (
                           <tr key={t.id} className="border-b hover:bg-muted/50">
-                            <td className="p-3 text-muted-foreground">{t.author_id}</td>
-                            <td className="p-3">{String(t.content).slice(0, 80)}...</td>
-                            <td className="p-3">{formatDate(t.created_at)}</td>
-                            <td className="p-3 text-right">
+                            <td className="p-2 sm:p-3 text-xs text-muted-foreground hidden md:table-cell truncate">{t.author_id}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm truncate">{String(t.content).slice(0, 40)}...</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm">{formatDate(t.created_at)}</td>
+                            <td className="p-2 sm:p-3 text-right">
                               <Button
                                 size="sm"
                                 variant="destructive"
@@ -682,8 +694,9 @@ export default function Dashboard() {
                                   const ok = await handleDeleteById("threads", "id", t.id);
                                   if (ok) setThreads((prev) => prev.filter((x) => x.id !== t.id));
                                 }}
+                                className="text-xs h-8 px-2"
                               >
-                                <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                <Trash2 className="w-3 h-3" />
                               </Button>
                             </td>
                           </tr>
@@ -699,32 +712,32 @@ export default function Dashboard() {
           <TabsContent value="comments">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <MessageSquare className="w-4 h-4" />
                   Comentarios ({threadComments.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingAdmin ? (
-                  <div className="py-8 text-muted-foreground">Cargando comentarios...</div>
+                  <div className="py-8 text-xs sm:text-sm text-muted-foreground">Cargando comentarios...</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3">Autor</th>
-                          <th className="text-left p-3">Contenido</th>
-                          <th className="text-left p-3">Fecha</th>
-                          <th className="text-right p-3">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 text-xs hidden md:table-cell">Autor</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Contenido</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Fecha</th>
+                          <th className="text-right p-2 sm:p-3 text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {threadComments.map((c) => (
                           <tr key={c.id} className="border-b hover:bg-muted/50">
-                            <td className="p-3 text-muted-foreground">{c.author_id}</td>
-                            <td className="p-3">{String(c.content).slice(0, 80)}...</td>
-                            <td className="p-3">{formatDate(c.created_at)}</td>
-                            <td className="p-3 text-right">
+                            <td className="p-2 sm:p-3 text-xs text-muted-foreground hidden md:table-cell truncate">{c.author_id}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm truncate">{String(c.content).slice(0, 40)}...</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm">{formatDate(c.created_at)}</td>
+                            <td className="p-2 sm:p-3 text-right">
                               <Button
                                 size="sm"
                                 variant="destructive"
@@ -732,8 +745,9 @@ export default function Dashboard() {
                                   const ok = await handleDeleteById("thread_comments", "id", c.id);
                                   if (ok) setThreadComments((prev) => prev.filter((x) => x.id !== c.id));
                                 }}
+                                className="text-xs h-8 px-2"
                               >
-                                <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                <Trash2 className="w-3 h-3" />
                               </Button>
                             </td>
                           </tr>
@@ -749,32 +763,32 @@ export default function Dashboard() {
           <TabsContent value="messages">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <MessagesSquare className="w-4 h-4" />
                   Mensajes ({messages.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingAdmin ? (
-                  <div className="py-8 text-muted-foreground">Cargando mensajes...</div>
+                  <div className="py-8 text-xs sm:text-sm text-muted-foreground">Cargando mensajes...</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3">Remitente</th>
-                          <th className="text-left p-3">Contenido</th>
-                          <th className="text-left p-3">Fecha</th>
-                          <th className="text-right p-3">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 text-xs hidden md:table-cell">Remitente</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Contenido</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Fecha</th>
+                          <th className="text-right p-2 sm:p-3 text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {messages.map((m) => (
                           <tr key={m.id} className="border-b hover:bg-muted/50">
-                            <td className="p-3 text-muted-foreground">{m.sender_id}</td>
-                            <td className="p-3">{String(m.content).slice(0, 80)}...</td>
-                            <td className="p-3">{formatDate(m.created_at)}</td>
-                            <td className="p-3 text-right">
+                            <td className="p-2 sm:p-3 text-xs text-muted-foreground hidden md:table-cell truncate">{m.sender_id}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm truncate">{String(m.content).slice(0, 40)}...</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm">{formatDate(m.created_at)}</td>
+                            <td className="p-2 sm:p-3 text-right">
                               <Button
                                 size="sm"
                                 variant="destructive"
@@ -782,8 +796,9 @@ export default function Dashboard() {
                                   const ok = await handleDeleteById("messages", "id", m.id);
                                   if (ok) setMessages((prev) => prev.filter((x) => x.id !== m.id));
                                 }}
+                                className="text-xs h-8 px-2"
                               >
-                                <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                <Trash2 className="w-3 h-3" />
                               </Button>
                             </td>
                           </tr>
@@ -799,34 +814,34 @@ export default function Dashboard() {
           <TabsContent value="groupMessages">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <MessagesSquare className="w-4 h-4" />
                   Mensajes de Grupo ({groupMessages.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingAdmin ? (
-                  <div className="py-8 text-muted-foreground">Cargando mensajes de grupo...</div>
+                  <div className="py-8 text-xs sm:text-sm text-muted-foreground">Cargando mensajes de grupo...</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3">Grupo</th>
-                          <th className="text-left p-3">Remitente</th>
-                          <th className="text-left p-3">Contenido</th>
-                          <th className="text-left p-3">Fecha</th>
-                          <th className="text-right p-3">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 text-xs hidden lg:table-cell">Grupo</th>
+                          <th className="text-left p-2 sm:p-3 text-xs hidden md:table-cell">Remitente</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Contenido</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Fecha</th>
+                          <th className="text-right p-2 sm:p-3 text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {groupMessages.map((m) => (
                           <tr key={m.id} className="border-b hover:bg-muted/50">
-                            <td className="p-3 text-muted-foreground">{m.group_id}</td>
-                            <td className="p-3 text-muted-foreground">{m.sender_id}</td>
-                            <td className="p-3">{String(m.content).slice(0, 80)}...</td>
-                            <td className="p-3">{formatDate(m.created_at)}</td>
-                            <td className="p-3 text-right">
+                            <td className="p-2 sm:p-3 text-xs text-muted-foreground hidden lg:table-cell truncate">{m.group_id}</td>
+                            <td className="p-2 sm:p-3 text-xs text-muted-foreground hidden md:table-cell truncate">{m.sender_id}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm truncate">{String(m.content).slice(0, 40)}...</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm">{formatDate(m.created_at)}</td>
+                            <td className="p-2 sm:p-3 text-right">
                               <Button
                                 size="sm"
                                 variant="destructive"
@@ -834,8 +849,9 @@ export default function Dashboard() {
                                   const ok = await handleDeleteById("group_messages", "id", m.id);
                                   if (ok) setGroupMessages((prev) => prev.filter((x) => x.id !== m.id));
                                 }}
+                                className="text-xs h-8 px-2"
                               >
-                                <Trash2 className="w-3 h-3 mr-1" />Eliminar
+                                <Trash2 className="w-3 h-3" />
                               </Button>
                             </td>
                           </tr>
@@ -851,47 +867,51 @@ export default function Dashboard() {
           <TabsContent value="pages">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-base sm:text-lg">
                   <span className="flex items-center gap-2"><FileText className="w-4 h-4" />Páginas ({pages.length})</span>
-                  <Button size="sm" onClick={() => setEditPage({ slug: "", title: "", content: "" })}>
+                  <Button size="sm" onClick={() => setEditPage({ slug: "", title: "", content: "" })} className="text-xs w-full sm:w-auto">
                     Nueva página
                   </Button>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loadingAdmin ? (
-                  <div className="py-8 text-muted-foreground">Cargando páginas...</div>
+                  <div className="py-8 text-xs sm:text-sm text-muted-foreground">Cargando páginas...</div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                  <div className="overflow-x-auto -mx-2 sm:mx-0">
+                    <table className="w-full text-xs sm:text-sm min-w-max">
                       <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="text-left p-3">Slug</th>
-                          <th className="text-left p-3">Título</th>
-                          <th className="text-left p-3">Actualizado</th>
-                          <th className="text-right p-3">Acciones</th>
+                        <tr className="border-b bg-muted/50 sticky top-0">
+                          <th className="text-left p-2 sm:p-3 text-xs">Slug</th>
+                          <th className="text-left p-2 sm:p-3 text-xs hidden sm:table-cell">Título</th>
+                          <th className="text-left p-2 sm:p-3 text-xs">Actualizado</th>
+                          <th className="text-right p-2 sm:p-3 text-xs">Acciones</th>
                         </tr>
                       </thead>
                       <tbody>
                         {pages.map((p) => (
                           <tr key={p.id} className="border-b hover:bg-muted/50">
-                            <td className="p-3 font-medium">{p.slug}</td>
-                            <td className="p-3">{p.title || "-"}</td>
-                            <td className="p-3">{formatDate(p.updated_at)}</td>
-                            <td className="p-3 text-right flex gap-2 justify-end">
-                              <Button size="sm" variant="outline" onClick={() => setEditPage(p)}>
-                                <Edit2 className="w-3 h-3 mr-1" />Editar
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={async () => {
-                                  const ok = await handleDeleteById("site_pages", "id", p.id);
-                                  if (ok) setPages((prev) => prev.filter((x) => x.id !== p.id));
-                                }}
-                              >
-                                <Trash2 className="w-3 h-3 mr-1" />Eliminar
-                              </Button>
+                            <td className="p-2 sm:p-3 font-medium text-xs sm:text-sm truncate">{p.slug}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm hidden sm:table-cell truncate">{p.title || "-"}</td>
+                            <td className="p-2 sm:p-3 text-xs sm:text-sm">{formatDate(p.updated_at)}</td>
+                            <td className="p-2 sm:p-3 text-right">
+                              <div className="flex gap-1 sm:gap-2 justify-end">
+                                <Button size="sm" variant="outline" onClick={() => setEditPage(p)} className="text-xs h-8 px-2">
+                                  <Edit2 className="w-3 h-3" />
+                                  <span className="hidden sm:inline ml-1">Editar</span>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={async () => {
+                                    const ok = await handleDeleteById("site_pages", "id", p.id);
+                                    if (ok) setPages((prev) => prev.filter((x) => x.id !== p.id));
+                                  }}
+                                  className="text-xs h-8 px-2"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -907,12 +927,12 @@ export default function Dashboard() {
 
       {/* Edit Dialog */}
       <Dialog open={!!editUser} onOpenChange={(open) => !open && !saving && setEditUser(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-xs sm:max-w-md w-11/12">
           <DialogHeader>
             <DialogTitle>Editar Usuario</DialogTitle>
           </DialogHeader>
           {editUser && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -975,12 +995,12 @@ export default function Dashboard() {
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditUser(null)} disabled={saving}>
+          <DialogFooter className="flex gap-2 flex-col-reverse sm:flex-row">
+            <Button variant="outline" onClick={() => setEditUser(null)} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={handleSaveEdit} disabled={saving}>
-              {saving ? "Guardando..." : "Guardar Cambios"}
+            <Button onClick={handleSaveEdit} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
+              {saving ? "Guardando..." : "Guardar"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -988,12 +1008,12 @@ export default function Dashboard() {
 
       {/* Edit Group Dialog */}
       <Dialog open={!!editGroup} onOpenChange={(open) => !open && !saving && setEditGroup(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-xs sm:max-w-md w-11/12">
           <DialogHeader>
             <DialogTitle>Editar Grupo</DialogTitle>
           </DialogHeader>
           {editGroup && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <Label htmlFor="group-name">Nombre</Label>
                 <Input
@@ -1016,11 +1036,11 @@ export default function Dashboard() {
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditGroup(null)} disabled={saving}>
+          <DialogFooter className="flex gap-2 flex-col-reverse sm:flex-row">
+            <Button variant="outline" onClick={() => setEditGroup(null)} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={saveGroup} disabled={saving}>
+            <Button onClick={saveGroup} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
               {saving ? "Guardando..." : "Guardar"}
             </Button>
           </DialogFooter>
@@ -1029,12 +1049,12 @@ export default function Dashboard() {
 
       {/* Edit Event Dialog */}
       <Dialog open={!!editEvent} onOpenChange={(open) => !open && !saving && setEditEvent(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-xs sm:max-w-md w-11/12">
           <DialogHeader>
             <DialogTitle>Editar Evento</DialogTitle>
           </DialogHeader>
           {editEvent && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <Label htmlFor="event-title">Título</Label>
                 <Input
@@ -1079,11 +1099,11 @@ export default function Dashboard() {
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditEvent(null)} disabled={saving}>
+          <DialogFooter className="flex gap-2 flex-col-reverse sm:flex-row">
+            <Button variant="outline" onClick={() => setEditEvent(null)} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={saveEvent} disabled={saving}>
+            <Button onClick={saveEvent} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
               {saving ? "Guardando..." : "Guardar"}
             </Button>
           </DialogFooter>
@@ -1092,12 +1112,12 @@ export default function Dashboard() {
 
       {/* Edit Page Dialog */}
       <Dialog open={!!editPage} onOpenChange={(open) => !open && !saving && setEditPage(null)}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xs sm:max-w-xl w-11/12 max-h-screen overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editPage?.id ? "Editar Página" : "Nueva Página"}</DialogTitle>
           </DialogHeader>
           {editPage && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <Label htmlFor="page-slug">Slug</Label>
                 <Input
@@ -1122,20 +1142,20 @@ export default function Dashboard() {
                 <Label htmlFor="page-content">Contenido</Label>
                 <Textarea
                   id="page-content"
-                  rows={8}
+                  rows={4}
                   value={editPage.content || ""}
                   onChange={(e) => setEditPage({ ...editPage, content: e.target.value })}
-                  className="mt-1"
+                  className="mt-1 text-xs sm:text-sm"
                   disabled={saving}
                 />
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditPage(null)} disabled={saving}>
+          <DialogFooter className="flex gap-2 flex-col-reverse sm:flex-row">
+            <Button variant="outline" onClick={() => setEditPage(null)} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button onClick={savePage} disabled={saving}>
+            <Button onClick={savePage} disabled={saving} className="text-xs sm:text-sm w-full sm:w-auto">
               {saving ? "Guardando..." : "Guardar"}
             </Button>
           </DialogFooter>
