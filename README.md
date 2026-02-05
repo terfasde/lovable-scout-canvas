@@ -3,6 +3,7 @@
 > Sitio web oficial del Grupo Scout Séptimo - Formando líderes desde 1964
 
 [![Deploy Status](https://img.shields.io/badge/deploy-ready-brightgreen)]()
+[![CI](https://github.com/tu-usuario/lovable-scout-canvas/actions/workflows/ci.yml/badge.svg)](https://github.com/tu-usuario/lovable-scout-canvas/actions)
 [![Security](https://img.shields.io/badge/security-audited-blue)]()
 [![Performance](https://img.shields.io/badge/performance-optimized-orange)]()
 

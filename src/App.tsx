@@ -13,6 +13,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+// ...existing code...
 import { ThemeProvider } from "next-themes";
 import ScrollToTop from "@/components/ScrollToTop";
 import RouteTransition from "@/components/RouteTransition";
@@ -63,7 +64,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// 🧠 Contexto global de usuario Supabase
+//  Contexto global de usuario Supabase
 interface SupabaseUserContextType {
   user: any | null;
 }
@@ -120,7 +121,7 @@ async function ensureProfileExists(user: { id: string; email?: string | null; us
       .maybeSingle();
     if (error) return;
     if (existing) return; // ya existe
-
+  // ...existing code...
     // Crear perfil mínimo
     const nombreFallback =
       (user.user_metadata?.nombre as string | undefined) ||
@@ -192,7 +193,6 @@ const App = () => (
 
                     {/* Admin */}
                     <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
-
                     {/* Ruta por defecto */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
