@@ -80,38 +80,88 @@ const SupabaseUserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);
 
   useEffect(() => {
+    // ESCRIBIR EN LA PÁGINA DIRECTAMENTE para verificar
+    if (typeof document !== "undefined") {
+      const debugDiv = document.createElement("div");
+      debugDiv.id = "app-debug";
+      debugDiv.style.position = "fixed";
+      debugDiv.style.top = "0";
+      debugDiv.style.left = "0";
+      debugDiv.style.zIndex = "99999";
+      debugDiv.style.background = "red";
+      debugDiv.style.color = "white";
+      debugDiv.style.padding = "10px";
+      debugDiv.style.fontFamily = "monospace";
+      debugDiv.style.fontSize = "12px";
+      debugDiv.textContent = "🟢 SUPABSE PROVIDER INICIADO";
+      document.body.appendChild(debugDiv);
+      
+      setTimeout(() => {
+        debugDiv.textContent = "🔄 Llamando getSession...";
+      }, 100);
+    }
+
     async function fetchUserAndProfile(sessionUser: any) {
+      console.log("🔍 fetchUserAndProfile llamado");
+      
       if (!sessionUser) {
+        console.log("❌ Sin usuario");
         setUser(null);
         return;
       }
-      // Buscar perfil en Supabase
+      
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("user_id", sessionUser.id)
         .maybeSingle();
+      
+      console.log("📊 Perfil obtenido");
+      
       if (error || !profile) {
-        setUser(sessionUser); // fallback solo datos auth
+        console.log("⚠️  Sin perfil");
+        setUser(sessionUser);
+        localStorage.setItem("adminUser", JSON.stringify(sessionUser));
         return;
       }
-      // Combina datos auth y perfil
-      setUser({ ...sessionUser, ...profile });
+      
+      const combinedUser = { ...sessionUser, ...profile };
+      console.log("✅ Usuario guardado:", combinedUser?.email, "Rol:", (combinedUser as any)?.role);
+      setUser(combinedUser);
+      localStorage.setItem("adminUser", JSON.stringify(combinedUser));
+      
+      // ACTUALIZAR DEBUG EN PÁGINA
+      if (typeof document !== "undefined") {
+        const debug = document.getElementById("app-debug");
+        if (debug) {
+          debug.style.background = "green";
+          debug.textContent = `✅ Usuario: ${combinedUser.email} | Rol: ${combinedUser.role}`;
+        }
+      }
     }
 
+    // Obtener sesión inicial
     supabase.auth.getSession().then(({ data: { session } }) => {
       const u = session?.user ?? null;
-      console.log("App.tsx - Sesión inicial:", u?.email || "sin usuario");
-      fetchUserAndProfile(u);
-      if (u) ensureProfileExists(u).catch(() => {});
+      console.log("📍 Sesión obtenida:", u?.email);
+      if (u) fetchUserAndProfile(u);
+    }).catch(err => {
+      console.error("❌ Error getSession:", err);
+      if (typeof document !== "undefined") {
+        const debug = document.getElementById("app-debug");
+        if (debug) {
+          debug.style.background = "orange";
+          debug.textContent = `⚠️ Error: ${err.message}`;
+        }
+      }
     });
 
+    // Escuchar cambios de auth
     const { data: listener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         const u = session?.user ?? null;
-        console.log("App.tsx - Auth change:", event, "usuario:", u?.email || "sin usuario");
-        fetchUserAndProfile(u);
-        if (u) ensureProfileExists(u).catch(() => {});
+        console.log(`📨 Auth change: ${event}`);
+        if (u) fetchUserAndProfile(u);
       },
     );
 
