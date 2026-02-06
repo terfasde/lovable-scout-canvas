@@ -5,9 +5,6 @@ import { Reveal } from "@/components/Reveal";
 import {
   Archive,
   FileText,
-  Image,
-  Calendar,
-  Newspaper,
   Layers,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -33,33 +30,6 @@ const secciones = [
   },
 ];
 
-const colecciones = [
-  {
-    title: "Noticias y comunicados",
-    description:
-      "Publicaciones históricas, comunicados internos y anuncios relevantes del grupo.",
-    icon: Newspaper,
-  },
-  {
-    title: "Eventos y actividades",
-    description:
-      "Calendarios, campamentos, jornadas y registros de actividades pasadas.",
-    icon: Calendar,
-  },
-  {
-    title: "Galerías y multimedia",
-    description:
-      "Fotos, afiches y material audiovisual del grupo.",
-    icon: Image,
-  },
-  {
-    title: "Documentos y archivos",
-    description:
-      "Documentos, actas, reglamentos y archivos descargables.",
-    icon: FileText,
-  },
-];
-
 const Archivo = () => {
   return (
     <div className="min-h-screen">
@@ -82,34 +52,26 @@ const Archivo = () => {
               organización y hacerlo fácil de encontrar.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link to="/contacto">
-                <Button size="lg" className="gap-2">
-                  <Layers className="w-4 h-4" />
-                  Enviar material
-                </Button>
-              </Link>
-              <Button
-                size="lg"
-                variant="outline"
-                className="gap-2"
-                onClick={() =>
-                  document
-                    .getElementById("colecciones")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                <Archive className="w-4 h-4" />
-                Ver colecciones
-              </Button>
-            </div>
+            <Button
+              size="lg"
+              variant="outline"
+              className="gap-2"
+              onClick={() =>
+                document
+                  .getElementById("secciones")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              <Archive className="w-4 h-4" />
+              Ver secciones
+            </Button>
           </Reveal>
         </div>
       </section>
 
-      {/* Colecciones */}
+      {/* Secciones */}
       <section
-        id="colecciones"
+        id="secciones"
         className="py-12 sm:py-16 bg-gradient-to-b from-background to-muted/30"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -118,70 +80,38 @@ const Archivo = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 shadow-sm">
                 <Archive className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
-                  Colecciones
+                  Secciones destacadas
                 </span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                Contenido organizado por tipo
+                Contenido organizado por temática
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Agrupamos la información para que puedas navegarla fácil y
-                encontrar lo que buscás en pocos clics.
+                Entradas clave del archivo organizadas para una navegación más
+                simple.
               </p>
             </Reveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {colecciones.map((item, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {secciones.map((section, index) => (
                 <Reveal key={index}>
-                  <Card className="card-hover h-full overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-background via-background to-muted/20">
-                    <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary"></div>
-                    <CardContent className="p-5 sm:p-6">
-                      <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                        <item.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="text-lg sm:text-xl font-semibold mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                        {item.description}
+                  <Card className="card-hover border-2 border-primary/20 shadow-lg bg-gradient-to-br from-primary/5 via-background to-accent/5">
+                    <CardContent className="p-6">
+                      <h4 className="text-lg sm:text-xl font-semibold mb-2">
+                        {section.title}
+                      </h4>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {section.description}
                       </p>
+                      <Link to={section.to}>
+                        <Button size="sm" variant="outline">
+                          Abrir sección
+                        </Button>
+                      </Link>
                     </CardContent>
                   </Card>
                 </Reveal>
               ))}
-            </div>
-
-            <div className="mt-10 sm:mt-12">
-              <Reveal className="text-center mb-6">
-                <h3 className="text-2xl sm:text-3xl font-bold">
-                  Secciones destacadas
-                </h3>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Entradas clave del archivo organizadas por temática.
-                </p>
-              </Reveal>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {secciones.map((section, index) => (
-                  <Reveal key={index}>
-                    <Card className="card-hover border-2 border-primary/20 shadow-lg bg-gradient-to-br from-primary/5 via-background to-accent/5">
-                      <CardContent className="p-6">
-                        <h4 className="text-lg sm:text-xl font-semibold mb-2">
-                          {section.title}
-                        </h4>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {section.description}
-                        </p>
-                        <Link to={section.to}>
-                          <Button size="sm" variant="outline">
-                            Abrir sección
-                          </Button>
-                        </Link>
-                      </CardContent>
-                    </Card>
-                  </Reveal>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -203,7 +133,7 @@ const Archivo = () => {
                       </span>
                     </div>
                     <h3 className="text-2xl sm:text-3xl font-bold mb-2">
-                      ¿Tenés material de la página anterior?
+                      ¿Tenés material para sumar?
                     </h3>
                     <p className="text-sm sm:text-base text-muted-foreground">
                       Si querés sumar contenido histórico, escribinos y lo
