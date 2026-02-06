@@ -23,6 +23,10 @@ const Historia = lazy(() => import("./pages/Historia"));
 const Bauen = lazy(() => import("./pages/Bauen"));
 const AmLagerfeuer = lazy(() => import("./pages/AmLagerfeuer"));
 const MovimientoScout = lazy(() => import("./pages/MovimientoScout"));
+const Archivo = lazy(() => import("./pages/Archivo"));
+const ArchivoScoutpedia = lazy(() => import("./pages/archivo/Scoutpedia"));
+const ArchivoCompania = lazy(() => import("./pages/archivo/Compania"));
+const ArchivoMiembros = lazy(() => import("./pages/archivo/Miembros"));
 const Galeria = lazy(() => import("./pages/Galeria"));
 const Contacto = lazy(() => import("./pages/Contacto"));
 const Eventos = lazy(() => import("./pages/Eventos"));
@@ -196,6 +200,10 @@ const App = () => (
                     <Route path="/bauen" element={<Bauen />} />
                     <Route path="/am-lagerfeuer" element={<AmLagerfeuer />} />
                     <Route path="/movimiento-scout" element={<MovimientoScout />} />
+                    <Route path="/archivo" element={<Archivo />} />
+                    <Route path="/archivo/scoutpedia" element={<ArchivoScoutpedia />} />
+                    <Route path="/archivo/compania" element={<ArchivoCompania />} />
+                    <Route path="/archivo/miembros" element={<ArchivoMiembros />} />
                     <Route path="/galeria" element={<Galeria />} />
                     <Route path="/contacto" element={<Contacto />} />
                     <Route path="/eventos" element={<Eventos />} />

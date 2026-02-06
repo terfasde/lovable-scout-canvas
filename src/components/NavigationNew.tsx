@@ -17,6 +17,7 @@ import {
   Users,
   MessageSquare,
   Shield,
+  Archive,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -67,6 +68,7 @@ const navSections: NavSection[] = [
       { name: "Inicio", path: "/", icon: Home },
       { name: "Comuni 7", path: "/usuarios", icon: Users },
       { name: "Historia", path: "/historia", icon: History },
+      { name: "Archivo", path: "/archivo", icon: Archive },
       { name: "Eventos", path: "/eventos", icon: Calendar },
       { name: "Movimiento Scout", path: "/movimiento-scout", icon: BookOpen },
       { name: "Contacto", path: "/contacto", icon: Mail },
