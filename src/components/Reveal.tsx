@@ -36,6 +36,11 @@ export const Reveal: React.FC<RevealProps> = ({
     const el = ref.current;
     if (!el) return;
 
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+      return;
+    }
+
     // Respeta prefers-reduced-motion
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",

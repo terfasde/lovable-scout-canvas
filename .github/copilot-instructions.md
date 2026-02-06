@@ -5,7 +5,7 @@
 
 **Stack**: React 18 + TypeScript (Vite), Express backend, SQLite/PostgreSQL, Supabase auth, TailwindCSS
 
-**Key Docs**: Read [RESUMEN.md](../RESUMEN.md) for project status, [SECURITY.md](../SECURITY.md) for secrets handling, [CHECKLIST.md](../CHECKLIST.md) for quality standards.
+**Key Docs**: Read RESUMEN.md for project status, SECURITY.md for secrets handling, CHECKLIST.md for quality standards.
 
 ---
 
@@ -56,7 +56,7 @@ npm run build:staging         # Staging variant with different env vars
 npm run deploy:prod           # PowerShell script archives dist/ to artifacts/
 ```
 
-**Deploy Target**: Vercel (see [VERCEL_DEPLOY.md](../VERCEL_DEPLOY.md)), Netlify, or static hosting
+**Deploy Target**: Vercel (see VERCEL_DEPLOY.md), Netlify, or static hosting
 
 ### Testing
 ```bash
@@ -128,7 +128,7 @@ Use `db.prepare()` for SQLite queries with parameterized statements (prevents SQ
 ### Security
 1. **NEVER** hardcode API keys - use `import.meta.env.VITE_*`
 2. **NEVER** commit `.env*` files (already in `.gitignore`)
-3. Read [SECURITY.md](../SECURITY.md) before adding auth flows
+3. Read SECURITY.md before adding auth flows
 4. Validate inputs server-side with Zod
 5. Hash passwords with bcrypt, use JWT for auth
 
