@@ -99,7 +99,7 @@ const Archivo = () => {
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                <ListChecks className="w-4 h-4" />
+                <Archive className="w-4 h-4" />
                 Ver colecciones
               </Button>
             </div>
