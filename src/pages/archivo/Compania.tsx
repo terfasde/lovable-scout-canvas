@@ -22,7 +22,7 @@ const Compania = () => {
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
               Espacio para la historia, actividades y documentación de la
-              Compañía. Migración en curso.
+              Compañía.
             </p>
           </Reveal>
         </div>
@@ -40,14 +40,14 @@ const Compania = () => {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-xl sm:text-2xl font-semibold mb-2">
-                        Contenido pendiente de carga
+                        Contenido en preparación
                       </h2>
                       <p className="text-sm sm:text-base text-muted-foreground mb-4">
                         Enviá el material de Compañía para organizarlo aquí.
                       </p>
                       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                         <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                          Estado: esperando contenido
+                          Estado: sección en crecimiento
                         </Badge>
                         <Link to="/contacto">
                           <Button size="sm" className="gap-2">

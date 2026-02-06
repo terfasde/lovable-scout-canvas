@@ -21,8 +21,8 @@ const Scoutpedia = () => {
               Scoutpedia
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-              Sección en migración. Aquí organizaremos definiciones, términos y
-              contenido enciclopédico de la wiki histórica.
+              Aquí organizamos definiciones, términos y contenido enciclopédico
+              del historial scout.
             </p>
           </Reveal>
         </div>
@@ -164,11 +164,11 @@ const Scoutpedia = () => {
                         ¿Querés sumar más material?
                       </h3>
                       <p className="text-sm sm:text-base text-muted-foreground mb-4">
-                        Enviá el contenido de la wiki y lo seguimos migrando.
+                        Enviá material y lo incorporamos a la Scoutpedia.
                       </p>
                       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                         <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-                          Estado: migración en curso
+                          Estado: sección en crecimiento
                         </Badge>
                         <Link to="/contacto">
                           <Button size="sm" className="gap-2">

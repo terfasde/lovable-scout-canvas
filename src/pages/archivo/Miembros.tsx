@@ -21,7 +21,7 @@ const Miembros = () => {
               Lista de miembros y exmiembros
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
-              Esta sección se migrará con cuidado para respetar la privacidad y
+              Esta sección se publica con cuidado para respetar la privacidad y
               el consentimiento de las personas.
             </p>
           </Reveal>
@@ -40,7 +40,7 @@ const Miembros = () => {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-xl sm:text-2xl font-semibold mb-2">
-                        Migración con consentimiento
+                        Publicación con consentimiento
                       </h2>
                       <p className="text-sm sm:text-base text-muted-foreground mb-4">
                         Antes de publicar datos personales, confirmamos la

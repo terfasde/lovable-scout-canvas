@@ -8,7 +8,6 @@ import {
   Image,
   Calendar,
   Newspaper,
-  ListChecks,
   Layers,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -50,7 +49,7 @@ const colecciones = [
   {
     title: "Galerías y multimedia",
     description:
-      "Fotos, afiches y material audiovisual migrado de la página anterior.",
+      "Fotos, afiches y material audiovisual del grupo.",
     icon: Image,
   },
   {
@@ -58,29 +57,6 @@ const colecciones = [
     description:
       "Documentos, actas, reglamentos y archivos descargables.",
     icon: FileText,
-  },
-];
-
-const pasosMigracion = [
-  {
-    title: "Inventario y clasificación",
-    description:
-      "Relevamos todo el contenido de la página anterior y lo agrupamos por tipo (noticias, eventos, fotos, documentos).",
-  },
-  {
-    title: "Normalización de datos",
-    description:
-      "Estandarizamos títulos, fechas, autores, etiquetas y formatos para que todo quede consistente.",
-  },
-  {
-    title: "Importación y revisión",
-    description:
-      "Subimos el contenido a esta web y validamos enlaces, imágenes y textos para evitar pérdidas.",
-  },
-  {
-    title: "Publicación por etapas",
-    description:
-      "Liberamos el contenido por bloques para que el archivo se construya de forma ordenada.",
   },
 ];
 
@@ -94,23 +70,23 @@ const Archivo = () => {
             <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
               <Archive className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
-                Archivo de la página anterior
+                Archivo del Grupo
               </span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6">
               Archivo Histórico
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-              Este espacio reúne la información migrada desde la página anterior
-              del Grupo Scout Séptimo. La idea es conservar el contenido, mejorar
-              su organización y hacerlo fácil de encontrar.
+              Este espacio reúne la información histórica del Grupo Scout
+              Séptimo. La idea es conservar el contenido, mejorar su
+              organización y hacerlo fácil de encontrar.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link to="/contacto">
                 <Button size="lg" className="gap-2">
                   <Layers className="w-4 h-4" />
-                  Enviar material para migrar
+                  Enviar material
                 </Button>
               </Link>
               <Button
@@ -142,7 +118,7 @@ const Archivo = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 shadow-sm">
                 <Archive className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
-                  Colecciones migradas
+                  Colecciones
                 </span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
@@ -178,10 +154,10 @@ const Archivo = () => {
             <div className="mt-10 sm:mt-12">
               <Reveal className="text-center mb-6">
                 <h3 className="text-2xl sm:text-3xl font-bold">
-                  Secciones solicitadas para migración
+                  Secciones destacadas
                 </h3>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  Estas son las primeras áreas que vamos a migrar desde la wiki.
+                  Entradas clave del archivo organizadas por temática.
                 </p>
               </Reveal>
 
@@ -211,52 +187,6 @@ const Archivo = () => {
         </div>
       </section>
 
-      {/* Metodología */}
-      <section className="py-12 sm:py-16 bg-gradient-to-b from-muted/30 to-background">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto">
-            <Reveal className="text-center mb-8 sm:mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 shadow-sm">
-                <ListChecks className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
-                  Metodología de migración
-                </span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-                Cómo migramos mucha información
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Trabajamos por etapas para conservar todo el contenido sin perder
-                contexto ni calidad.
-              </p>
-            </Reveal>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {pasosMigracion.map((step, index) => (
-                <Reveal key={index}>
-                  <Card className="card-hover border-2 border-primary/20 shadow-lg bg-gradient-to-br from-primary/5 via-background to-accent/5">
-                    <CardContent className="p-6 sm:p-8">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Badge className="bg-primary text-white">{index + 1}</Badge>
-                        </div>
-                        <div>
-                          <h3 className="text-xl sm:text-2xl font-semibold mb-2">
-                            {step.title}
-                          </h3>
-                          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                            {step.description}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CTA */}
       <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-muted/20">
