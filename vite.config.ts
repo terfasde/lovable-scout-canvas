@@ -51,7 +51,6 @@ export default defineConfig(({ mode }) => ({
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', '@tanstack/react-query'],
-    exclude: ['@supabase/supabase-js'], // Lazy load si es posible
+    include: ['react', 'react-dom', '@tanstack/react-query', '@supabase/supabase-js'],
   },
 }));
