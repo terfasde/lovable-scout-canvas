@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Hand, Calendar, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Reveal } from "@/components/Reveal";
@@ -16,7 +16,7 @@ const Hero = () => {
       e.preventDefault();
       toast({
         title:
-          "gracias por se parte de la pagina web oficial del Grupo scout septimo",
+          "Gracias por ser parte de la página web oficial del Grupo Scout Séptimo",
       });
     }
   };
@@ -34,6 +34,8 @@ const Hero = () => {
           objectFit="cover"
           priority
         />
+        <div className="bg-blob w-72 h-72 bg-muted/40 -top-24 -right-16 float-slow" />
+        <div className="bg-blob w-64 h-64 bg-muted/40 -bottom-24 -left-10 drift-slow" />
         <div className="absolute inset-0 bg-gradient-to-r from-scout-black/75 via-scout-black/60 to-scout-black/35" />
         <div className="absolute inset-0 bg-gradient-to-t from-scout-black/50 via-transparent to-transparent" />
       </div>
@@ -95,12 +97,53 @@ const Hero = () => {
               </div>
             </Reveal>
 
+            <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-450">
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-white/40 text-white bg-transparent hover:bg-transparent hover:text-white"
+                  onClick={() =>
+                    document
+                      .getElementById("quienes-somos")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  Quiénes somos
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-white/40 text-white bg-transparent hover:bg-transparent hover:text-white"
+                  onClick={() =>
+                    document
+                      .getElementById("ramas")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  Unidades
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-white/40 text-white bg-transparent hover:bg-transparent hover:text-white"
+                  onClick={() =>
+                    document
+                      .getElementById("pilares")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  Pilares
+                </Button>
+              </div>
+            </Reveal>
+
             {/* Stats */}
             <Reveal animationClassName="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
               <div 
                 className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-white/20"
                 role="list"
-                aria-label="Estadísticas del grupo"
+                aria-label="Estadásticas del grupo"
               >
                 <div className="group" role="listitem">
                   <div className="text-3xl sm:text-4xl md:text-5xl font-bold text-primary transition-transform duration-300 group-hover:scale-110" aria-label="Más de 61 años">
@@ -143,7 +186,7 @@ const Hero = () => {
 
       {/* Mobile Scroll Indicator */}
       <div className="md:hidden pointer-events-none absolute bottom-20 right-4 z-10 animate-bounce">
-        <div className="w-12 h-12 bg-primary/20 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border border-primary/30">
+        <div className="w-12 h-12 bg-muted/40 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border border-primary/30">
           <Hand className="w-6 h-6 text-primary" />
         </div>
       </div>
@@ -151,3 +194,5 @@ const Hero = () => {
   );
 };
 export default Hero;
+
+

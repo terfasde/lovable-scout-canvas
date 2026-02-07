@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -181,7 +181,7 @@ const DashboardCoordinador = () => {
       const scoutsOnly = scoutsData.filter(s => s.edad < 21);
       setScouts(scoutsOnly);
 
-      // Calcular estadísticas
+      // Calcular estadásticas
       const porRama = {
         manada: scoutsOnly.filter((s) => s.edad >= 7 && s.edad <= 10).length,
         tropa: scoutsOnly.filter((s) => s.edad >= 11 && s.edad <= 14).length,
@@ -236,7 +236,7 @@ const DashboardCoordinador = () => {
   const handleSendGroupMessage = async () => {
     if (!groupMessage.trim()) {
       toast({
-        title: "Mensaje vacío",
+        title: "Mensaje vacáo",
         description: "Escribe un mensaje para enviar",
         variant: "destructive",
       });
@@ -439,7 +439,7 @@ const DashboardCoordinador = () => {
             </CardHeader>
             <CardContent>
               {getEffectiveRama(coordinadorProfile as any) === "manada" && (
-                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                <div className="p-4 bg-muted/30 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">🐺</span>
                     <div>
@@ -455,7 +455,7 @@ const DashboardCoordinador = () => {
                 </div>
               )}
               {getEffectiveRama(coordinadorProfile as any) === "tropa" && (
-                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                <div className="p-4 bg-muted/30 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">⚜️</span>
                     <div>
@@ -471,7 +471,7 @@ const DashboardCoordinador = () => {
                 </div>
               )}
               {getEffectiveRama(coordinadorProfile as any) === "pioneros" && (
-                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                <div className="p-4 bg-muted/30 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">🏔️</span>
                     <div>
@@ -487,7 +487,7 @@ const DashboardCoordinador = () => {
                 </div>
               )}
               {getEffectiveRama(coordinadorProfile as any) === "rovers" && (
-                <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                <div className="p-4 bg-muted/30 border border-primary/20 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-2xl">🚶</span>
                     <div>
@@ -519,7 +519,7 @@ const DashboardCoordinador = () => {
           </Card>
         )}
 
-        {/* Estadísticas generales */}
+        {/* Estadásticas generales */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -583,7 +583,7 @@ const DashboardCoordinador = () => {
             </TabsTrigger>
             <TabsTrigger value="stats">
               <TrendingUp className="w-4 h-4 mr-2" />
-              Estadísticas
+              Estadásticas
             </TabsTrigger>
           </TabsList>
 
@@ -745,14 +745,14 @@ const DashboardCoordinador = () => {
                 Mensaje grupal a tu sección
               </DialogTitle>
               <DialogDescription>
-                Envía un mensaje a todos los scouts de tus secciones ({scouts.length} destinatarios)
+                Enváa un mensaje a todos los scouts de tus secciones ({scouts.length} destinatarios)
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Mensaje</label>
                 <Textarea
-                  placeholder="Escribe tu mensaje aquí... Ej: Recordatorio: Reunión este sábado a las 15:00 en la sede."
+                  placeholder="Escribe tu mensaje aquá... Ej: Recordatorio: Reunión este sábado a las 15:00 en la sede."
                   value={groupMessage}
                   onChange={(e) => setGroupMessage(e.target.value)}
                   rows={6}
@@ -816,3 +816,5 @@ const DashboardCoordinador = () => {
 };
 
 export default DashboardCoordinador;
+
+

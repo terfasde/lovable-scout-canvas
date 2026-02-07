@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef, useCallback } from "react";
+﻿import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -393,7 +393,7 @@ export default function Mensajes() {
                       key={u.user_id}
                       className={`w-full text-left p-2.5 sm:p-3 rounded-lg border transition-colors ${
                         selectedUser?.user_id === u.user_id
-                          ? "bg-primary/10 border-primary/50 shadow-sm"
+                          ? "bg-muted/30 border-primary/50 shadow-sm"
                           : "hover:bg-muted/50 border-border"
                       }`}
                       onClick={() => setSelectedUser(u)}
@@ -454,7 +454,7 @@ export default function Mensajes() {
                   <div ref={messagesContainerRef} className="flex-1 overflow-auto space-y-2 sm:space-y-3 p-2 sm:p-4 border rounded-lg mb-3 sm:mb-4 h-[calc(100vh-400px)] sm:h-[60vh] bg-muted/20">
                     {messages.length === 0 ? (
                       <div className="text-muted-foreground text-xs sm:text-sm text-center py-12">
-                        Sin mensajes aún. ¡Envía el primero! 💬
+                        Sin mensajes aún. ¡Enváa el primero! 💬
                       </div>
                     ) : (
                       <>
@@ -562,7 +562,7 @@ export default function Mensajes() {
                                     {category === 'actividades' && '🏕️ Actividades'}
                                     {category === 'scout' && '⚜️ Scout'}
                                     {category === 'naturaleza' && '🌲 Naturaleza'}
-                                    {category === 'energia' && '⚡ Energía'}
+                                    {category === 'energia' && '⚡ Energáa'}
                                   </div>
                                   <div className="grid grid-cols-6 gap-2">
                                     {stickers.map((emoji, i) => (
@@ -597,3 +597,5 @@ export default function Mensajes() {
     </EmailVerificationGuard>
   );
 }
+
+

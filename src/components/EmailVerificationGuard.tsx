@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { sendVerificationEmail, checkEmailVerified } from "@/lib/email-verification";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,7 @@ const EmailVerificationGuard = ({
         title: "Token generado",
         description: result?.developmentMode
           ? "Link copiado / visible en consola (modo desarrollo)."
-          : "Si el envío está habilitado, revisa tu correo.",
+          : "Si el enváo está habilitado, revisa tu correo.",
       });
     } catch (e: any) {
       toast({
@@ -156,3 +156,4 @@ const EmailVerificationGuard = ({
 };
 
 export default EmailVerificationGuard;
+

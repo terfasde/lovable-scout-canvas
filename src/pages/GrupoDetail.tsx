@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+﻿import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 // Navigation es global en App.tsx
@@ -201,7 +201,7 @@ export default function GrupoDetail() {
         if (groupError) throw groupError;
         setGroup(groupData);
 
-        // Verificar membresía y rol
+        // Verificar membresáa y rol
         const { data: membership } = await supabase
           .from("group_members")
           .select("role")
@@ -882,3 +882,4 @@ export default function GrupoDetail() {
     </div>
   );
 }
+

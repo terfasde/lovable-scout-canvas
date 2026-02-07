@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import communityImage from "@/assets/community-scouts.jpg";
@@ -13,7 +13,7 @@ const Comite = () => {
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground mb-4">
-                  El Comité de Padres es un pilar fundamental del grupo. Formado por madres, padres y familiares, acompañan la labor educativa brindando apoyo logístico, económico y humano.
+                  El Comité de Padres es un pilar fundamental del grupo. Formado por madres, padres y familiares, acompañan la labor educativa brindando apoyo logástico, económico y humano.
                 </p>
                 <p className="text-lg text-muted-foreground mb-4">
                   Organizan eventos, gestionan recursos, mantienen el local y colaboran en cada campamento o actividad importante.
@@ -22,7 +22,7 @@ const Comite = () => {
                   Su participación fortalece la comunidad scout y demuestra que, cuando las familias se comprometen, los sueños de los chicos se hacen realidad.
                 </p>
                 <ul className="list-disc pl-5 mt-6 text-muted-foreground space-y-2">
-                  <li>Apoyo logístico y económico</li>
+                  <li>Apoyo logástico y económico</li>
                   <li>Organización de eventos y gestión de recursos</li>
                   <li>Participación activa de padres y familiares</li>
                 </ul>
@@ -53,3 +53,4 @@ const Comite = () => {
 };
 
 export default Comite;
+

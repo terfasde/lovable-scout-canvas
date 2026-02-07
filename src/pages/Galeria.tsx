@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -123,7 +123,7 @@ const Galeria = () => {
     if (!newAlbumName.trim()) {
       toast({
         title: "Error",
-        description: "El nombre del álbum no puede estar vacío",
+        description: "El nombre del álbum no puede estar vacáo",
         variant: "destructive",
       });
       return;
@@ -205,7 +205,7 @@ const Galeria = () => {
       setImages(imgs);
       toast({
         title: "✅ Imagen eliminada",
-        description: "La imagen se eliminó correctamente de la galería.",
+        description: "La imagen se eliminó correctamente de la galeráa.",
       });
     } catch (error) {
       toast({
@@ -277,16 +277,16 @@ const Galeria = () => {
   }, [lightboxOpen, images.length]);
 
   return (
-    <EmailVerificationGuard featureName="Galería">
+    <EmailVerificationGuard featureName="Galeráa">
     <div className="min-h-screen bg-background">
       {/* Hero */}
       <section className="pt-24 sm:pt-28 md:pt-32 pb-4 sm:pb-6">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 rounded-full mb-3 sm:mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-muted/30 rounded-full mb-3 sm:mb-4">
               <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm">
-                Galería
+                Galeráa
               </span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
@@ -356,7 +356,7 @@ const Galeria = () => {
             <div className="text-center text-muted-foreground py-4">
               <p className="text-xs sm:text-sm">
                 {isAdmin
-                  ? "No hay álbumes todavía. Crea tu primer álbum arriba."
+                  ? "No hay álbumes todaváa. Crea tu primer álbum arriba."
                   : "No hay álbumes disponibles."}
               </p>
             </div>
@@ -372,7 +372,7 @@ const Galeria = () => {
                   className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm border transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-background ${
                     selected === a.name
                       ? "bg-primary text-primary-foreground border-primary"
-                      : "hover:bg-accent/60 border-border"
+                      : "hover:bg-muted/30 border-border"
                   }`}
                 >
                   {a.name}
@@ -430,7 +430,7 @@ const Galeria = () => {
             <div className="text-center text-muted-foreground py-16 sm:py-20">
               <Images className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-3" />
               <p className="text-xs sm:text-sm">
-                No hay imágenes en este álbum todavía.
+                No hay imágenes en este álbum todaváa.
               </p>
             </div>
           )}
@@ -484,7 +484,7 @@ const Galeria = () => {
             <AlertDialogTitle>¿Eliminar imagen?</AlertDialogTitle>
             <AlertDialogDescription>
               Esta acción no se puede deshacer. La imagen se eliminará
-              permanentemente de la galería.
+              permanentemente de la galeráa.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -565,3 +565,5 @@ const Galeria = () => {
 };
 
 export default Galeria;
+
+

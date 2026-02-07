@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Componente de imagen optimizado con lazy loading, blur placeholder y manejo de errores
  */
 
@@ -133,7 +133,7 @@ export function OptimizedImage({
 }
 
 /**
- * Componente para galería de imágenes con lazy loading
+ * Componente para galeráa de imágenes con lazy loading
  */
 interface ImageGalleryProps {
   images: Array<{
@@ -224,3 +224,4 @@ export function useBlurDataURL(src: string): string | undefined {
 
   return blurDataURL;
 }
+

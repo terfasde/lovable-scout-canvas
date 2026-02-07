@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Menu,
@@ -213,7 +213,7 @@ const Navigation = () => {
                   alt="Grupo Scout Séptimo"
                   className="h-10 w-10 md:h-12 md:w-12 object-contain transition-transform group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-muted/40 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <div className="hidden sm:block">
                 <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
@@ -229,23 +229,37 @@ const Navigation = () => {
             <div className="hidden lg:flex items-center gap-6">
               {/* Main Links */}
               <div className="flex items-center gap-1">
-                {navSections[0].links.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={cn(
-                      "px-4 py-2 rounded-md text-sm font-medium transition-all",
-                      "hover:bg-nav-hover hover:text-nav-hover-foreground",
-                      isActive(link.path) || 
-                      (link.path === "/historia" && isActive("/linea-temporal")) ||
-                      (link.path === "/eventos" && isActive("/bauen"))
-                        ? "bg-primary text-primary-foreground"
-                        : "text-foreground/80",
-                    )}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
+                {navSections[0].links.map((link) => {
+                  const isSpecialActive =
+                    (link.path === "/historia" && isActive("/linea-temporal")) ||
+                    (link.path === "/eventos" && isActive("/bauen"));
+                  const active = isActive(link.path) || isSpecialActive;
+                  const isHomeLink = link.path === "/";
+
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={cn(
+                        "relative px-4 py-2 rounded-md text-sm font-medium transition-all group",
+                        "hover:bg-nav-hover hover:text-nav-hover-foreground",
+                        active ? "text-foreground" : "text-foreground/80",
+                      )}
+                    >
+                      <span>{link.name}</span>
+                      <span
+                        className={cn(
+                          "pointer-events-none absolute left-3 right-3 -bottom-1 h-0.5 rounded-full",
+                          "bg-foreground/40 opacity-0 transition-opacity duration-300",
+                          "group-hover:opacity-100",
+                          active && "opacity-100",
+                          "underline-sweep",
+                        )}
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  );
+                })}
               </div>
 
                       {/* Notificaciones */}
@@ -266,7 +280,7 @@ const Navigation = () => {
                               <span className="font-semibold">Notificaciones</span>
                               {unreadCount > 0 && (
                                 <Button size="sm" variant="ghost" onClick={markAllRead}>
-                                  Marcar todo como leído
+                                  Marcar todo como leádo
                                 </Button>
                               )}
                             </div>
@@ -447,7 +461,7 @@ function MobileMenu({
           {/* Tarjeta de usuario con dropdown */}
           <button
             onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-            className="w-full flex items-center gap-3 p-4 rounded-lg bg-accent hover:bg-accent/80 transition-colors"
+            className="w-full flex items-center gap-3 p-4 rounded-lg bg-muted/30 hover:bg-muted/40 transition-colors"
           >
             <UserAvatar userName={userName} avatarUrl={avatarUrl} size="md" />
             <div className="flex-1 min-w-0 text-left">
@@ -472,7 +486,7 @@ function MobileMenu({
                   setAccountMenuOpen(false);
                   onLinkClick();
                 }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-accent transition-colors text-sm"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-muted/30 transition-colors text-sm"
               >
                 <User className="h-4 w-4" />
                 <span>Ver mi perfil</span>
@@ -483,7 +497,7 @@ function MobileMenu({
                   setAccountMenuOpen(false);
                   onLinkClick();
                 }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-accent transition-colors text-sm"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-muted/30 transition-colors text-sm"
               >
                 <Settings className="h-4 w-4" />
                 <span>Editar perfil</span>
@@ -494,7 +508,7 @@ function MobileMenu({
                   setAccountMenuOpen(false);
                   onLinkClick();
                 }}
-                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-accent transition-colors text-sm"
+                className="flex items-center gap-3 px-4 py-2.5 rounded-md hover:bg-muted/30 transition-colors text-sm"
               >
                 <Share2 className="h-4 w-4" />
                 <span>Compartir perfil</span>
@@ -566,3 +580,5 @@ function MobileMenu({
 }
 
 export default Navigation;
+
+

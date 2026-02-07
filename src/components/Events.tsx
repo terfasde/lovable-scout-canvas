@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Calendar, MapPin, Flag, Users, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,31 +17,31 @@ const sampleEvents = [
   {
     id: 1,
     title: "Campamento de Verano 2024",
-    date: "15-20 Enero, 2024",
+    date: "A confirmar, 2026",
     location: "Parque Nacional Santa Teresa",
     participants: "Todas las ramas",
     type: "Campamento",
-    status: "Confirmado",
+    status: "En incógnita",
     image: "https://images.unsplash.com/photo-1533599329424-34869443a571?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: 2,
     title: "Juego de Ciudad",
-    date: "12 Abril, 2024",
+    date: "A confirmar, 2026",
     location: "Centro de Montevideo",
     participants: "Tropa y Comunidad",
     type: "Actividad",
-    status: "Planificado",
+    status: "En incógnita",
     image: "https://images.unsplash.com/photo-1599946343513-c4963d360293?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: 3,
     title: "Fogón de Aniversario",
-    date: "A confirmar",
+    date: "A confirmar, 2026",
     location: "Sede del Grupo",
     participants: "Todo el grupo",
     type: "Celebración",
-    status: "Pendiente",
+    status: "En incógnita",
     image: "", // Evento sin imagen para mostrar el placeholder
   },
 ];
@@ -97,13 +97,13 @@ const EventCard = ({ event }: { event: any }) => {
   return (
     <Reveal>
       <Card 
-        className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 group h-full flex flex-col bg-gradient-to-br from-background via-background to-muted/20 shadow-sm hover:shadow-lg"
+        className="card-hover overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 group h-full flex flex-col bg-background/70 backdrop-blur-sm shadow-sm hover:shadow-lg"
         role="article" 
         aria-labelledby={`event-title-${event.id}`}
         tabIndex={0}
       >
         <div className="relative">
-          <div className="h-2.5 bg-gradient-to-r from-primary via-accent to-primary animate-gradient-x"></div>
+          <div className="h-2.5 bg-foreground/10 animate-gradient-x"></div>
           <img
             src={event.image || '/placeholder.svg'}
             alt={`Imagen del evento ${event.title}`}
@@ -114,10 +114,10 @@ const EventCard = ({ event }: { event: any }) => {
         </div>
         <CardHeader className="space-y-3 p-4">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full" aria-label="Tipo de evento">
+            <span className="text-xs font-bold text-primary bg-muted/30 px-3 py-1 rounded-full" aria-label="Tipo de evento">
               {event.type}
             </span>
-            <span className="text-xs bg-gradient-to-r from-accent/20 to-accent/10 text-accent-foreground px-3 py-1 rounded-full font-semibold border border-accent/20" aria-label="Estado del evento">
+            <span className="text-xs bg-muted/30 text-foreground px-3 py-1 rounded-full font-semibold border border-border" aria-label="Estado del evento">
               {event.status}
             </span>
           </div>
@@ -163,7 +163,7 @@ const EventCard = ({ event }: { event: any }) => {
               tabIndex={0}
               className="w-full"
             >
-              <Button variant="outline" size="sm" className="w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:bg-primary/5 hover:text-primary">
+              <Button variant="outline" size="sm" className="w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary hover:bg-muted/20 hover:text-primary">
                 <PlusCircle className="w-4 h-4 mr-2" />
                 Añadir a Google Calendar
               </Button>
@@ -196,7 +196,7 @@ const Events = () => {
         <Reveal>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">Próximos Eventos</h2>
           <p className="text-muted-foreground mt-2 text-lg">
-            Mantente al día con nuestras actividades y campamentos.
+            Mantente al dáa con nuestras actividades y campamentos.
           </p>
         </Reveal>
       </div>
@@ -234,7 +234,7 @@ const Events = () => {
 
       {/* BAUEN Special Section */}
       <Reveal>
-        <Card className="bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10 border-2 border-primary/30 shadow-xl group overflow-hidden mt-16">
+        <Card className="bg-background/70 backdrop-blur-sm border-2 border-primary/30 shadow-xl group overflow-hidden mt-16">
           <CardContent className="p-6 sm:p-8 md:p-10">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="flex-1 space-y-5">
@@ -245,11 +245,11 @@ const Events = () => {
                   </h3>
                 </div>
                 <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                  El evento más importante del escultismo uruguayo, creado por el Grupo Séptimo en 2004. Un desafío que reúne a grupos scouts de todo el país para compartir experiencias, desarrollar habilidades y fortalecer la hermandad scout.
+                  El evento más importante del escultismo uruguayo, creado por el Grupo Séptimo en 2004. Un desafáo que reúne a grupos scouts de todo el paás para compartir experiencias, desarrollar habilidades y fortalecer la hermandad scout.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Badge variant="outline" className="px-4 py-2 text-base bg-primary/10 text-primary border-primary/30 transition-transform hover:scale-105">Creado en 2004</Badge>
-                  <Badge variant="secondary" className="px-4 py-2 text-base bg-accent/20 text-accent-foreground border-accent/30 transition-transform hover:scale-105">+300 Participantes</Badge>
+                  <Badge variant="outline" className="px-4 py-2 text-base bg-muted/30 text-primary border-primary/30 transition-transform hover:scale-105">Creado en 2004</Badge>
+                  <Badge variant="secondary" className="px-4 py-2 text-base bg-muted/40 text-accent-foreground border-accent/30 transition-transform hover:scale-105">+300 Participantes</Badge>
                   <Badge variant="outline" className="px-4 py-2 text-base bg-muted text-muted-foreground border-muted-foreground/20 transition-transform hover:scale-105">Tradición Nacional</Badge>
                 </div>
               </div>
@@ -273,4 +273,7 @@ const Events = () => {
 };
 
 export default Events;
+
+
+
 

@@ -1,4 +1,4 @@
-import {
+﻿import {
   useEffect,
   useState,
   createContext,
@@ -157,7 +157,7 @@ async function ensureProfileExists(user: { id: string; email?: string | null; us
     if (error) return;
     if (existing) return; // ya existe
   // ...existing code...
-    // Crear perfil mínimo
+    // Crear perfil mánimo
     const nombreFallback =
       (user.user_metadata?.nombre as string | undefined) ||
       (user.email as string | undefined) ||
@@ -251,3 +251,4 @@ const App = () => (
 );
 
 export default App;
+

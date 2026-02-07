@@ -1,4 +1,4 @@
-// Sanitización básica para mostrar datos
+﻿// Sanitización básica para mostrar datos
 function sanitizeText(text: string | null | undefined): string {
   if (!text) return "";
   return String(text).replace(/[<>"']/g, "");
@@ -52,7 +52,7 @@ const PerfilPublic = () => {
             const data = await apiFetch(`/profiles/${encodeURIComponent(id)}`);
             setProfile(data);
           } catch {
-            // Fallback: directorio mínimo
+            // Fallback: directorio mánimo
             const directory = (await apiFetch(
               "/profiles/directory?q=&limit=200&offset=0",
             )) as any[];
@@ -304,7 +304,7 @@ const PerfilPublic = () => {
             </div>
           ) : (
             <div className="text-sm text-muted-foreground">
-              Solo puedes ver el nombre y el usuario. Envía una solicitud para ver más información.
+              Solo puedes ver el nombre y el usuario. Enváa una solicitud para ver más información.
             </div>
           )}
         </CardContent>
@@ -314,3 +314,4 @@ const PerfilPublic = () => {
 };
 
 export default PerfilPublic;
+

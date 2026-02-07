@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+﻿import { MapPin } from "lucide-react";
 
 const DEFAULT_CENTER = {
   lat: -34.88597863841296,
@@ -16,7 +16,7 @@ interface MapComponentEmbedProps {
 /**
  * Componente de mapa usando Google Maps Embed API
  * - NO requiere billing habilitado
- * - Completamente GRATIS sin límites
+ * - Completamente GRATIS sin lámites
  * - Solo necesita Maps Embed API habilitada en Google Cloud Console
  */
 function MapComponentEmbed({
@@ -59,3 +59,4 @@ function MapComponentEmbed({
 }
 
 export default MapComponentEmbed;
+

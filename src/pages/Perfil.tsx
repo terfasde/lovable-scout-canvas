@@ -1,4 +1,4 @@
-// --- Validación y sanitización ---
+﻿// --- Validación y sanitización ---
 type ProfileFormData = {
   nombre_completo: string;
   telefono: string;
@@ -146,7 +146,7 @@ const Perfil = () => {
   useEffect(() => {
     if (formData.fecha_nacimiento) {
       const hoy = new Date();
-      // Parsear fecha sin conversión UTC para evitar desfase de días
+      // Parsear fecha sin conversión UTC para evitar desfase de dáas
       const [year, month, day] = formData.fecha_nacimiento
         .split("-")
         .map(Number);
@@ -173,7 +173,7 @@ const Perfil = () => {
 
   // Detectar rama educador según datos
   useEffect(() => {
-    // Si ya hay un valor explícito en rama_que_educa, usarlo
+    // Si ya hay un valor explácito en rama_que_educa, usarlo
     if (formData.rama_que_educa) {
       setRamaEducador(formData.rama_que_educa as "" | "manada" | "tropa" | "pioneros" | "rovers");
     } else {
@@ -293,7 +293,7 @@ const Perfil = () => {
   ) => {
     const { name, value } = e.target;
 
-    // Validación específica por campo
+    // Validación especáfica por campo
     if (name === "telefono") {
       // Solo números y guiones/espacios
       const cleaned = value.replace(/[^\d\s\-+()]/g, "");
@@ -720,7 +720,7 @@ const Perfil = () => {
             <p className="text-sm text-muted-foreground mb-3">{userEmail}</p>
             <div className="flex gap-2 justify-center sm:justify-start">
               <Label htmlFor="avatar-upload" className="cursor-pointer">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted/30 text-foreground rounded-md hover:bg-muted/40 transition-colors text-sm font-medium">
                   <Upload className="w-4 h-4" />
                   {formData.avatar_url ? "Cambiar foto" : "Subir foto"}
                 </div>
@@ -806,7 +806,7 @@ const Perfil = () => {
                 {formData.nombre_completo.length > 0 &&
                   formData.nombre_completo.length < 3 && (
                     <p className="text-xs text-destructive">
-                      Mínimo 3 caracteres
+                      Mánimo 3 caracteres
                     </p>
                   )}
                 {formData.nombre_completo.length > 90 && (
@@ -831,7 +831,7 @@ const Perfil = () => {
                       if (daysRemaining > 0) {
                         return (
                           <span className="ml-2 text-xs text-muted-foreground font-normal">
-                            (podrás cambiar en {daysRemaining} día
+                            (podrás cambiar en {daysRemaining} dáa
                             {daysRemaining !== 1 ? "s" : ""})
                           </span>
                         );
@@ -869,10 +869,10 @@ const Perfil = () => {
                   {formData.username.length > 0 &&
                     formData.username.length < 3 && (
                       <span className="block text-destructive mt-1">
-                        Mínimo 3 caracteres
+                        Mánimo 3 caracteres
                       </span>
                     )}
-                  {!formData.username && " Solo se puede cambiar cada 7 días."}
+                  {!formData.username && " Solo se puede cambiar cada 7 dáas."}
                 </p>
               </div>
 
@@ -935,7 +935,7 @@ const Perfil = () => {
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleChange}
-                    placeholder="Dejar vacío para mantener"
+                    placeholder="Dejar vacáo para mantener"
                     className="bg-background pr-10"
                   />
                   <button
@@ -1073,7 +1073,7 @@ const Perfil = () => {
                     </p>
                   </div>
 
-                  {/* Campos específicos según la rama */}
+                  {/* Campos especáficos según la rama */}
                   {ramaEducador === "manada" && (
                     <div className="space-y-2">
                       <Label htmlFor="seisena_educador">Seisena de Manada (opcional)</Label>
@@ -1186,7 +1186,7 @@ const Perfil = () => {
             </div>
 
             {hasChanges() && (
-              <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-md animate-pulse">
+              <div className="mt-3 p-3 bg-muted/30 border border-primary/20 rounded-md animate-pulse">
                 <p className="text-sm text-primary font-medium text-center">
                   ⚠️ Tienes cambios sin guardar
                 </p>
@@ -1240,3 +1240,5 @@ const Perfil = () => {
 };
 
 export default Perfil;
+
+

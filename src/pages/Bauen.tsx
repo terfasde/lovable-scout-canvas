@@ -1,4 +1,4 @@
-// Navigation y Footer son globales en App.tsx
+﻿// Navigation y Footer son globales en App.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Flag, Target, Users, Calendar, Award, Flame, Instagram, Phone } from "lucide-react";
@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 const Bauen = () => {
   const actividades = [
     { nombre: "Pionerismo", icon: "🏗️" },
-    { nombre: "Cabullería", icon: "🪢" },
+    { nombre: "Cabulleráa", icon: "🪢" },
     { nombre: "Cocina", icon: "🔥" },
   ];
 
@@ -15,25 +15,25 @@ const Bauen = () => {
     {
       nombre: "La Manada",
       color: "#FEB21A",
-      duracion: "1 día",
-      descripcion: "En la Manada realiza construcciones de cubiles. Esta se desarrolla en una sola jornada donde deben presentar sus construcciones que se realizan dentro de un box delimitado. Cada cubil representará a un personaje del Libro de la Selva, elegido por cada seisena, y la elección del mismo no podrá repetirse dentro del mismo Grupo Scout. Con esta propuesta se busca que exploren y se sumerjan en el mundo de las Tierras Vírgenes durante esta actividad. Es una actividad familiar que los Lobatos disfrutan mucho así como los Padres y familia y amigos.",
+      duracion: "1 dáa",
+      descripcion: "En la Manada realiza construcciones de cubiles. Esta se desarrolla en una sola jornada donde deben presentar sus construcciones que se realizan dentro de un box delimitado. Cada cubil representará a un personaje del Libro de la Selva, elegido por cada seisena, y la elección del mismo no podrá repetirse dentro del mismo Grupo Scout. Con esta propuesta se busca que exploren y se sumerjan en el mundo de las Tierras Várgenes durante esta actividad. Es una actividad familiar que los Lobatos disfrutan mucho asá como los Padres y familia y amigos.",
     },
     {
       nombre: "Rama Scout / Tropa",
       color: "#344F1F",
-      duracion: "2 días",
-      descripcion: "Es uno de los platos fuertes de este evento ya que nuclear a la mayor cantidad de participantes. A la fecha participan más de 25 Patrullas en la modalidad de competencia de construcciones de Rincones de Patrulla y competencia de Cocina con fuego. En la competencia de Rama Scout/Tropa se puede ver en tiempo real todo lo que los scouts han aprendido a lo largo de su vida scout en la teoría y ponerlo en práctica de la mejor manera posible. Cabuyería, amarres, pionerismo, campismo, cocina, fuego, armado de toldos, armado de mesas y bancos, cuidado y limpieza del rincón.",
+      duracion: "2 dáas",
+      descripcion: "Es uno de los platos fuertes de este evento ya que nuclear a la mayor cantidad de participantes. A la fecha participan más de 25 Patrullas en la modalidad de competencia de construcciones de Rincones de Patrulla y competencia de Cocina con fuego. En la competencia de Rama Scout/Tropa se puede ver en tiempo real todo lo que los scouts han aprendido a lo largo de su vida scout en la teoráa y ponerlo en práctica de la mejor manera posible. Cabuyeráa, amarres, pionerismo, campismo, cocina, fuego, armado de toldos, armado de mesas y bancos, cuidado y limpieza del rincón.",
     },
     {
       nombre: "Pioneros",
       color: "#134686",
-      duracion: "2 días",
-      descripcion: "Sin duda se ha transformado en la actividad del segundo día que mayor atención atrae. La construcción de Trebuchet es una competencia que aplica todo lo referente a cabuyería pero de una forma más compleja. Requiere precisión, técnica y que todos los participantes tengan muy en claro su roll dentro de la competencia. En este caso además se agrega una cena Medieval a la Noche donde todos los scouts de todos los grupos comparten una velada totalmente caracterizados con la época y a la mañana siguiente antes de comenzar la competencia tienen un momento de distinción y juego donde realizan competencias medievales de arquería, etc.",
+      duracion: "2 dáas",
+      descripcion: "Sin duda se ha transformado en la actividad del segundo dáa que mayor atención atrae. La construcción de Trebuchet es una competencia que aplica todo lo referente a cabuyeráa pero de una forma más compleja. Requiere precisión, técnica y que todos los participantes tengan muy en claro su roll dentro de la competencia. En este caso además se agrega una cena Medieval a la Noche donde todos los scouts de todos los grupos comparten una velada totalmente caracterizados con la época y a la mañana siguiente antes de comenzar la competencia tienen un momento de distinción y juego donde realizan competencias medievales de arqueráa, etc.",
     },
     {
       nombre: "Rovers",
       color: "#DD0303",
-      duracion: "2 días",
+      duracion: "2 dáas",
       descripcion: "Los rovers realiza generalmente competencias de Torres aunque en los últimos años se han realizado otro tipo de competencias como construcciones de barcos, campamentos elevados, juegos mecánicos, etc. En esta Unidad la competencia ha tomado mayor interés ya que Poco a poco más y más Comunidades se anotan a esta competencia. Además se realiza una actividad en la primera noche donde el objetivo es conocerse y dejar la competencia de lado un momento. En esta competencia se nota la diferencia en cuanto a la madurez como scouts y la experiencia. Podemos ver mucho más desarrollado el trabajo en equipo, la práctica de la paciencia y la fraternidad entre comunidades. Es una competencia más distendida debido a la seguridad que manejan los participantes y además la motivación es constante, tanto dentro del equipo como entre competidores.",
     },
   ];
@@ -42,17 +42,16 @@ const Bauen = () => {
     <div className="min-h-screen relative overflow-hidden">
       {/* Background decorativo global */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 dark:bg-primary/10 rounded-full blur-3xl animate-blob"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 dark:bg-accent/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/3 dark:bg-primary/8 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-muted/20 dark:bg-muted/30 rounded-full blur-3xl animate-blob"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-muted/20 dark:bg-muted/30 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-muted/15 dark:bg-muted/20 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
       </div>
 
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/10 via-accent/5 to-transparent dark:from-primary/20 dark:via-accent/10 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent dark:from-primary/15"></div>
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-background/60 backdrop-blur-sm relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-muted/30 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
               <Flag className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
                 Desde 2004 - Competencia entre Grupos Scouts
@@ -98,8 +97,7 @@ const Bauen = () => {
       </section>
 
       {/* Acerca del Evento */}
-      <section className="section-padding bg-gradient-to-b from-background via-muted/20 to-background dark:from-background dark:via-muted/30 dark:to-background relative">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent dark:from-accent/10"></div>
+      <section className="section-padding bg-background/60 backdrop-blur-sm relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 text-center">
@@ -114,8 +112,8 @@ const Bauen = () => {
                   por supuesto, divirtiéndonos, ayudando a continuar construyendo juntos los ideales del Escultismo.
                 </p>
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6">
-                  Bauen es una excusa para conocer a otros Grupos de nuestro país, otras formas de hacer escultismo, 
-                  es una instancia para practicar la empatía, la tolerancia y sentir el verdadero espíritu scout 
+                  Bauen es una excusa para conocer a otros Grupos de nuestro paás, otras formas de hacer escultismo, 
+                  es una instancia para practicar la empatáa, la tolerancia y sentir el verdadero espáritu scout 
                   del que todos tenemos conocimiento.
                 </p>
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
@@ -141,8 +139,7 @@ const Bauen = () => {
       </section>
 
       {/* Nuestras Ramas - Rediseño */}
-      <section className="section-padding bg-gradient-to-b from-background via-primary/5 to-muted/30 dark:from-background dark:via-primary/10 dark:to-muted/40 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent dark:from-primary/10"></div>
+      <section className="section-padding bg-background/60 backdrop-blur-sm relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
@@ -234,3 +231,6 @@ const Bauen = () => {
   );
 };
 export default Bauen;
+
+
+

@@ -1,4 +1,4 @@
-// Navigation y Footer son globales en App.tsx
+﻿// Navigation y Footer son globales en App.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +32,7 @@ const Historia = () => {
     {
       nombre: "San Pedro",
       direccion:
-        "Parroquia San Pedro Apóstol del Buceo — Leguizamón 3684, Montevideo",
+        "Parroquia San Pedro Apóstol del Buceo  Leguizamón 3684, Montevideo",
       resumen:
         "Parroquia San Pedro Apóstol del Buceo, conocida como la 'iglesia' o 'capilla'.",
       detalle: `Parroquia San Pedro Apóstol del Buceo. Dirección: Leguizamón 3684, 11400 Montevideo. Comúnmente llamada 'iglesia', 'parroquia' o 'capilla'.`,
@@ -66,7 +66,7 @@ const Historia = () => {
     },
     {
       nombre: "El Tajamar",
-      direccion: "Lieja 6416 — Parque Julio César Grauert, Carrasco",
+      direccion: "Lieja 6416  Parque Julio César Grauert, Carrasco",
       resumen:
         "Uno de los locales más importantes: construido en 1942, reunió al grupo bajo techo por muchos años.",
       detalle: `El Tajamar (Lieja 6416) en el Parque Julio César Grauert, Carrasco. Diseñado por el Arq. Juan A. Scasso e inaugurado en 1942; reciclado en 1991 por la Intendencia. Durante ese periodo tuvimos tres 'locales' (parque al lado de CONAPROLE, El Tajamar, y parque atrás del Lawn Tennis). El Tajamar fue el más importante porque permitió reunir al grupo bajo su techo por muchos años. Tras dejar el Tajamar nos reuníamos detrás del Lawn Tennis y luego en otros lugares.`,
@@ -80,7 +80,7 @@ const Historia = () => {
     },
     {
       nombre: "Volteadores",
-      direccion: "Volteadores 1753 — Capilla San Jerónimo, Malvín",
+      direccion: "Volteadores 1753  Capilla San Jerónimo, Malvín",
       resumen:
         "Capilla San Jerónimo; uso del Parque Baroffio para actividades al aire libre.",
       detalle: `Capilla San Jerónimo. Dirección: Volteadores 1753, Malvín, Montevideo. El Grupo utiliza el Parque Baroffio para actividades al aire libre.`,
@@ -90,10 +90,14 @@ const Historia = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+      <section className="relative overflow-hidden pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-background/60 backdrop-blur-sm">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="bg-blob w-80 h-80 bg-muted/30 -top-20 -right-16 float-slow" />
+          <div className="bg-blob w-64 h-64 bg-muted/30 -bottom-20 -left-12 drift-slow" />
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-muted/30 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
                 Más de 60 años de trayectoria
@@ -107,38 +111,77 @@ const Historia = () => {
             </p>
             
             <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto">
-              <Card className="text-center card-hover bg-gradient-to-br from-primary/5 to-background">
+              <Card className="text-center card-hover bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-3 sm:p-6">
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 sm:mb-2">1964</div>
                   <p className="text-xs sm:text-sm text-muted-foreground">Año de fundación</p>
                 </CardContent>
               </Card>
-              <Card className="text-center card-hover bg-gradient-to-br from-accent/5 to-background">
+              <Card className="text-center card-hover bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-3 sm:p-6">
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 sm:mb-2">11</div>
                   <p className="text-xs sm:text-sm text-muted-foreground">Locales históricos</p>
                 </CardContent>
               </Card>
-              <Card className="text-center card-hover bg-gradient-to-br from-primary/5 to-background">
+              <Card className="text-center card-hover bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-3 sm:p-6">
                   <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-1 sm:mb-2">60+</div>
                   <p className="text-xs sm:text-sm text-muted-foreground">Años de servicio</p>
                 </CardContent>
               </Card>
             </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() =>
+                  document
+                    .getElementById("nacimiento")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Nacimiento
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() =>
+                  document
+                    .getElementById("locales")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Locales
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() =>
+                  document
+                    .getElementById("tradiciones")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Tradiciones
+              </Button>
+            </div>
           </Reveal>
         </div>
       </section>
 
       {/* Nacimiento del grupo */}
-      <section className="py-8 sm:py-12 bg-gradient-to-b from-background to-muted/30">
+      <section id="nacimiento" className="py-8 sm:py-12 bg-background/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto">
             <Reveal>
-              <Card className="card-hover border-2 border-primary/20 shadow-xl bg-gradient-to-br from-primary/5 via-background to-accent/5">
+              <Card className="card-hover border-2 border-primary/20 shadow-xl bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-6 sm:p-8 md:p-10">
                   <div className="flex flex-col md:flex-row items-start gap-4 sm:gap-6">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary/20 to-accent/10 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-muted/30 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
                       <Users className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
                     </div>
                     <div className="flex-1">
@@ -146,7 +189,7 @@ const Historia = () => {
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">
                           Nacimiento del Grupo
                         </h2>
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                        <Badge variant="outline" className="bg-muted/30 text-primary border-primary/30">
                           1964
                         </Badge>
                       </div>
@@ -172,11 +215,11 @@ const Historia = () => {
       </section>
 
       {/* Locales Section */}
-      <section className="py-12 sm:py-16 bg-gradient-to-b from-muted/30 via-background to-muted/20">
+      <section id="locales" className="py-12 sm:py-16 bg-background/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto">
             <Reveal className="text-center mb-8 sm:mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 shadow-sm">
+              <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-muted/30 backdrop-blur-sm rounded-full mb-4 shadow-sm">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
                   Nuestros Locales
@@ -194,11 +237,11 @@ const Historia = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {locales.map((local, index) => (
                 <Reveal key={index}>
-                  <Card className="card-hover h-full overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group bg-gradient-to-br from-background via-background to-muted/20">
-                    <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary"></div>
+                  <Card className="card-hover h-full overflow-hidden border-2 hover:border-primary/50 transition-all duration-500 group bg-background/70 backdrop-blur-sm">
+                    <div className="h-2 bg-foreground/10"></div>
                     <CardContent className="p-5 sm:p-6">
                       <div className="flex items-start gap-3 mb-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                        <div className="w-12 h-12 bg-muted/30 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
                           <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -232,15 +275,15 @@ const Historia = () => {
       </section>
 
       {/* Acontecimientos importantes y Tradiciones */}
-      <section className="py-12 sm:py-16 bg-gradient-to-b from-background to-muted/30">
+      <section id="tradiciones" className="py-12 sm:py-16 bg-background/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Acontecimientos importantes */}
             <Reveal>
-              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 bg-muted/30 rounded-xl flex items-center justify-center shadow-lg">
                       <Calendar className="w-6 h-6 text-primary" />
                     </div>
                     <h2 className="text-xl sm:text-2xl font-bold">
@@ -248,8 +291,8 @@ const Historia = () => {
                     </h2>
                   </div>
                   <ul className="space-y-4 text-sm sm:text-base text-muted-foreground">
-                    <li className="flex gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors">
-                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 h-fit">
+                    <li className="flex gap-3 p-3 rounded-lg hover:bg-muted/20 transition-colors">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-muted/30 h-fit">
                         2004
                       </Badge>
                       <span className="flex-1">
@@ -257,14 +300,14 @@ const Historia = () => {
                         por nuestro grupo.
                       </span>
                     </li>
-                    <li className="flex gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors">
-                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 h-fit">
+                    <li className="flex gap-3 p-3 rounded-lg hover:bg-muted/20 transition-colors">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-muted/30 h-fit">
                         2014
                       </Badge>
                       <span className="flex-1">Aniversario y celebración de los 50 años del Grupo Séptimo.</span>
                     </li>
-                    <li className="flex gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors">
-                      <Badge variant="outline" className="text-primary border-primary/30 bg-primary/10 h-fit">
+                    <li className="flex gap-3 p-3 rounded-lg hover:bg-muted/20 transition-colors">
+                      <Badge variant="outline" className="text-primary border-primary/30 bg-muted/30 h-fit">
                         2025
                       </Badge>
                       <span className="flex-1">
@@ -279,10 +322,10 @@ const Historia = () => {
 
             {/* Am Lagerfeuers */}
             <Reveal>
-              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-accent/5 via-background to-primary/5">
+              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-accent/20 to-primary/10 rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 bg-muted/30 rounded-xl flex items-center justify-center shadow-lg">
                       <Flame className="w-6 h-6 text-primary" />
                     </div>
                     <h2 className="text-xl sm:text-2xl font-bold">
@@ -310,10 +353,10 @@ const Historia = () => {
 
             {/* Línea del Tiempo */}
             <Reveal>
-              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+              <Card className="card-hover border-2 hover:border-primary/50 transition-all duration-500 bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="w-12 h-12 bg-muted/30 rounded-xl flex items-center justify-center shadow-lg">
                       <Calendar className="w-6 h-6 text-primary" />
                     </div>
                     <h2 className="text-xl sm:text-2xl font-bold">
@@ -343,3 +386,8 @@ const Historia = () => {
 };
 
 export default Historia;
+
+
+
+
+

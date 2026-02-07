@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
 import emblemImage from "@/assets/scout-emblem.jpg";
 
@@ -38,7 +38,7 @@ const Historia = () => {
       year: "2020",
       title: "Adaptación Digital",
       description:
-        "Durante la pandemia, innovamos con actividades virtuales manteniendo vivo el espíritu scout.",
+        "Durante la pandemia, innovamos con actividades virtuales manteniendo vivo el espáritu scout.",
     },
     {
       year: "2025",
@@ -50,10 +50,10 @@ const Historia = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-background/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-muted/30 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
                 Nuestra Historia
@@ -64,7 +64,7 @@ const Historia = () => {
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
               Desde 1964, hemos sido parte fundamental del movimiento scout
-              uruguayo, formando generaciones de líderes comprometidos con su
+              uruguayo, formando generaciones de láderes comprometidos con su
               comunidad.
             </p>
           </div>
@@ -104,7 +104,7 @@ const Historia = () => {
           {/* Timeline */}
           <div className="relative">
             {/* Vertical Line */}
-            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-primary via-accent to-primary"></div>
+            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-foreground/20"></div>
 
             <div className="space-y-12 sm:space-y-16">
               {milestones.map((milestone, index) => (
@@ -151,3 +151,5 @@ const Historia = () => {
 };
 
 export default Historia;
+
+

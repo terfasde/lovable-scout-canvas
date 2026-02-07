@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, Phone, MapPin, Heart, Youtube } from "lucide-react";
+﻿import { Facebook, Instagram, Mail, Phone, MapPin, Heart, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import logoImage from "@/assets/grupo-scout-logo.png";
@@ -61,8 +61,9 @@ const SocialLink = ({ href, icon, label }: SocialLinkProps) => (
 );
 
 const FooterNew = () => {
+  const currentYear = new Date().getFullYear();
   return (
-    <footer role="contentinfo" aria-label="Pie de página Grupo Scout Séptimo" className="bg-scout-black text-gray-300 border-t border-white/5">
+    <footer role="contentinfo" aria-label="Pie de página Grupo Scout Séptimo" className="bg-background/80 backdrop-blur-sm text-gray-300 border-t border-white/5">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 mb-8">
@@ -117,7 +118,7 @@ const FooterNew = () => {
                 <FooterLink to="/">Inicio</FooterLink>
               </li>
               <li>
-                <FooterLink to="/linea-temporal">Línea Temporal</FooterLink>
+                <FooterLink to="/linea-temporal">Lánea Temporal</FooterLink>
               </li>
               <li>
                 <FooterLink to="/historia">Historia</FooterLink>
@@ -129,7 +130,7 @@ const FooterNew = () => {
                 <FooterLink to="/eventos">Eventos</FooterLink>
               </li>
               <li>
-                <FooterLink to="/galeria">Galería</FooterLink>
+                <FooterLink to="/galeria">Galeráa</FooterLink>
               </li>
               <li>
                 <FooterLink to="/contacto">Contacto</FooterLink>
@@ -200,14 +201,14 @@ const FooterNew = () => {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-400 text-center md:text-left flex items-center gap-1.5">
-            © 2025 Grupo Scout Séptimo de Montevideo.
+            © {currentYear} Grupo Scout Séptimo de Montevideo.
             <span className="hidden sm:inline">Hecho con</span>
             <Heart className="w-4 h-4 text-primary inline-block fill-current animate-pulse" />
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <button className="hover:text-primary transition-colors duration-300 hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" tabIndex={0} aria-label="Política de Privacidad">
-              Política de Privacidad
+            <button className="hover:text-primary transition-colors duration-300 hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" tabIndex={0} aria-label="Polática de Privacidad">
+              Polática de Privacidad
             </button>
             <button className="hover:text-primary transition-colors duration-300 hover:underline underline-offset-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" tabIndex={0} aria-label="Términos y Condiciones">
               Términos y Condiciones
@@ -220,3 +221,5 @@ const FooterNew = () => {
 };
 
 export default FooterNew;
+
+

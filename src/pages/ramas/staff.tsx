@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import communityImage from "@/assets/community-scouts.jpg";
@@ -13,10 +13,10 @@ const Staff = () => {
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground mb-4">
-                  Los Educadores Scouts son voluntarios que acompañan, guían y sostienen el crecimiento de cada niño, niña y joven del grupo.
+                  Los Educadores Scouts son voluntarios que acompañan, guáan y sostienen el crecimiento de cada niño, niña y joven del grupo.
                 </p>
                 <p className="text-lg text-muted-foreground mb-4">
-                  Desde la vocación y el compromiso, dedican su tiempo a planificar actividades, capacitarse, formar equipos y vivir el escultismo con alegría y coherencia.
+                  Desde la vocación y el compromiso, dedican su tiempo a planificar actividades, capacitarse, formar equipos y vivir el escultismo con alegráa y coherencia.
                 </p>
                 <p className="text-lg text-muted-foreground">
                   Su misión es formar personas libres, responsables y felices, siendo testimonio vivo de los valores que inspiran el Movimiento Scout.
@@ -53,3 +53,4 @@ const Staff = () => {
 };
 
 export default Staff;
+

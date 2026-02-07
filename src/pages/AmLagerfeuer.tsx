@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Flame, Calendar, Users, Download, Upload, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -138,10 +138,10 @@ const AmLagerfeuer = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-background/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-muted/30 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
               <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
                 Tradición Scout
@@ -152,7 +152,7 @@ const AmLagerfeuer = () => {
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
               Repositorio de nuestras reuniones nocturnas alrededor del fuego.
-              Aquí encontrarás los registros de cada Am Lagerfeuer: cantos,
+              Aquá encontrarás los registros de cada Am Lagerfeuer: cantos,
               historias y momentos compartidos que forman parte de nuestra
               historia scout.
             </p>
@@ -218,12 +218,12 @@ const AmLagerfeuer = () => {
                     key={index}
                     className="card-hover border-2 hover:border-primary/50 transition-all duration-500 overflow-hidden group"
                   >
-                    <div className="h-2 bg-gradient-to-r from-primary to-accent"></div>
+                    <div className="h-2 bg-foreground/10"></div>
                     <CardContent className="p-5 sm:p-6 lg:p-8">
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div className="flex-1 space-y-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-muted/30 rounded-xl flex items-center justify-center">
                               <Flame className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                             </div>
                             <div className="flex-1">
@@ -281,7 +281,7 @@ const AmLagerfeuer = () => {
             )}
 
             {/* Mensaje informativo */}
-            <Card className="mt-8 sm:mt-12 border-2 border-accent/30 bg-accent/5">
+            <Card className="mt-8 sm:mt-12 border-2 border-accent/30 bg-muted/20">
               <CardContent className="p-5 sm:p-6 lg:p-8 text-center">
                 <Flame className="w-12 h-12 text-primary mx-auto mb-4" />
                 <h3 className="text-lg sm:text-xl font-bold mb-3">
@@ -327,3 +327,6 @@ const AmLagerfeuer = () => {
 };
 
 export default AmLagerfeuer;
+
+
+

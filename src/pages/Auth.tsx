@@ -1,13 +1,13 @@
-// --- Validación y sanitización ---
+﻿// --- Validación y sanitización ---
 function validateAuth({ email, password, nombreCompleto, telefono }: { email: string; password: string; nombreCompleto?: string; telefono?: string }) {
   const errors: string[] = [];
   // Email obligatorio y formato válido
   if (!email.trim()) errors.push("El email es obligatorio.");
   if (email && !/^\S+@\S+\.\S+$/.test(email)) errors.push("El email no es válido.");
-  // Password obligatorio y mínimo 6 caracteres
+  // Password obligatorio y mánimo 6 caracteres
   if (!password.trim()) errors.push("La contraseña es obligatoria.");
   if (password && password.length < 6) errors.push("La contraseña debe tener al menos 6 caracteres.");
-  // Nombre: opcional pero si existe, mínimo 3 caracteres y sin caracteres peligrosos
+  // Nombre: opcional pero si existe, mánimo 3 caracteres y sin caracteres peligrosos
   if (nombreCompleto && nombreCompleto.length < 3) errors.push("El nombre debe tener al menos 3 caracteres.");
   if (nombreCompleto && /[<>"']/.test(nombreCompleto)) errors.push("El nombre contiene caracteres inválidos.");
   // Teléfono: opcional pero si existe debe ser numérico
@@ -95,7 +95,7 @@ const Auth = () => {
                 localStorage.removeItem("oauth_intent");
                 toast({
                   title: "Primero debes registrarte",
-                  description: "Ese correo no está registrado. Regístrate y luego podrás iniciar sesión con Google.",
+                  description: "Ese correo no está registrado. Regástrate y luego podrás iniciar sesión con Google.",
                   variant: "destructive",
                 });
                 setProcessingOAuth(false);
@@ -139,7 +139,7 @@ const Auth = () => {
       } = supabase.auth.onAuthStateChange(async (event, session) => {
         console.log("Auth state change evento:", event, "email:", session?.user?.email);
         
-        // Solo redirigir en eventos específicos de login exitoso
+        // Solo redirigir en eventos especáficos de login exitoso
         if (event === "SIGNED_IN" && session?.user) {
           console.log("SIGNED_IN detectado, redirigiendo a /");
           setTimeout(() => {
@@ -381,7 +381,7 @@ const Auth = () => {
         setLoading(false);
       } else {
         console.log("OAuth iniciado correctamente:", data);
-        // No desactivar loading aquí porque la página se redirigirá
+        // No desactivar loading aquá porque la página se redirigirá
       }
     } catch (error: any) {
       console.error("Error inesperado en Google Sign In:", error);
@@ -395,7 +395,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-scout-black via-scout-red to-scout-yellow flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background/60 backdrop-blur-sm flex items-center justify-center p-4">
       {processingOAuth ? (
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
@@ -669,3 +669,4 @@ const Auth = () => {
 };
 
 export default Auth;
+

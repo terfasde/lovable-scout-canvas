@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
@@ -8,21 +8,21 @@ import { Link } from "react-router-dom";
 const Compania = () => {
   return (
     <div className="min-h-screen">
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-14 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+      <section className="pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-14 bg-background/60 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted/30 rounded-full mb-4">
               <Users className="w-4 h-4 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm">
-                Archivo · Compañía
+                Archivo · Compañáa
               </span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Sección Compañía
+              Sección Compañáa
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed">
               Espacio para la historia, actividades y documentación de la
-              Compañía.
+              Compañáa.
             </p>
           </Reveal>
         </div>
@@ -32,10 +32,10 @@ const Compania = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <Reveal>
-              <Card className="border-2 border-primary/20 shadow-lg bg-gradient-to-br from-primary/5 via-background to-accent/5">
+              <Card className="border-2 border-primary/20 shadow-lg bg-background/70 backdrop-blur-sm">
                 <CardContent className="p-6 sm:p-8">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-2xl bg-muted/30 flex items-center justify-center">
                       <FileText className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
@@ -43,10 +43,10 @@ const Compania = () => {
                         Contenido en preparación
                       </h2>
                       <p className="text-sm sm:text-base text-muted-foreground mb-4">
-                        Enviá el material de Compañía para organizarlo aquí.
+                        Enviá el material de Compañáa para organizarlo aquá.
                       </p>
                       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                        <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                        <Badge variant="outline" className="bg-muted/30 text-primary border-primary/30">
                           Estado: sección en crecimiento
                         </Badge>
                         <Link to="/contacto">
@@ -69,3 +69,5 @@ const Compania = () => {
 };
 
 export default Compania;
+
+

@@ -1,4 +1,4 @@
-// --- Validación y sanitización ---
+﻿// --- Validación y sanitización ---
 function validateContact({ name, email, phone, message }: { name: string; email: string; phone?: string; message: string }) {
   const errors: string[] = [];
   // Nombre obligatorio, mínimo 3 caracteres, sin caracteres peligrosos
@@ -94,10 +94,14 @@ const Contacto = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-gradient-to-b from-primary/5 via-accent/5 to-background">
+      <section className="relative overflow-hidden pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 bg-background/60 backdrop-blur-sm">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="bg-blob w-72 h-72 bg-muted/30 -top-16 -right-12 float-slow" />
+          <div className="bg-blob w-64 h-64 bg-muted/30 -bottom-20 -left-12 drift-slow" />
+        </div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-primary/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-muted/30 backdrop-blur-sm rounded-full mb-4 sm:mb-6 shadow-sm">
               <Mail className="w-4 h-4 text-primary" />
               <span className="text-primary font-semibold text-xs sm:text-sm md:text-base">
                 Contacto
@@ -110,6 +114,44 @@ const Contacto = () => {
               Estamos aquí para responder tus preguntas y ayudarte a formar
               parte de nuestra comunidad scout.
             </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() =>
+                  document
+                    .getElementById("formulario")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Formulario
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() =>
+                  document
+                    .getElementById("info")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Contacto
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-full"
+                onClick={() =>
+                  document
+                    .getElementById("mapa")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Mapa
+              </Button>
+            </div>
           </Reveal>
         </div>
       </section>
@@ -120,7 +162,7 @@ const Contacto = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
             {/* Contact Form */}
             <Reveal>
-              <div>
+              <div id="formulario">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
                   Envíanos un mensaje
                 </h2>
@@ -210,7 +252,7 @@ const Contacto = () => {
 
             {/* Contact Info */}
             <Reveal>
-              <div className="space-y-6 sm:space-y-8">
+              <div id="info" className="space-y-6 sm:space-y-8">
                 <div>
                   <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
                     Información de contacto
@@ -228,7 +270,7 @@ const Contacto = () => {
                     >
                       <CardContent className="p-4 sm:p-6">
                         <div className="flex items-start gap-3 sm:gap-4">
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-muted/30 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
                             <info.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -246,7 +288,7 @@ const Contacto = () => {
                 </div>
 
                 {/* Map */}
-                <Card className="overflow-hidden shadow-xl border-2">
+                <Card id="mapa" className="overflow-hidden shadow-xl border-2">
                   <CardContent className="p-0">
                     <div className="w-full h-64 sm:h-80 rounded-lg overflow-hidden">
                       <MapComponent />
@@ -265,3 +307,8 @@ const Contacto = () => {
 };
 
 export default Contacto;
+
+
+
+
+

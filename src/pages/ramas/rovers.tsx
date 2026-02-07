@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import communityImage from "@/assets/community-scouts.jpg";
@@ -24,7 +24,7 @@ const Rovers = () => {
                 </p>
                 <ul className="list-disc pl-5 mt-6 text-muted-foreground space-y-2">
                   <li>Edades: 18–21 años</li>
-                  <li>Enfoque en servicio y autonomía</li>
+                  <li>Enfoque en servicio y autonomáa</li>
                   <li>Proyectos de crecimiento personal y comunitario</li>
                 </ul>
                 <div className="mt-6">
@@ -54,3 +54,4 @@ const Rovers = () => {
 };
 
 export default Rovers;
+

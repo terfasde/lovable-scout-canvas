@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import communityImage from "@/assets/community-scouts.jpg";
@@ -17,7 +17,7 @@ const Manada = () => {
                   La Manada es el primer paso en la aventura scout. Está integrada por niñas y niños de 7 a 10 años, que descubren el mundo a través del juego, la imaginación y la vida en grupo. Inspirados en El Libro de la Selva, aprenden valores como la amistad, el respeto y la ayuda mutua.
                 </p>
                 <p className="text-lg text-muted-foreground">
-                  Sus actividades están llenas de canciones, exploraciones y desafíos simples que despiertan la curiosidad y el amor por la naturaleza. En la Manada, cada uno encuentra su lugar en la selva y aprende, jugando, a ser mejor persona junto al resto de los integrantes de la manada.
+                  Sus actividades están llenas de canciones, exploraciones y desafáos simples que despiertan la curiosidad y el amor por la naturaleza. En la Manada, cada uno encuentra su lugar en la selva y aprende, jugando, a ser mejor persona junto al resto de los integrantes de la manada.
                 </p>
                 <ul className="list-disc pl-5 mt-6 text-muted-foreground space-y-2">
                   <li>Edades: 7–10 años</li>
@@ -51,3 +51,4 @@ const Manada = () => {
 };
 
 export default Manada;
+

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback, ReactNode } from "react";
+﻿import { useEffect, useState, useMemo, useCallback, ReactNode } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { isLocalBackend, apiFetch, getAuthUser } from "@/lib/backend";
@@ -488,16 +488,16 @@ const Usuarios = () => {
           </div>
         </div>
 
-        {/* Botones de acceso a Galería y Mensajes */}
+        {/* Botones de acceso a Galeráa y Mensajes */}
         <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4">
           <Link to="/galeria">
             <Card className="card-hover cursor-pointer h-full">
               <CardContent className="p-2 sm:p-3 flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-muted/30 rounded-lg flex items-center justify-center">
                   <ImageIconGallery className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm sm:text-base">Galería</h3>
+                  <h3 className="font-semibold text-sm sm:text-base">Galeráa</h3>
                   <p className="text-xs text-muted-foreground hidden sm:block">
                     Explorá las fotos del grupo
                   </p>
@@ -509,7 +509,7 @@ const Usuarios = () => {
           <Link to="/mensajes">
             <Card className="card-hover cursor-pointer h-full">
               <CardContent className="p-2 sm:p-3 flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-muted/30 rounded-lg flex items-center justify-center">
                   <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
                 <div>
@@ -841,7 +841,7 @@ const Usuarios = () => {
                           onChange={handleFileChange}
                           className="hidden"
                         />
-                        <div className="flex items-center gap-2 text-primary hover:bg-primary/10 px-3 py-2 rounded-full transition-colors">
+                        <div className="flex items-center gap-2 text-primary hover:bg-muted/30 px-3 py-2 rounded-full transition-colors">
                           <ImageIcon className="h-5 w-5" />
                           <span className="text-sm font-medium">Imagen</span>
                         </div>
@@ -1269,3 +1269,5 @@ const Usuarios = () => {
 };
 
 export default Usuarios;
+
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+﻿import { useEffect, useMemo, useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,7 +60,7 @@ const EMOJIS = [
   "🔥",
 ];
 
-// Stickers scouts organizados por categoría
+// Stickers scouts organizados por categoráa
 const STICKER_CATEGORIES = {
   actividades: [
     { emoji: "🏕️", text: "¡Campamento!", bg: "bg-green-100 dark:bg-green-900/30" },
@@ -81,14 +81,14 @@ const STICKER_CATEGORIES = {
   naturaleza: [
     { emoji: "🌲", text: "Bosque scout", bg: "bg-green-100 dark:bg-green-900/30" },
     { emoji: "🌙", text: "Noche estrellada", bg: "bg-indigo-100 dark:bg-indigo-900/30" },
-    { emoji: "☀️", text: "Día soleado", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "☀️", text: "Dáa soleado", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
     { emoji: "⛰️", text: "Aventura en montaña", bg: "bg-slate-100 dark:bg-slate-800" },
     { emoji: "🌊", text: "Actividad acuática", bg: "bg-cyan-100 dark:bg-cyan-900/30" },
     { emoji: "�", text: "Naturaleza viva", bg: "bg-pink-100 dark:bg-pink-900/30" },
   ],
   energia: [
     { emoji: "💪", text: "¡Fuerza scout!", bg: "bg-red-100 dark:bg-red-900/30" },
-    { emoji: "⚡", text: "Energía total", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
+    { emoji: "⚡", text: "Energáa total", bg: "bg-yellow-100 dark:bg-yellow-900/30" },
     { emoji: "🔦", text: "Iluminando el camino", bg: "bg-amber-100 dark:bg-amber-900/30" },
     { emoji: "🧭", text: "Siempre orientado", bg: "bg-blue-100 dark:bg-blue-900/30" },
     { emoji: "✨", text: "Brillando siempre", bg: "bg-purple-100 dark:bg-purple-900/30" },
@@ -435,7 +435,7 @@ export default function Mensajes() {
                       key={u.user_id}
                       className={`w-full text-left p-2.5 sm:p-3 rounded-lg border transition-colors ${
                         selectedUser?.user_id === u.user_id
-                          ? "bg-primary/10 border-primary/50 shadow-sm"
+                          ? "bg-muted/30 border-primary/50 shadow-sm"
                           : "hover:bg-muted/50 border-border"
                       }`}
                       onClick={() => setSelectedUser(u)}
@@ -496,7 +496,7 @@ export default function Mensajes() {
                   <div ref={messagesContainerRef} className="flex-1 overflow-auto space-y-2 sm:space-y-3 p-2 sm:p-4 border rounded-lg mb-3 sm:mb-4 h-[calc(100vh-400px)] sm:h-[60vh] bg-muted/20">
                     {messages.length === 0 ? (
                       <div className="text-muted-foreground text-xs sm:text-sm text-center py-12">
-                        Sin mensajes aún. ¡Envía el primero! 💬
+                        Sin mensajes aún. ¡Enváa el primero! 💬
                       </div>
                     ) : (
                       <>
@@ -597,7 +597,7 @@ export default function Mensajes() {
                                     {category === 'actividades' && '🏕️ Actividades'}
                                     {category === 'scout' && '⚜️ Scout'}
                                     {category === 'naturaleza' && '🌲 Naturaleza'}
-                                    {category === 'energia' && '⚡ Energía'}
+                                    {category === 'energia' && '⚡ Energáa'}
                                   </div>
                                   <div className="grid grid-cols-1 gap-1.5">
                                     {stickers.map((sticker, i) => (
@@ -633,3 +633,5 @@ export default function Mensajes() {
     </EmailVerificationGuard>
   );
 }
+
+

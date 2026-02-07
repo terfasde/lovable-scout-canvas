@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -58,7 +58,7 @@ const UserAvatar = ({
         onClick={handleClick}
       >
         {avatarUrl && <AvatarImage src={avatarUrl} alt={userName || "Usuario"} loading="lazy" />}
-        <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+        <AvatarFallback className="bg-muted/30 text-primary font-semibold">
           {initials}
         </AvatarFallback>
       </Avatar>
@@ -88,3 +88,4 @@ const UserAvatar = ({
 };
 
 export default UserAvatar;
+

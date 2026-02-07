@@ -44,7 +44,7 @@ export function OptimizedImage({
     >
       {/* Skeleton mientras carga */}
       {!isLoaded && (
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-muted via-muted/50 to-muted" />
+        <div className="absolute inset-0 animate-pulse bg-muted/40" />
       )}
       
       <picture>
@@ -104,8 +104,8 @@ export function HeroImage({
       />
       
       {/* Overlay gradient */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"
+      <div
+        className="absolute inset-0 bg-black/50"
         style={{ opacity: overlayOpacity }}
       />
       
@@ -145,7 +145,7 @@ export function AvatarImage({
     return (
       <div 
         className={cn(
-          "flex items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-yellow-500 font-semibold text-white",
+          "flex items-center justify-center rounded-full bg-muted/30 text-foreground font-semibold",
           sizeClasses[size],
           className
         )}

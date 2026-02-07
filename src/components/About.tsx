@@ -1,4 +1,4 @@
-import {
+﻿import {
   Shield,
   Heart,
   Compass,
@@ -121,7 +121,7 @@ const About = () => {
   return (
     <>
       {/* Quiénes Somos */}
-      <section className="section-padding bg-background">
+      <section id="quienes-somos" className="section-padding bg-background">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto">
             <Reveal>
@@ -158,13 +158,13 @@ const About = () => {
                   <img
                     src={communityImage}
                     alt="Grupo de scouts compartiendo actividades en comunidad"
-                    className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]"
+                    className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3] float-slow"
                     loading="lazy"
                     decoding="async"
                   />
                 </div>
-                <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-primary rounded-full opacity-20 blur-3xl -z-0"></div>
-                <div className="absolute -top-6 -right-6 w-40 h-40 bg-accent rounded-full opacity-20 blur-3xl -z-0"></div>
+                <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-primary rounded-full opacity-20 blur-3xl -z-0 glow-pulse"></div>
+                <div className="absolute -top-6 -right-6 w-40 h-40 bg-accent rounded-full opacity-20 blur-3xl -z-0 drift-slow"></div>
               </div>
             </Reveal>
           </div>
@@ -172,7 +172,7 @@ const About = () => {
       </section>
 
       {/* Ramas y Pilares */}
-      <section className="section-padding bg-background">
+      <section id="ramas" className="section-padding bg-background">
         <div className="container mx-auto px-4">
           <Reveal className="text-center mb-6 sm:mb-8">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
@@ -193,7 +193,7 @@ const About = () => {
                       className={`card-hover border-none shadow-sm min-w-[140px] aspect-square cursor-pointer transition-all duration-300 group ${branch.hoverClass}`}
                     >
                       <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center gap-2">
-                        <div className="w-14 h-14 bg-primary/10 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-all duration-300">
+                        <div className="w-14 h-14 bg-muted/30 group-hover:bg-white/20 rounded-xl flex items-center justify-center transition-all duration-300">
                           <branch.icon
                             className={`w-7 h-7 text-current transition-colors duration-300 ${branch.hoverIconClass}`}
                           />
@@ -259,8 +259,8 @@ const About = () => {
 
           {/* Values Grid - Pilares */}
           <Reveal>
-            <div className="bg-gradient-to-br from-muted/30 to-muted/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-12">
-              <div className="text-center mb-6 sm:mb-10">
+            <div className="bg-background/70 backdrop-blur-sm border border-border/60 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-12">
+              <div id="pilares" className="text-center mb-6 sm:mb-10">
                 <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
                   Los Pilares del Escultismo
                 </h3>
@@ -277,7 +277,7 @@ const About = () => {
                   className="card-hover border-none shadow-md bg-card/50 backdrop-blur-sm group"
                 >
                   <CardContent className="p-6 space-y-4">
-                    <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                    <div className="w-14 h-14 bg-muted/30 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                       <value.icon className="w-7 h-7 text-primary" />
                     </div>
                     <div>
@@ -299,3 +299,5 @@ const About = () => {
 };
 
 export default About;
+
+

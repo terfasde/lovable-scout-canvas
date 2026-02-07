@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+﻿import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import communityImage from "@/assets/community-scouts.jpg";
@@ -14,13 +14,13 @@ const Tropa = () => {
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground mb-4">
-                  La Rama Scout reúne a adolescentes de 11 a 14 años, en una etapa llena de energía, descubrimientos y búsqueda de independencia.
+                  La Rama Scout reúne a adolescentes de 11 a 14 años, en una etapa llena de energáa, descubrimientos y búsqueda de independencia.
                 </p>
                 <p className="text-lg text-muted-foreground mb-4">
                   A través de patrullas, construcciones, campamentos, juegos y proyectos, aprenden a trabajar en equipo, a tomar decisiones y a asumir responsabilidades.
                 </p>
                 <p className="text-lg text-muted-foreground">
-                  La vida de Tropa es pura aventura: noches bajo las estrellas, desafíos personales y la emoción de aprender haciendo. Cada scout vive la Ley y la Promesa, construyendo día a día su carácter y su compromiso con los demás scouts de la unidad.
+                  La vida de Tropa es pura aventura: noches bajo las estrellas, desafáos personales y la emoción de aprender haciendo. Cada scout vive la Ley y la Promesa, construyendo dáa a dáa su carácter y su compromiso con los demás scouts de la unidad.
                 </p>
                 <ul className="list-disc pl-5 mt-6 text-muted-foreground space-y-2">
                   <li>Edades: 11–14 años</li>
@@ -54,3 +54,4 @@ const Tropa = () => {
 };
 
 export default Tropa;
+

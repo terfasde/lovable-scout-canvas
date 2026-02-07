@@ -1,4 +1,4 @@
-
+﻿
 
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -24,7 +24,7 @@ export default function AdminDashboard() {
     // Solo admins pueden acceder (ajusta la lógica según tu sistema de roles)
     const isAdmin = user?.role === 'admin' || user?.email === 'franciscolorenzo2406@gmail.com';
 
-    // Obtener usuarios y estadísticas reales
+    // Obtener usuarios y estadásticas reales
     useEffect(() => {
       async function fetchData() {
         setLoading(true);
@@ -32,7 +32,7 @@ export default function AdminDashboard() {
         const { data: usuarios, error } = await supabase.from('profiles').select('*');
         // Obtener admins
         const admins = usuarios?.filter((u: any) => u.role === 'admin').length || 0;
-        // Estadísticas simples
+        // Estadásticas simples
         const registradosHoy = usuarios?.filter((u: any) => u.created_at?.startsWith(new Date().toISOString().slice(0, 10))).length || 0;
         setUsers(usuarios || []);
         setStats({
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
       <div style={{ padding: 32, maxWidth: 900, margin: '0 auto' }}>
         <h1>Panel de Administración</h1>
         <section style={{ marginBottom: 32 }}>
-          <h2>Estadísticas</h2>
+          <h2>Estadásticas</h2>
           <ul>
             <li>Total de usuarios: {stats.totalUsuarios}</li>
             <li>Admins: {stats.admins}</li>
@@ -219,3 +219,4 @@ export default function AdminDashboard() {
   ];
 
   // ...existing code...
+

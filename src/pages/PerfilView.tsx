@@ -1,4 +1,4 @@
-// Sanitización básica para mostrar datos
+﻿// Sanitización básica para mostrar datos
 function sanitizeText(text: string | null | undefined): string {
   if (!text) return "";
   return String(text).replace(/[<>"']/g, "");
@@ -50,7 +50,7 @@ type Profile = Tables["profiles"]["Row"];
 const PerfilView = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
-  // Perfil mínimo para casos de privacidad (nombre/username)
+  // Perfil mánimo para casos de privacidad (nombre/username)
   const [minimalProfile, setMinimalProfile] = useState<{
     nombre_completo: string | null;
     username?: string | null;
@@ -377,7 +377,7 @@ const PerfilView = () => {
                   🔒 Este perfil es privado. Solo puedes ver el nombre y el usuario.
                 </p>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  Envía una solicitud de seguimiento para ver más información.
+                  Enváa una solicitud de seguimiento para ver más información.
                 </p>
               </div>
             </div>
@@ -522,7 +522,7 @@ const PerfilView = () => {
                               }
                             }}
                           >
-                            Sí, eliminar
+                            Sá, eliminar
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -616,7 +616,7 @@ const PerfilView = () => {
                   📞 {sanitizeText(profile.telefono)}
                 </p>
               )}
-              {/* Para adultos ya mostramos Rol y Rama que educa arriba; no repetir aquí */}
+              {/* Para adultos ya mostramos Rol y Rama que educa arriba; no repetir aquá */}
             </div>
           </div>
         </div>
@@ -1073,3 +1073,4 @@ const PerfilView = () => {
 };
 
 export default PerfilView;
+

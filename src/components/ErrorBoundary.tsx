@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from "react";
+﻿import { Component, ErrorInfo, ReactNode } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,7 +40,7 @@ class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
 
-    // Aquí podrías enviar el error a un servicio de logging como Sentry
+    // Aquá podráas enviar el error a un servicio de logging como Sentry
     // logErrorToService(error, errorInfo);
   }
 
@@ -106,3 +106,4 @@ class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
+

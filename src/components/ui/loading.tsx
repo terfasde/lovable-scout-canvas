@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+﻿import { cn } from "@/lib/utils";
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -52,7 +52,7 @@ export function ListItemSkeleton({ count = 3 }: { count?: number }) {
 }
 
 /**
- * Skeleton para galería de imágenes
+ * Skeleton para galeráa de imágenes
  */
 export function GallerySkeleton({ count = 6 }: { count?: number }) {
   return (
@@ -193,3 +193,4 @@ export function EmptyState({
     </div>
   );
 }
+
